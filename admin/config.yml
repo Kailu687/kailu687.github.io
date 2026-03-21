@@ -13,17 +13,36 @@ collections:
     folder: _projects
     create: true
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Description, name: description, widget: text }
-      - { label: Link, name: link, widget: string, required: false }
-      - { label: Status, name: status, widget: select, options: [published, hidden] }
+      - label: Title
+        name: title
+        widget: string
+      - label: Description
+        name: description
+        widget: text
+      - label: Link
+        name: link
+        widget: string
+        required: false
+      - label: Status
+        name: status
+        widget: select
+        options: [published, hidden]
 
   - name: blog
     label: Blog Posts
     folder: _posts
     create: true
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Summary, name: summary, widget: text }
-      - { label: Body, name: body, widget: markdown }
-      - { label: Published, name: published, widget: boolean, default: false }
+      - label: Title
+        name: title
+        widget: string
+      - label: Summary
+        name: summary
+        widget: text
+      - label: Body
+        name: body
+        widget: markdown
+      - label: Published
+        name: published
+        widget: boolean
+        default: false
