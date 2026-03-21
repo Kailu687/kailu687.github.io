@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Kailu687/Kailu687.github.io
   branch: main
-  base_url: https://jolly-daffodil-980b57.netlify.app
+  base_url: https://netlify-cms-github-oauth-provider-bk2q.onrender.com
 
 media_folder: Images
 site_url: https://kailashamarnath.me
