@@ -1,32 +1,29 @@
 backend:
-
-name: github
-repo: Kailu687/Kailu687.github.io
-branch: main
+  name: github
+  repo: Kailu687/Kailu687.github.io
+  branch: main
+  base_url: https://jolly-daffodil-980b57.netlify.app
 
 media_folder: Images
-
 site_url: https://kailashamarnath.me
 
 collections:
+  - name: projects
+    label: Projects
+    folder: _projects
+    create: true
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Description, name: description, widget: text }
+      - { label: Link, name: link, widget: string, required: false }
+      - { label: Status, name: status, widget: select, options: [published, hidden] }
 
- -name: projects
-  label: Projects
-  folder: projects
-  create: true
-  fields:
-    - { label: Title, name: title, widget: string }
-    - { label: Description, name: description, widget: text }
-    - { label: Link, name: link, widget: string, required: false }
-    - { label: Status, name: status, widget: select,
-      options: [published, hidden] }
-
- -name: blog
-  label: Blog Posts
-  folder: posts
-  create: true
-  fields:
-  - { label: Title, name: title, widget: string }
-  - { label: Summary, name: summary, widget: text }
-  - { label: Body, name: body, widget: markdown }
-  - { label: Published, name: published, widget: boolean, default: false }
+  - name: blog
+    label: Blog Posts
+    folder: _posts
+    create: true
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Body, name: body, widget: markdown }
+      - { label: Published, name: published, widget: boolean, default: false }
