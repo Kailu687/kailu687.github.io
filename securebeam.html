@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="portfolio-cms">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
+
+  <title>SecureBeam — Kailash Amarnath</title>
+  <meta name="description" content="Built a two-way laser-based optical communication prototype using Morse-coded pulses, Arduino microcontrollers, and an LDR receiver. Developed embedded transmission and decoding logic, investigated sensor calibration and synchronization issues, and contributed to a Python-based serial control interface.">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/securebeam.html">
+  <meta name="theme-color" content="#001027">
+
+  <!-- Social previews -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="SecureBeam">
+  <meta property="og:description" content="Built a two-way laser-based optical communication prototype using Morse-coded pulses, Arduino microcontrollers, and an LDR receiver. Developed embedded transmission and decoding logic, investigated sensor calibration and synchronization issues, and contributed to a Python-based serial control interface.">
+  <meta property="og:url" content="https://kailashamarnath.me/securebeam.html">
+  <meta property="og:image" content="https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png">
+  <meta property="og:image:alt" content="SecureBeam">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CreativeWork","name":"SecureBeam","headline":"SecureBeam","description":"Built a two-way laser-based optical communication prototype using Morse-coded pulses, Arduino microcontrollers, and an LDR receiver. Developed embedded transmission and decoding logic, investigated sensor calibration and synchronization issues, and contributed to a Python-based serial control interface.","url":"https://kailashamarnath.me/securebeam.html","image":"https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png","author":{"@type":"Person","name":"Kailash Amarnath","url":"https://kailashamarnath.me/"},"keywords":"Arduino, Embedded C, Optoelectronics, Python"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://kailashamarnath.me/"},{"@type":"ListItem","position":2,"name":"Projects","item":"https://kailashamarnath.me/#projects"},{"@type":"ListItem","position":3,"name":"SecureBeam"}]}]}</script>
+</head>
+<body class="content-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Kailash, home">
+      <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+      <span class="logo">KAILASH</span>
+      <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="links" id="nav-links" aria-label="Main">
+      <a href="./#home">Home</a>
+      <a href="./#about">About</a>
+      <a href="./#projects" aria-current="page">Projects</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="./">Home</a></li>
+        <li><a href="./#projects">Projects</a></li>
+        <li><span aria-current="page">SecureBeam</span></li>
+      </ol>
+    </nav>
+
+    <div class="page-title">
+      <div>
+        <h1>SecureBeam</h1>
+
+        <div class="meta-row"><span class="tag">Arduino</span><span class="tag muted">Embedded C</span><span class="tag muted">Optoelectronics</span><span class="tag muted">Python</span></div>
+      </div>
+
+    </div>
+
+    <section class="panel reveal" aria-labelledby="secure-beam-laser-based-optical-wireless">
+<h2 id="secure-beam-laser-based-optical-wireless">SeCure BEAM — Laser-Based Optical Wireless Communication</h2><p>SeCure BEAM is a half-duplex optical wireless communication prototype developed during my first semester as part of the <em>Physics of Semiconductor Devices</em> course.</p><p>The project explores how information can be transmitted through a focused laser beam using Morse code, with an Arduino-controlled laser transmitter and a light-dependent resistor (LDR) receiver. Text messages are converted into timed light pulses, transmitted through free space, and reconstructed at the receiving station using pulse-duration and timing-gap detection.</p><p>Beyond the hardware, I also worked on microcontroller firmware and a Python-based desktop interface for serial communication and system monitoring. The project was successfully demonstrated and submitted, giving me my first practical experience in integrating electronics, embedded programming, and communication principles into a working system.<br><br></p><p><strong>How it works:</strong></p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/Gemini_Generated_Image_mvczk1mvczk1mvcz.png" aria-label="Enlarge image: Gemini Generated Image mvczk1mvczk1mvcz"><img src="Images/uploads/Gemini_Generated_Image_mvczk1mvczk1mvcz.png" alt="Gemini Generated Image mvczk1mvczk1mvcz" width="2198" height="572" loading="lazy" decoding="async"></button></figure><p><strong><br></strong></p><p><strong>Key Features:</strong></p><ul><li><strong>Laser-based optical communication&nbsp; :&nbsp;</strong>Transmits information through a free-space optical path instead of a conventional wired data connection or radio link.&nbsp;&nbsp;</li><li><strong>Morse-code encoding and decoding&nbsp; :&nbsp;</strong>Maps text to timed dots and dashes, then reconstructs characters from detected pulse durations and inter-symbol gaps.&nbsp;&nbsp;</li><li><strong>Embedded firmware&nbsp; :&nbsp;</strong>Uses Arduino C++ for GPIO control, analog sensor acquisition, timing logic, serial commands, and transmission feedback.&nbsp;&nbsp;</li><li><strong>Desktop interface : A</strong>&nbsp;Python Tkinter GUI with PySerial for serial-port selection, message transmission controls, and serial-output monitoring.&nbsp;&nbsp;</li></ul><p><strong>Technology Stack</strong></p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/02bd9d3b-bc28-445c-a740-041bed4c78a4-2.jpg" aria-label="Enlarge image: 02bd9d3b bc28 445c a740 041bed4c78a4 2"><img src="Images/uploads/02bd9d3b-bc28-445c-a740-041bed4c78a4-2.jpg" alt="02bd9d3b bc28 445c a740 041bed4c78a4 2" width="952" height="430" loading="lazy" decoding="async"></button></figure><p><strong><br></strong></p><p><strong>Demonstration</strong></p><div></div><p><strong>What I Worked On</strong></p><ul><li><p>Built the Arduino-based laser transmitter and LDR receiver.</p></li><li><p>Developed Arduino C++ code for Morse-code transmission and decoding.</p></li><li><p>Calibrated the LDR and debugged signal detection issues.</p></li><li><p>Contributed to a Python GUI for controlling the system and monitoring serial output.</p></li></ul><table><thead><tr><th>Challenge</th><th>How we overcomed it</th></tr></thead><tbody><tr><td><p>Unreliable raw-binary decoding&nbsp;&nbsp;</p></td><td><p>Transitioned to Morse-coded pulses with timing-based symbol recognition.&nbsp;&nbsp;</p></td></tr><tr><td><p>Ambient-light interference&nbsp;&nbsp;</p></td><td>Protected the sensors with black insulation tape and made a path with a PVC pipe to provide zero light interference.</td></tr><tr><td>Inverted and inconsistent Light Detection&nbsp;</td><td><p>Investigated the sensor output polarity and adapted the receiver logic to the actual circuit behavior.&nbsp;&nbsp;</p></td></tr><tr><td><p>Serial communication errors</p></td><td><p>Investigated COM-port access and Arduino upload configuration issues.</p></td></tr></tbody></table><p><strong><br></strong></p><p><strong>Outcome &amp; Learning</strong></p><p>Successfully demonstrated and submitted a working Morse-code-based optical communication prototype.</p><p>The project introduced me to practical semiconductor optoelectronics, analog sensor behavior, embedded firmware development, timing-sensitive communication, and iterative hardware debugging.</p><p>It also taught me an important engineering lesson: a communication system is only as reliable as its sensing, timing, synchronization, and environmental tolerance. Moving away from the initial raw-binary approach helped me appreciate the trade-offs involved in choosing a signaling method for a simple hardware platform.</p><p><strong>Resources</strong></p><p><a href="https://github.com/Kailu687/SC-Project-Secure-BEAM" target="_blank" rel="noopener">https://github.com/Kailu687/SC-Project-Secure-BEAM</a></p><p><a href="https://www.youtube.com/watch?v=XM38rXNGQCY" target="_blank" rel="noopener">https://www.youtube.com/watch?v=XM38rXNGQCY</a></p>
+    </section>
+
+    <div class="cta-row" style="margin-top:40px">
+      <a class="btn" href="./#projects">← All projects</a>
+      <a class="btn primary" href="./#contact">Get in touch</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Kailash Amarnath</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>
