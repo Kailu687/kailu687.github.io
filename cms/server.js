@@ -40,7 +40,7 @@ const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json', '.xml': 'application/xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
   '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp4': 'video/mp4',
-  '.webm': 'video/webm', '.txt': 'text/plain; charset=utf-8', '.woff2': 'font/woff2',
+  '.webm': 'video/webm', '.txt': 'text/plain; charset=utf-8', '.pdf': 'application/pdf', '.woff2': 'font/woff2',
 };
 
 // Uploads: allowed extensions and the bytes each file type must start with.
@@ -52,6 +52,7 @@ const UPLOAD_TYPES = {
   '.webp': (b) => b.slice(0, 4).toString('latin1') === 'RIFF' && b.slice(8, 12).toString('latin1') === 'WEBP',
   '.mp4': (b) => b.slice(4, 8).toString('latin1') === 'ftyp',
   '.webm': (b) => b.slice(0, 4).equals(Buffer.from([0x1a, 0x45, 0xdf, 0xa3])),
+  '.pdf': (b) => b.slice(0, 5).toString('latin1') === '%PDF-',
 };
 
 const SECURITY_HEADERS = {
@@ -122,15 +123,20 @@ function within(root, urlPath) {
   return full.startsWith(path.resolve(root) + path.sep) ? full : null;
 }
 
+// PDFs (reports, papers) go in files/; images and videos in Images/uploads/.
+const uploadFolder = (ext) => (ext === '.pdf'
+  ? { dir: path.join(SITE_DIR, 'files'), web: 'files' }
+  : { dir: path.join(UPLOAD_DIR, 'uploads'), web: 'Images/uploads' });
+
 function safeUploadName(name) {
   const ext = path.extname(name).toLowerCase();
   if (!UPLOAD_TYPES[ext]) {
-    throw content.httpError(400, 'Only PNG, JPG, GIF, WebP, MP4 and WebM files can be uploaded.');
+    throw content.httpError(400, 'Only PNG, JPG, GIF, WebP, MP4, WebM and PDF files can be uploaded.');
   }
   const base = path.basename(name, path.extname(name))
     .normalize('NFKD').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 60) || 'image';
   let candidate = `${base}${ext}`;
-  for (let n = 2; fs.existsSync(path.join(UPLOAD_DIR, 'uploads', candidate)); n++) candidate = `${base}-${n}${ext}`;
+  for (let n = 2; fs.existsSync(path.join(uploadFolder(ext).dir, candidate)); n++) candidate = `${base}-${n}${ext}`;
   return candidate;
 }
 
@@ -263,9 +269,10 @@ async function api(req, res, url) {
     if (!UPLOAD_TYPES[path.extname(name)](buf)) {
       throw content.httpError(400, "That file's contents don't match its type, so it wasn't uploaded.");
     }
-    fs.mkdirSync(path.join(UPLOAD_DIR, 'uploads'), { recursive: true });
-    fs.writeFileSync(path.join(UPLOAD_DIR, 'uploads', name), buf);
-    return send(res, 201, { path: `Images/uploads/${name}`, size: buf.length });
+    const folder = uploadFolder(path.extname(name));
+    fs.mkdirSync(folder.dir, { recursive: true });
+    fs.writeFileSync(path.join(folder.dir, name), buf);
+    return send(res, 201, { path: `${folder.web}/${name}`, size: buf.length });
   }
 
   if (resource === 'build' && m === 'POST') return send(res, 200, rebuild());
@@ -332,6 +339,10 @@ const server = http.createServer(async (req, res) => {
     const pv = p.match(/^\/preview\/(projects|blog)\/([a-z0-9_-]+)$/);
     if (pv) return preview(res, pv[1], pv[2]);
     // The editor shows images with the same relative paths the site uses.
+    if (p.startsWith('/files/')) {
+      const f = within(path.join(SITE_DIR, 'files'), p.slice('/files/'.length));
+      return f ? serveFile(res, f) : send(res, 404, 'Not found', 'text/plain');
+    }
     if (p.startsWith('/Images/')) {
       const f = within(UPLOAD_DIR, p.slice('/Images/'.length));
       return f ? serveFile(res, f) : send(res, 404, 'Not found', 'text/plain');

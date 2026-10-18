@@ -62,6 +62,11 @@ function enhance(html, siteDir) {
     'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
     'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>');
 
+  // PDF viewers: shown inline where the browser can, with a link for phones.
+  html = html.replace(/<div (?=[^>]*class="pdf-embed")(?=[^>]*data-pdf="(files\/[\w.%-]+\.pdf)")[^>]*>\s*<\/div>/gi, (_, src) =>
+    `<div class="pdf-embed"><object data="${src}#view=FitH" type="application/pdf" aria-label="PDF document">` +
+    `<p class="pdf-fallback">This PDF can't be shown here. <a href="${src}" target="_blank" rel="noopener">Open the PDF</a></p></object></div>`);
+
   // Wide tables scroll sideways on phones instead of squashing.
   html = html.replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, '</table></div>');
 

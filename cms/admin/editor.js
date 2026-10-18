@@ -85,6 +85,7 @@
           <button type="button" data-insert="image"><b>Image or video</b><span>Upload, or pick one you have</span></button>
           <button type="button" data-insert="gallery"><b>Image gallery</b><span>A row of images</span></button>
           <button type="button" data-insert="youtube"><b>YouTube video</b><span>Paste a link</span></button>
+          <button type="button" data-insert="pdf"><b>PDF or report</b><span>Upload a PDF to download or read in the page</span></button>
           <button type="button" data-insert="table"><b>Table</b><span>Rows and columns</span></button>
           <button type="button" data-insert="code"><b>Code block</b><span>Firmware, scripts, commands</span></button>
           <button type="button" data-insert="specs"><b>Spec cards</b><span>Key numbers, like range or mass</span></button>
@@ -346,12 +347,75 @@
   }
 
   async function uploadFiles(files, at) {
+    const pdf = files.find((f) => /\.pdf$/i.test(f.name));
+    if (pdf) {
+      if (at) { getSelection().removeAllRanges(); getSelection().addRange(at); saveSelection(); }
+      await insertPdf(pdf);
+      files = files.filter((f) => f !== pdf);
+      if (!files.length) return;
+    }
     try {
       const paths = [];
       for (const f of files) paths.push(await ctx.upload(f));
       if (at) { getSelection().removeAllRanges(); getSelection().addRange(at); saveSelection(); }
       insertBlock((paths.length > 1 ? galleryHtml(paths) : figureHtml(paths[0])) + '<p><br></p>');
     } catch (err) { ctx.toast(err.message, true); }
+  }
+
+  // A small dialog with a few big choices; resolves to the chosen key, or null.
+  function choose(title, options) {
+    return new Promise((resolve) => {
+      const dlg = document.createElement('dialog');
+      dlg.className = 'choose-dialog';
+      dlg.innerHTML = `<div class="dialog-head"><h2>${esc(title)}</h2><button class="close-x" type="button" aria-label="Close">×</button></div>
+        <div class="dialog-body stack">${options.map(([key, label, help]) =>
+          `<button type="button" class="choice" data-key="${esc(key)}"><b>${esc(label)}</b><span>${esc(help || '')}</span></button>`).join('')}</div>`;
+      document.body.appendChild(dlg);
+      let result = null;
+      dlg.addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        result = b.dataset.key || null;
+        dlg.close();
+      });
+      dlg.addEventListener('close', () => { dlg.remove(); resolve(result); });
+      dlg.showModal();
+      const first = dlg.querySelector('.choice');
+      if (first) first.focus();
+    });
+  }
+
+  // PDFs: a download card, plus an optional reader shown inside the page.
+  function choosePdf() {
+    return new Promise((resolve) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/pdf,.pdf';
+      input.onchange = () => resolve(input.files[0] || null);
+      input.click();
+    });
+  }
+
+  async function insertPdf(file) {
+    saveSelection();
+    file = file || await choosePdf();
+    if (!file) return;
+    if (!/\.pdf$/i.test(file.name)) { ctx.toast('Please choose a PDF file.', true); return; }
+    let p;
+    try { p = await ctx.upload(file); } catch (err) { ctx.toast(err.message, true); return; }
+    const guess = file.name.replace(/\.pdf$/i, '').replace(/[-_]+/g, ' ');
+    const label = await ctx.ask('PDF added', 'Link text', guess, 'What readers click to open or download it, like "Full project report".');
+    if (label === null) return;
+    const showInline = await choose('How should it appear?', [
+      ['both', 'Download link + reader in the page', 'Readers can scroll through it right on the page'],
+      ['link', 'Just a download link', 'A neat card that opens the PDF'],
+    ]);
+    if (!showInline) return;
+    const href = esc(encodeURI(p));
+    const kb = file.size > 1048576 ? `${(file.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(file.size / 1024))} KB`;
+    let html = `<p><a class="file-card" href="${href}">${esc(label.trim() || guess)} (PDF, ${kb})</a></p>`;
+    if (showInline === 'both') html += `<div class="pdf-embed" data-pdf="${href}"></div>`;
+    insertBlock(html + '<p><br></p>');
   }
 
   function youtubeId(url) {
@@ -363,6 +427,7 @@
   async function insert(kind) {
     closeMenus();
     if (kind === 'image' || kind === 'gallery') return insertMedia(kind);
+    if (kind === 'pdf') return insertPdf();
     saveSelection();
     if (kind === 'youtube') {
       const url = await ctx.ask('YouTube video', 'Video link', '', 'Paste the address of the video, like https://youtu.be/…');
@@ -496,7 +561,7 @@
     ctx.selectedFigure = fig;
     fig.classList.add('selected');
     const inGallery = !!fig.closest('.md-gallery');
-    const isEmbed = fig.classList.contains('embed');
+    const isEmbed = fig.classList.contains('embed') || fig.classList.contains('pdf-embed');
     $$('[data-only="single"]', figBar).forEach((g) => { g.hidden = inGallery; });
     $$('[data-only="img"]', figBar).forEach((b) => { b.hidden = !fig.querySelector('img') || isEmbed; });
     $$('[data-fa="caption"], [data-fa="replace"]', figBar).forEach((b) => { b.hidden = isEmbed; });
@@ -611,7 +676,7 @@
   // Figures, videos and other blocks can be dragged to any spot in the article.
   let dragging = null;
   function onDragStart(e) {
-    const el = e.target.closest && e.target.closest('figure, .embed, .md-gallery, table, .spec-grid');
+    const el = e.target.closest && e.target.closest('figure, .embed, .pdf-embed, .md-gallery, table, .spec-grid');
     if (!el || !ctx.doc.contains(el)) return;
     const unit = el.tagName === 'FIGURE' && el.closest('.md-gallery') && e.altKey ? el.closest('.md-gallery') : el;
     dragging = unit;
@@ -667,7 +732,7 @@
   }
   function onDrop(e) {
     ctx.dropLine.hidden = true;
-    const files = [...e.dataTransfer.files].filter((f) => /^(image|video)\//.test(f.type));
+    const files = [...e.dataTransfer.files].filter((f) => /^(image|video)\//.test(f.type) || /\.pdf$/i.test(f.name));
     if (files.length) {
       e.preventDefault();
       const pos = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
@@ -898,8 +963,8 @@
   const KEEP = new Set(['DETAILS', 'SUMMARY', 'P', 'H2', 'H3', 'H4', 'STRONG', 'EM', 'U', 'S', 'A', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'PRE', 'CODE', 'HR', 'BR', 'FIGURE', 'FIGCAPTION', 'IMG', 'VIDEO', 'DIV', 'SPAN', 'MARK', 'SUP', 'SUB', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD']);
   const RENAME = { B: 'strong', I: 'em', H1: 'h2', H5: 'h4', H6: 'h4', STRIKE: 's', DEL: 's' };
   const DROP = new Set(['SCRIPT', 'STYLE', 'META', 'LINK', 'TITLE', 'IFRAME', 'OBJECT', 'SVG', 'NOSCRIPT', 'TEMPLATE', 'FORM', 'BUTTON', 'INPUT', 'TEXTAREA', 'SELECT']);
-  const ATTRS = { A: ['href'], DETAILS: ['open'], IMG: ['src', 'alt'], VIDEO: ['src', 'controls', 'loop', 'muted', 'playsinline', 'autoplay', 'poster', 'aria-label'], DIV: ['data-youtube'] };
-  const CLASS_OK = /^(md-gallery|img-(wide|left|right|center|small)|w-(25|33|50|66|75|100)|fs-(sm|lg|xl)|c-(accent|blue|muted|white|green|amber|red)|ta-(center|right|justify)|callout|callout-ok|callout-warn|btn-link|note|spec-grid|spec|k|v|split|media-box|embed|tag|muted)$/;
+  const ATTRS = { A: ['href'], DETAILS: ['open'], IMG: ['src', 'alt'], VIDEO: ['src', 'controls', 'loop', 'muted', 'playsinline', 'autoplay', 'poster', 'aria-label'], DIV: ['data-youtube', 'data-pdf'] };
+  const CLASS_OK = /^(md-gallery|img-(wide|left|right|center|small)|w-(25|33|50|66|75|100)|fs-(sm|lg|xl)|c-(accent|blue|muted|white|green|amber|red)|ta-(center|right|justify)|callout|callout-ok|callout-warn|btn-link|file-card|pdf-embed|note|spec-grid|spec|k|v|split|media-box|embed|tag|muted)$/;
 
   function cleanHtml(html) {
     const d = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
@@ -975,6 +1040,13 @@
     $$('details', root).forEach((d) => d.setAttribute('open', ''));
     $$('table, .spec-grid', root).forEach((t) => t.setAttribute('draggable', 'false'));
     $$('video', root).forEach((v) => { v.muted = true; v.removeAttribute('autoplay'); });
+    $$('.pdf-embed', root).forEach((pe) => {
+      pe.setAttribute('contenteditable', 'false');
+      pe.setAttribute('draggable', 'true');
+      if (!pe.querySelector('[data-preview]')) {
+        pe.innerHTML = `<span class="pdf-label" data-preview>📄 PDF shown in the page: ${esc(decodeURI(pe.getAttribute('data-pdf') || '').replace(/^files\//, ''))}</span>`;
+      }
+    });
     $$('.embed', root).forEach((em) => {
       em.setAttribute('contenteditable', 'false');
       em.setAttribute('draggable', 'true');
@@ -1102,7 +1174,7 @@
     on(handle, 'pointerdown', startResize);
 
     on(doc, 'click', (e) => {
-      const fig = e.target.closest('figure, .embed');
+      const fig = e.target.closest('figure, .embed, .pdf-embed');
       if (fig && doc.contains(fig)) { e.preventDefault(); selectFigure(fig); return; }
       deselectFigure();
       updateState();
@@ -1138,7 +1210,7 @@
 
     on(doc, 'paste', (e) => {
       const cd = e.clipboardData;
-      const files = [...cd.files].filter((f) => /^(image|video)\//.test(f.type));
+      const files = [...cd.files].filter((f) => /^(image|video)\//.test(f.type) || /\.pdf$/i.test(f.name));
       e.preventDefault();
       if (files.length) { uploadFiles(files); return; }
       const r = currentRange();

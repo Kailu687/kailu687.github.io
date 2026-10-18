@@ -7,7 +7,7 @@ const ALLOWED = {
   mark: [], sup: [], sub: [],
   details: [], summary: [],
   a: ['href', 'title', 'class'], ul: [], ol: [], li: ['class'], blockquote: ['class'], pre: [], code: [],
-  hr: [], br: [], figure: ['class'], figcaption: ['class'], div: ['class', 'data-youtube'], span: ['class'],
+  hr: [], br: [], figure: ['class'], figcaption: ['class'], div: ['class', 'data-youtube', 'data-pdf'], span: ['class'],
   img: ['src', 'alt', 'width', 'height'],
   video: ['src', 'controls', 'loop', 'muted', 'autoplay', 'playsinline', 'poster', 'aria-label'],
   table: [], thead: [], tbody: [], tr: [], th: ['class'], td: ['class'],
@@ -22,7 +22,7 @@ const CLASSES = new Set([
   'fs-sm', 'fs-lg', 'fs-xl',
   'c-accent', 'c-blue', 'c-muted', 'c-white', 'c-green', 'c-amber', 'c-red',
   'ta-center', 'ta-right', 'ta-justify',
-  'callout', 'callout-ok', 'callout-warn', 'btn-link', 'note', 'spec-grid', 'spec', 'k', 'v', 'split', 'media-box', 'embed', 'tag', 'muted',
+  'callout', 'callout-ok', 'callout-warn', 'btn-link', 'file-card', 'pdf-embed', 'note', 'spec-grid', 'spec', 'k', 'v', 'split', 'media-box', 'embed', 'tag', 'muted',
 ]);
 const RENAME = { b: 'strong', i: 'em', h1: 'h2', h5: 'h4', h6: 'h4', strike: 's', del: 's' };
 
@@ -58,6 +58,7 @@ function cleanAttrs(name, raw) {
     if (key === 'class') val = val.split(/\s+/).filter((c) => CLASSES.has(c)).join(' ');
     if ((key === 'width' || key === 'height') && !/^\d{1,4}$/.test(val)) val = null;
     if (key === 'data-youtube' && !/^[\w-]{11}$/.test(val)) val = null;
+    if (key === 'data-pdf' && !/^files\/[\w.%-]+\.pdf$/i.test(val)) val = null;
     if (val === null || (key === 'class' && !val)) continue;
     const boolean = ['controls', 'loop', 'muted', 'autoplay', 'playsinline'].includes(key);
     out.push(boolean ? key : `${key}="${encodeAttr(val)}"`);
