@@ -64,6 +64,7 @@ or a private GitHub repository) so a lost laptop doesn't take your drafts with i
 
 ```
 npm run cms     # start the dashboard
+npm run signin  # one-time GitHub sign-in so Publish can push (opens GitHub in the browser)
 npm run build   # rebuild pages, home page cards and sitemap.xml without the dashboard
 npm test        # sanitizer and markdown checks
 ```

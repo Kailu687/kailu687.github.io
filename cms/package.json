@@ -7,6 +7,7 @@
     "cms": "node server.js",
     "start": "node server.js",
     "build": "node lib/build.js",
+    "signin": "node signin.js",
     "test": "node test/run.js"
   },
   "engines": {

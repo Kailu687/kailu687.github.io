@@ -106,7 +106,9 @@ async function publish({ files, message }) {
       pushed: false,
       log,
       error: `Saved the changes locally but could not push to GitHub: ${err.message}\n` +
-        'Open GitHub Desktop and click "Push origin" to finish publishing.',
+        (/could not read Username|terminal prompts disabled|Authentication failed/i.test(err.message)
+          ? 'Git is not signed in to GitHub on this laptop yet. Run "npm run signin" in the cms folder once, sign in in the browser window that opens, then publish again.'
+          : 'Open GitHub Desktop and click "Push origin" to finish publishing.'),
     };
   }
 }
