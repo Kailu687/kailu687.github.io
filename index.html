@@ -108,7 +108,7 @@
 
   <div id="loader-screen" aria-hidden="true">
     <div id="loader-card">
-      <div id="terminal-text"></div>
+      <!-- cms:loader:start --><div id="terminal-text" data-lines='["Preparing systems...","Optimizing modules...","Starting engines...","Final checks...","Ready."]'></div><!-- cms:loader:end -->
       <div id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-bar"></div></div>
       <div id="loader-sub"><span>Loading — <span id="progress-percent">0%</span></span><span>Tap or press any key to skip</span></div>
     </div>
@@ -136,12 +136,14 @@
     <main id="main" class="container">
       <section id="home" class="hero reveal" aria-labelledby="hero-heading">
         <div>
+          <!-- cms:hero:start -->
           <p class="eyebrow">It's not the plane, it's the pilot</p>
           <h1 id="hero-heading">
-            <span class="sr-only">Kailash: ECE undergrad by choice, aviator by passion.</span>
-            <span id="typing" aria-hidden="true"></span><span class="cursor" aria-hidden="true">|</span>
+            <span class="sr-only">ECE undergrad by choice. Aviator by passion.</span>
+            <span id="typing" aria-hidden="true" data-phrases='["ECE undergrad by choice. Aviator by passion.","Still figuring things out — trying, making and breaking.","Building cool things one failure at a time.","Engineering my own flight path."]'></span><span class="cursor" aria-hidden="true">|</span>
           </h1>
           <p class="lead">Just another ECE student still figuring things out — trying, making, breaking, and learning from all of it.</p>
+          <!-- cms:hero:end -->
           <div class="cta-row">
             <a class="btn primary" href="#projects">Projects</a>
             <a class="btn" href="#blog">Blog</a>
@@ -153,8 +155,8 @@
 
       <section id="about" class="panel reveal" aria-labelledby="about-heading">
         <h2 id="about-heading">About</h2>
-        <p>Hey, I’m Kailash — a first‑year ECE student who fell in love with aircraft long before touching an engineering textbook. I’m not an expert, not a prodigy… just someone who genuinely enjoys learning, building, and exploring whatever pulls me deeper into the world of aerospace and electronics.</p>
-        <p>I don’t know exactly where this path leads — maybe aerospace, maybe research, maybe something completely different — but I love the journey. You could say I’m committed… not to a relationship, but to aircrafts.</p>
+        <!-- cms:about:start -->
+        <p>Hey, I’m Kailash — a first‑year ECE student who fell in love with aircraft long before touching an engineering textbook. I’m not an expert, not a prodigy… just someone who genuinely enjoys learning, building, and exploring whatever pulls me deeper into the world of aerospace and electronics.</p><p>I don’t know exactly where this path leads — maybe aerospace, maybe research, maybe something completely different — but I love the journey. You could say I’m committed… not to a relationship, but to aircrafts.</p>
         <ul class="chips" aria-label="Interests">
           <li class="tag">Electronics</li>
           <li class="tag">Embedded systems</li>
@@ -163,6 +165,7 @@
           <li class="tag">Aerospace</li>
           <li class="tag">PCB design</li>
         </ul>
+        <!-- cms:about:end -->
       </section>
 
       <section id="projects" class="panel reveal" aria-labelledby="projects-heading">
@@ -206,6 +209,7 @@
 
       <section id="contact" class="panel reveal" aria-labelledby="contact-heading">
         <h2 id="contact-heading">Contact</h2>
+        <!-- cms:contact:start -->
         <p>Want to talk projects, aircraft or internships? Reach out.</p>
         <ul class="contact-list">
           <li><a href="mailto:kailash.dak2007@gmail.com"><span class="label">Email</span>kailash.dak2007@gmail.com</a></li>
@@ -213,6 +217,7 @@
           <li><a href="https://www.linkedin.com/in/kailash-amarnath-b248b8273" target="_blank" rel="noopener"><span class="label">LinkedIn</span>View profile ↗</a></li>
           <li><a href="https://github.com/kailu687" target="_blank" rel="noopener"><span class="label">GitHub</span>kailu687 ↗</a></li>
         </ul>
+        <!-- cms:contact:end -->
       </section>
     </main>
 

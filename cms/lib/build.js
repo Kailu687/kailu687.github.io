@@ -11,6 +11,7 @@ const content = require('./content');
 const { render, escapeHtml } = require('./markdown');
 const { sanitize } = require('./sanitize');
 const { enhance } = require('./media');
+const home = require('./home');
 
 // CMS_SITE_DIR lets tests build into a copy of the site instead of the real one.
 const SITE_DIR = path.resolve(process.env.CMS_SITE_DIR || path.join(__dirname, '..', '..'));
@@ -269,6 +270,7 @@ function build({ adopt = [] } = {}) {
     let html = fs.readFileSync(indexFile, 'utf8');
     html = replaceRegion(html, 'projects', 'card-grid', cardsHtml('projects'));
     html = replaceRegion(html, 'blog', 'card-grid', cardsHtml('blog'));
+    html = home.apply(html);
     result.indexUpdated = writeIfChanged(indexFile, html);
   }
 

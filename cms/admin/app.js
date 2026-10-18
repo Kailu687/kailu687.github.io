@@ -66,6 +66,7 @@
     [/^#\/(projects|blog)\/new$/, (m) => renderEditor(m[1], null)],
     [/^#\/(projects|blog)\/edit\/([a-z0-9_-]+)$/, (m) => renderEditor(m[1], m[2])],
     [/^#\/settings$/, renderSettings],
+    [/^#\/home$/, renderHome],
   ];
 
   async function route() {
@@ -114,6 +115,7 @@
       <div class="grid">
         <a class="card big-action" href="#/projects/new"><strong>＋ New project</strong><span class="muted">Specs, build logs, images, diagrams and GIFs.</span></a>
         <a class="card big-action" href="#/blog/new"><strong>＋ New blog post</strong><span class="muted">Write it like a document, drop images anywhere.</span></a>
+        <a class="card big-action" href="#/home"><strong>✎ Edit home page</strong><span class="muted">Tagline, typing phrases, About, contact links.</span></a>
         <div class="card"><h2>Your content</h2>
           <p><b style="color:#fff">${count('published')}</b> published · <b style="color:#fff">${count('coming-soon')}</b> coming soon · <b style="color:#fff">${count('draft')}</b> drafts</p>
           <div class="row" style="margin-top:12px"><a class="btn small" href="#/projects">Projects</a><a class="btn small" href="#/blog">Blog</a></div>
@@ -175,6 +177,89 @@
         : 'Newest posts show first on the home page.'}</p></div>
         <a class="btn primary" href="#/${type}/new">＋ New ${one.toLowerCase()}</a></div>
       <div class="entries">${entriesHtml(state[type])}</div>`;
+  }
+
+  // ---------- Home page ----------
+  async function renderHome() {
+    await refresh();
+    const h = await api('GET', '/api/home');
+    const contacts = h.contacts || [];
+    const lines = (a) => esc((a || []).join('\n'));
+    view.innerHTML = `
+      <div class="page-title"><div><h1>Home page</h1><p>Everything visitors see first. Projects and blog cards update by themselves from your posts.</p></div>
+        <div class="row"><a class="btn ghost" href="/site/" target="_blank" rel="noopener">View local site</a><button class="btn primary" type="button" id="home-save">Save</button></div></div>
+      <div class="home-grid">
+        <section class="card stack">
+          <h2>Top of the page</h2>
+          <label class="field"><span class="label">Tagline</span><input class="input" id="h-eyebrow" value="${esc(h.eyebrow)}" maxlength="160"><small>The small line above the big heading.</small></label>
+          <label class="field"><span class="label">Typing phrases</span><textarea class="input" id="h-typing" rows="5">${lines(h.typing)}</textarea><small>One per line. The heading types each one out in turn.</small></label>
+          <label class="field"><span class="label">Intro</span><textarea class="input" id="h-lead" rows="3" maxlength="400">${esc(h.lead)}</textarea></label>
+          <label class="field"><span class="label">Loading screen messages</span><textarea class="input" id="h-loader" rows="5">${lines(h.loader)}</textarea><small>One per line, shown on the terminal-style loader.</small></label>
+        </section>
+        <section class="card stack">
+          <h2>About</h2>
+          <div id="toolbar-slot"></div>
+          <div id="doc" class="doc doc-small" contenteditable="true" role="textbox" aria-multiline="true" aria-label="About text"></div>
+          <label class="field"><span class="label">Interests</span><input class="input" id="h-interests" value="${esc((h.interests || []).join(', '))}"><small>Separate with commas. They show as tags under the About text.</small></label>
+        </section>
+        <section class="card stack">
+          <h2>Contact</h2>
+          <label class="field"><span class="label">Intro line</span><input class="input" id="h-contact-intro" value="${esc(h.contactIntro)}" maxlength="300"></label>
+          <div class="field"><span class="label">Ways to reach you</span>
+            <div id="contacts" class="contacts"></div>
+            <button class="btn small" type="button" id="add-contact">＋ Add a link</button>
+            <small>Links can be https://…, mailto:you@example.com or tel:+91….</small>
+          </div>
+        </section>
+        <section class="card stack">
+          <h2>Search and sharing</h2>
+          <label class="field"><span class="label">Page title</span><input class="input" id="h-title" value="${esc(h.pageTitle)}" maxlength="120"><small>Shown in the browser tab and as the Google headline.</small></label>
+          <label class="field"><span class="label">Google description</span><textarea class="input" id="h-desc" rows="3" maxlength="320">${esc(h.description)}</textarea></label>
+          <label class="field"><span class="label">Link preview text</span><textarea class="input" id="h-share" rows="2" maxlength="320">${esc(h.shareDescription)}</textarea><small>Shown when the site is shared on LinkedIn or WhatsApp.</small></label>
+        </section>
+      </div>`;
+
+    const markDirty = () => { dirty = true; };
+    leaveGuard = () => !dirty || confirm('You have unsaved changes. Leave without saving?');
+    const editor = CMSEditor.mount({ doc: $('#doc'), toolbar: $('#toolbar-slot'), html: h.about || '', markDirty, pickMedia, upload, ask, toast });
+
+    const box = $('#contacts');
+    const row = (c = {}) => {
+      const d = document.createElement('div');
+      d.className = 'contact-row';
+      d.innerHTML = `<input class="input" data-k="label" placeholder="Label" value="${esc(c.label)}" aria-label="Label">
+        <input class="input" data-k="text" placeholder="What it shows" value="${esc(c.text)}" aria-label="Text shown">
+        <input class="input" data-k="link" placeholder="https://…" value="${esc(c.link)}" aria-label="Link">
+        <button class="btn small ghost" type="button" data-up title="Move up" aria-label="Move up">↑</button>
+        <button class="btn small danger" type="button" data-del title="Remove" aria-label="Remove">✕</button>`;
+      d.querySelector('[data-del]').onclick = () => { d.remove(); markDirty(); };
+      d.querySelector('[data-up]').onclick = () => { if (d.previousElementSibling) { d.previousElementSibling.before(d); markDirty(); } };
+      box.appendChild(d);
+    };
+    contacts.forEach(row);
+    $('#add-contact').onclick = () => { row(); markDirty(); };
+    view.addEventListener('input', markDirty);
+
+    const save = async () => {
+      const split = (id) => $(id).value.split('\n').map((s) => s.trim()).filter(Boolean);
+      const data = {
+        eyebrow: $('#h-eyebrow').value, typing: split('#h-typing'), lead: $('#h-lead').value, loader: split('#h-loader'),
+        about: editor.getHTML(), interests: $('#h-interests').value.split(',').map((s) => s.trim()).filter(Boolean),
+        contactIntro: $('#h-contact-intro').value,
+        contacts: $$('.contact-row', box).map((r) => Object.fromEntries($$('input', r).map((i) => [i.dataset.k, i.value.trim()]))),
+        pageTitle: $('#h-title').value, description: $('#h-desc').value, shareDescription: $('#h-share').value,
+      };
+      $('#home-save').disabled = true;
+      try {
+        const r = await api('PUT', '/api/home', data);
+        dirty = false;
+        reportBuild(r.build);
+        toast('Home page saved. Publish when you are ready.');
+        refreshPublishCount();
+      } catch (err) { toast(err.message, true); } finally { $('#home-save').disabled = false; }
+    };
+    $('#home-save').onclick = save;
+    document.onkeydown = (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's' && $('#home-save')) { e.preventDefault(); save(); } };
   }
 
   // ---------- Settings ----------

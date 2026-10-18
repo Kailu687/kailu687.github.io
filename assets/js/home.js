@@ -23,7 +23,9 @@
     const bar = document.getElementById('progress-bar');
     const percent = document.getElementById('progress-percent');
     const progress = document.getElementById('progress');
-    const lines = ['Preparing systems...', 'Optimizing modules...', 'Starting engines...', 'Final checks...', 'Ready.'];
+    // Messages come from the page (set in the CMS), with the originals as a fallback.
+    let lines = ['Preparing systems...', 'Optimizing modules...', 'Starting engines...', 'Final checks...', 'Ready.'];
+    try { const d = JSON.parse(termText.dataset.lines || 'null'); if (Array.isArray(d) && d.length) lines = d; } catch (e) {}
     let l = 0, c = 0, p = 0;
 
     function step(amount){
@@ -64,12 +66,13 @@
     const el = document.getElementById('typing');
     if (!el || el.dataset.running) return;
     el.dataset.running = '1';
-    const texts = [
+    let texts = [
       'ECE undergrad by choice. Aviator by passion.',
       'Still figuring things out — trying, making and breaking.',
       'Building cool things one failure at a time.',
       'Engineering my own flight path.'
     ];
+    try { const d = JSON.parse(el.dataset.phrases || 'null'); if (Array.isArray(d) && d.length) texts = d; } catch (e) {}
     if (reduceMotion) { el.textContent = texts[0]; return; }
     let i = 0, j = 0, deleting = false;
     function loop(){

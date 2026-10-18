@@ -261,3 +261,11 @@ body.focus-mode .doc{min-height:80vh}
 .choice b{color:#fff}
 .choice span{color:var(--muted);font-size:13px}
 .choose-dialog{max-width:480px}
+
+/* Home page editor */
+.home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:18px;align-items:start}
+.home-grid h2{font-size:17px;color:#fff}
+.doc.doc-small{min-height:180px;padding:18px 20px}
+.contacts{display:flex;flex-direction:column;gap:8px}
+.contact-row{display:grid;grid-template-columns:110px 1fr 1.3fr auto auto;gap:6px;align-items:center}
+@media (max-width:640px){.contact-row{grid-template-columns:1fr 1fr}.contact-row [data-k=link]{grid-column:1/-1}}
