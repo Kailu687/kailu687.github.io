@@ -1,0 +1,5 @@
+# Private to this computer: drafts, saved versions and the dashboard key.
+content/
+.key
+.generated.json
+node_modules/

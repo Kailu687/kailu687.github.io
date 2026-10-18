@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Portfolio CMS · Kailash</title>
+<link rel="icon" href="/Images/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#/"><b>KAILASH</b><span>Portfolio CMS</span></a>
+  <nav class="topnav" aria-label="Dashboard">
+    <a href="#/">Dashboard</a>
+    <a href="#/projects">Projects</a>
+    <a href="#/blog">Blog</a>
+    <a href="#/settings">Settings</a>
+  </nav>
+  <div class="top-actions">
+    <a class="btn ghost small" href="/site/" target="_blank" rel="noopener">View local site</a>
+    <button class="btn primary small" id="publish-btn" type="button">Publish <span class="badge" id="publish-count" hidden></span></button>
+  </div>
+</header>
+
+<main id="view" tabindex="-1"></main>
+
+<div class="figure-bar" id="figure-bar" hidden role="toolbar" aria-label="Image options">
+  <button type="button" data-layout="img-wide">Full width</button>
+  <button type="button" data-layout="img-left">Left</button>
+  <button type="button" data-layout="img-right">Right</button>
+  <button type="button" data-layout="img-small">Small</button>
+  <button type="button" data-act="caption">Caption</button>
+  <button type="button" data-act="alt">Alt text</button>
+  <button type="button" data-act="up" aria-label="Move up">↑</button>
+  <button type="button" data-act="down" aria-label="Move down">↓</button>
+  <button type="button" data-act="remove" class="danger">Remove</button>
+</div>
+
+<dialog id="media-dialog" aria-labelledby="media-title">
+  <div class="dialog-head"><h2 id="media-title">Add an image</h2><button class="close-x" type="button" data-close aria-label="Close">×</button></div>
+  <div class="dialog-body">
+    <label class="dropzone" id="dropzone">
+      <input type="file" id="file-input" accept="image/png,image/jpeg,image/gif,image/webp,video/mp4,video/webm" multiple class="sr-only">
+      <strong style="color:#fff">Drop images here or click to upload</strong><br>
+      PNG, JPG, GIF, WebP, MP4 or WebM. They're saved in your Images folder.
+    </label>
+    <p class="muted" style="margin-top:16px">Or pick ones you already have:</p>
+    <div class="library" id="library"></div>
+  </div>
+  <div class="dialog-foot">
+    <span class="muted" id="media-hint" style="margin-right:auto;align-self:center"></span>
+    <button class="btn ghost" type="button" data-close>Cancel</button>
+    <button class="btn primary" type="button" id="media-insert" disabled>Insert</button>
+  </div>
+</dialog>
+
+<dialog id="prompt-dialog" aria-labelledby="prompt-title">
+  <form method="dialog">
+    <div class="dialog-head"><h2 id="prompt-title"></h2><button class="close-x" value="cancel" aria-label="Close">×</button></div>
+    <div class="dialog-body stack">
+      <label class="field"><span class="label" id="prompt-label"></span><input class="input" id="prompt-input"><small id="prompt-help"></small></label>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn ghost" value="cancel">Cancel</button>
+      <button class="btn primary" value="ok" id="prompt-ok">OK</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="publish-dialog" aria-labelledby="publish-title">
+  <div class="dialog-head"><h2 id="publish-title">Publish to your live site</h2><button class="close-x" type="button" data-close aria-label="Close">×</button></div>
+  <div class="dialog-body" id="publish-body"></div>
+  <div class="dialog-foot" id="publish-foot"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/admin/app.js"></script>
+</body>
+</html>

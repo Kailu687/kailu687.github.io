@@ -1,0 +1,36 @@
+/* Extra styles for pages written in the portfolio CMS (projects and blog posts).
+   Layout, panels, tags, spec grids, media grids and the lightbox come from site.css. */
+
+/* Article text */
+.content-page .panel h3{margin-top:22px}
+.content-page .panel > ul,.content-page .panel > ol{margin-top:10px}
+.content-page .panel ul + p,.content-page .panel ol + p{margin-top:14px}
+.content-page blockquote{border-left:3px solid var(--accent);padding:6px 0 6px 16px;margin:16px 0;color:#cfe6f5;font-style:italic}
+.content-page pre{background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:10px;padding:14px;overflow-x:auto;margin:16px 0}
+.content-page code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:0.92em}
+.content-page :not(pre) > code{background:rgba(0,208,255,0.08);padding:1px 6px;border-radius:6px}
+.content-page hr{border:0;border-top:1px solid var(--glass-border);margin:24px 0}
+.content-page table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px;display:block;overflow-x:auto}
+.content-page th,.content-page td{border:1px solid rgba(255,255,255,0.08);padding:8px 10px;text-align:left}
+.content-page th{background:rgba(0,208,255,0.06)}
+.content-page .panel::after{content:"";display:block;clear:both}
+.callout{margin:16px 0;padding:14px 16px;border-radius:12px;border:1px solid rgba(0,208,255,0.3);background:rgba(0,208,255,0.06)}
+
+/* Images placed in the editor */
+.content-page .panel > figure,.content-page .split > figure{margin:20px 0}
+.content-page .zoomable img{max-height:520px}
+.content-page figure video{display:block;width:100%;height:auto;max-height:520px;object-fit:contain;border-radius:12px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.05)}
+.content-page figure.img-left,.content-page figure.img-right{width:min(46%,420px)}
+.content-page figure.img-left{float:left;margin:6px 24px 12px 0}
+.content-page figure.img-right{float:right;margin:6px 0 12px 24px}
+.content-page figure.img-small{max-width:340px;margin-left:auto;margin-right:auto}
+.content-page .media-grid .zoomable img{height:240px;max-height:none}
+@media (max-width:640px){
+  .content-page figure.img-left,.content-page figure.img-right{float:none;width:100%;margin:16px 0}
+}
+
+/* Only shown in the dashboard's preview */
+.preview-banner{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;padding:10px 18px;border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),#2aa0ff);color:#001;font:700 14px Inter,system-ui,sans-serif;box-shadow:0 6px 24px rgba(0,208,255,0.4)}
+
+.spec .v .muted{font-size:14px;font-weight:600;color:var(--muted)}
