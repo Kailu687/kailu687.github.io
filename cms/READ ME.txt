@@ -1,0 +1,6 @@
+To access CMS, open this folder in terminal and enter "npm run cms"
+
+Or go to terminal and enter the following commands:
+
+cd "C:\Users\Kailash A\Desktop\Projects\Portfolio\cms"; 
+npm run cms

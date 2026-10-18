@@ -246,7 +246,7 @@
               </div>
             </div>
             <label class="field"><span class="label">Summary</span>
-              <textarea class="input" id="summary" maxlength="400" placeholder="One or two sentences">${esc(entry.summary)}</textarea>
+              <textarea class="input" id="summary" maxlength="600" placeholder="One or two sentences">${esc(entry.summary)}</textarea>
               <small><span id="summary-count"></span> Shown on the home page card and in Google results.</small></label>
             <label class="field"><span class="label">Tags</span>
               <input class="input" id="tags" value="${esc((entry.tags || []).join(', '))}" placeholder="Avionics, Drones, PCB" autocomplete="off">
@@ -294,8 +294,8 @@
     $('#slug').addEventListener('input', (e) => { slugTouched = true; $('#slug-preview').textContent = e.target.value || '…'; markDirty(); });
     const countSummary = () => {
       const n = $('#summary').value.length;
-      $('#summary-count').textContent = `${n}/160.`;
-      $('#summary-count').style.color = n > 160 ? 'var(--warn)' : '';
+      $('#summary-count').textContent = `${n}/350.`;
+      $('#summary-count').style.color = n > 350 ? 'var(--warn)' : '';
     };
     countSummary();
     $('#summary').addEventListener('input', () => { countSummary(); markDirty(); });

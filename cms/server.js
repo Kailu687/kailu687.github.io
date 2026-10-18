@@ -186,7 +186,7 @@ function cleanEntryInput(body) {
   const pick = (k, max = 300) => (typeof body[k] === 'string' ? body[k].slice(0, max) : undefined);
   const data = {
     title: pick('title', 160),
-    summary: pick('summary', 400),
+    summary: pick('summary', 600),
     subtitle: pick('subtitle', 160),
     tags: (Array.isArray(body.tags) ? body.tags.join(', ') : pick('tags', 200) || '')
       .split(',').map((t) => t.trim().replace(/[\r\n]/g, '')).filter(Boolean).slice(0, 6).join(', '),
