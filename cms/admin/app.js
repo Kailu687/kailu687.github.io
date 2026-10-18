@@ -72,7 +72,7 @@
     if (leaveGuard && !leaveGuard()) return;
     leaveGuard = null;
     dirty = false;
-    hideFigureBar();
+    if (window.CMSEditor) CMSEditor.unmount();
     const hash = location.hash || '#/';
     $$('.topnav a').forEach((a) => {
       const target = a.getAttribute('href');
@@ -219,31 +219,10 @@
         <div>
           <label class="sr-only" for="title">Title</label>
           <input id="title" class="title-input" placeholder="${one} title" value="${esc(entry.title)}" autocomplete="off">
-          <div class="toolbar" role="toolbar" aria-label="Formatting">
-            <select id="block-type" aria-label="Text style">
-              <option value="p">Paragraph</option><option value="h2">Section heading</option><option value="h3">Subheading</option>
-              <option value="blockquote">Quote</option><option value="pre">Code block</option>
-            </select>
-            <span class="sep"></span>
-            <button type="button" data-cmd="bold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button>
-            <button type="button" data-cmd="italic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button>
-            <button type="button" data-cmd="underline" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button>
-            <button type="button" data-act="link" title="Link (Ctrl+K)" aria-label="Add link">🔗</button>
-            <button type="button" data-cmd="unlink" title="Remove link" aria-label="Remove link">⛓︎̸</button>
-            <span class="sep"></span>
-            <button type="button" data-cmd="insertUnorderedList" title="Bulleted list" aria-label="Bulleted list">• List</button>
-            <button type="button" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list">1. List</button>
-            <button type="button" data-act="hr" title="Divider" aria-label="Divider">―</button>
-            <span class="sep"></span>
-            <button type="button" class="insert" data-act="image" title="Insert image or video">＋ Image</button>
-            <button type="button" class="insert" data-act="gallery" title="Insert a row of images">＋ Gallery</button>
-            <span class="sep"></span>
-            <button type="button" data-cmd="removeFormat" title="Clear formatting" aria-label="Clear formatting">Tx</button>
-            <button type="button" data-cmd="undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
-            <button type="button" data-cmd="redo" title="Redo (Ctrl+Y)" aria-label="Redo">↷</button>
-          </div>
+          <div id="toolbar-slot"></div>
           <div id="doc" class="doc" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${one} content"
             data-placeholder="Start writing… Use “Section heading” to start each new panel, like Overview or The Problem."></div>
+          <p class="editor-help">Click an image to place or resize it, drag it to move it anywhere, or drag its round corner to resize. Drop or paste images straight into the text. Each “Section heading” starts a new panel on the page.</p>
         </div>
 
         <aside class="side">
@@ -294,7 +273,7 @@
       </div>`;
 
     const doc = $('#doc');
-    doc.innerHTML = prepareForEditing(entry.body);
+    // The visual editor lives in editor.js; it fills the toolbar slot and the document area.
     document.execCommand('defaultParagraphSeparator', false, 'p');
     let current = entry;
     let slugTouched = !isNew;
@@ -336,7 +315,7 @@
     }));
     $$('[data-clear]').forEach((btn) => btn.addEventListener('click', () => { setImageField(btn.dataset.clear, ''); markDirty(); }));
 
-    setupToolbar(doc, markDirty);
+    const editor = CMSEditor.mount({ doc, toolbar: $('#toolbar-slot'), html: entry.body, markDirty, pickMedia, upload, ask, toast });
 
     const save = async () => {
       const payload = {
@@ -354,7 +333,7 @@
         coverAlt: $('#coverAlt').value.trim(),
         seoTitle: $('#seoTitle').value.trim(),
         description: $('#description').value.trim(),
-        body: serializeDoc(doc),
+        body: editor.getHTML(),
       };
       if (!payload.title) { toast('Give it a title first.', true); $('#title').focus(); return; }
       $('#save').disabled = true;
@@ -402,7 +381,6 @@
     document.onkeydown = (e) => {
       if (!(e.ctrlKey || e.metaKey) || !$('#doc')) return;
       if (e.key === 's') { e.preventDefault(); save(); }
-      if (e.key === 'k' && document.activeElement === doc) { e.preventDefault(); addLink(markDirty); }
     };
     if (isNew) $('#title').focus();
   }
@@ -420,242 +398,6 @@
     $(`#${key}`).value = value;
     $(`#${key}-thumb`).style.backgroundImage = value ? `url('/${encodeURI(value).replace(/'/g, '%27')}')` : '';
   }
-
-  // Figures and galleries are edited as whole blocks through the image toolbar.
-  function prepareForEditing(html) {
-    const tpl = document.createElement('template');
-    tpl.innerHTML = html || '<p></p>';
-    $$('figure, .md-gallery', tpl.content).forEach((el) => el.setAttribute('contenteditable', 'false'));
-    $$('video', tpl.content).forEach((v) => { v.muted = true; v.setAttribute('muted', ''); });
-    $$('.zoom', tpl.content).forEach((z) => z.replaceWith(...z.childNodes));
-    return tpl.innerHTML;
-  }
-
-  function serializeDoc(doc) {
-    const clone = doc.cloneNode(true);
-    $$('[contenteditable]', clone).forEach((el) => el.removeAttribute('contenteditable'));
-    $$('.selected', clone).forEach((el) => el.classList.remove('selected'));
-    $$('[class=""]', clone).forEach((el) => el.removeAttribute('class'));
-    return cleanHtml(clone.innerHTML);
-  }
-
-  // ---------- Toolbar ----------
-  let savedRange = null;
-  function saveSelection(doc) {
-    const sel = getSelection();
-    if (sel.rangeCount && doc.contains(sel.anchorNode)) savedRange = sel.getRangeAt(0).cloneRange();
-  }
-  function restoreSelection(doc) {
-    doc.focus();
-    const sel = getSelection();
-    sel.removeAllRanges();
-    if (savedRange && doc.contains(savedRange.startContainer)) sel.addRange(savedRange);
-    else { const r = document.createRange(); r.selectNodeContents(doc); r.collapse(false); sel.addRange(r); }
-  }
-
-  function setupToolbar(doc, markDirty) {
-    const blockSel = $('#block-type');
-    document.onselectionchange = () => {
-      if (!doc.isConnected) return;
-      const sel = getSelection();
-      if (!sel.rangeCount || !doc.contains(sel.anchorNode)) return;
-      saveSelection(doc);
-      let el = sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement;
-      const block = el.closest('h2,h3,blockquote,pre,p,li');
-      const tag = block ? block.tagName.toLowerCase() : 'p';
-      blockSel.value = ['h2', 'h3', 'blockquote', 'pre'].includes(tag) ? tag : 'p';
-      for (const cmd of ['bold', 'italic', 'underline', 'insertUnorderedList', 'insertOrderedList']) {
-        const b = $(`[data-cmd="${cmd}"]`);
-        if (b) b.setAttribute('aria-pressed', String(document.queryCommandState(cmd)));
-      }
-    };
-
-    blockSel.addEventListener('change', () => {
-      restoreSelection(doc);
-      document.execCommand('formatBlock', false, `<${blockSel.value}>`);
-      markDirty();
-    });
-
-    $$('.toolbar [data-cmd]').forEach((b) => {
-      b.addEventListener('mousedown', (e) => e.preventDefault());
-      b.addEventListener('click', () => {
-        restoreSelection(doc);
-        document.execCommand(b.dataset.cmd, false, null);
-        markDirty();
-      });
-    });
-
-    $$('.toolbar [data-act]').forEach((b) => {
-      b.addEventListener('mousedown', (e) => e.preventDefault());
-      b.addEventListener('click', async () => {
-        const act = b.dataset.act;
-        if (act === 'link') return addLink(markDirty);
-        if (act === 'hr') { restoreSelection(doc); document.execCommand('insertHTML', false, '<hr><p><br></p>'); markDirty(); return; }
-        saveSelection(doc);
-        const picked = await pickMedia({ multiple: act === 'gallery', title: act === 'gallery' ? 'Choose images for a gallery' : 'Add an image or video' });
-        if (!picked || !picked.length) return;
-        const figs = picked.map((p) => figureHtml(p, act === 'gallery' ? '' : 'img-wide'));
-        const html = act === 'gallery' && figs.length > 1
-          ? `<div class="md-gallery" contenteditable="false">${figs.join('')}</div><p><br></p>`
-          : figs.join('') + '<p><br></p>';
-        insertBlock(doc, html);
-        markDirty();
-      });
-    });
-
-    // Paste: keep structure (headings, lists, links), drop foreign styling.
-    doc.addEventListener('paste', (e) => {
-      const cd = e.clipboardData;
-      const files = [...cd.files].filter((f) => /^(image|video)\//.test(f.type));
-      e.preventDefault();
-      if (files.length) { uploadAndInsert(doc, files, markDirty); return; }
-      const html = cd.getData('text/html');
-      if (html) document.execCommand('insertHTML', false, cleanHtml(html));
-      else document.execCommand('insertText', false, cd.getData('text/plain'));
-      markDirty();
-    });
-
-    // Drag images straight from the desktop into the article.
-    doc.addEventListener('dragover', (e) => { if ([...e.dataTransfer.types].includes('Files')) e.preventDefault(); });
-    doc.addEventListener('drop', (e) => {
-      const files = [...e.dataTransfer.files].filter((f) => /^(image|video)\//.test(f.type));
-      if (!files.length) return;
-      e.preventDefault();
-      const pos = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
-      if (pos) { getSelection().removeAllRanges(); getSelection().addRange(pos); saveSelection(doc); }
-      uploadAndInsert(doc, files, markDirty);
-    });
-
-    doc.addEventListener('click', (e) => {
-      const fig = e.target.closest('figure');
-      if (fig && doc.contains(fig)) showFigureBar(fig, doc, markDirty);
-      else hideFigureBar();
-    });
-  }
-
-  async function uploadAndInsert(doc, files, markDirty) {
-    try {
-      const paths = [];
-      for (const f of files) paths.push(await upload(f));
-      const figs = paths.map((p) => figureHtml(p, paths.length > 1 ? '' : 'img-wide'));
-      insertBlock(doc, paths.length > 1 ? `<div class="md-gallery" contenteditable="false">${figs.join('')}</div><p><br></p>` : figs[0] + '<p><br></p>');
-      markDirty();
-    } catch (err) { toast(err.message, true); }
-  }
-
-  // Insert a block element after the paragraph the caret is in, not inside it.
-  function insertBlock(doc, html) {
-    restoreSelection(doc);
-    const sel = getSelection();
-    let node = sel.rangeCount ? sel.getRangeAt(0).startContainer : null;
-    while (node && node.parentNode !== doc) node = node.parentNode;
-    const tpl = document.createElement('template');
-    tpl.innerHTML = html;
-    const last = tpl.content.lastChild;
-    if (node && node !== doc) {
-      const empty = node.nodeType === 1 && node.tagName === 'P' && !node.textContent.trim() && !node.querySelector('img');
-      node.after(tpl.content);
-      if (empty) node.remove();
-    } else {
-      doc.appendChild(tpl.content);
-    }
-    if (last) {
-      const r = document.createRange();
-      r.selectNodeContents(last);
-      r.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(r);
-    }
-  }
-
-  function figureHtml(p, layout) {
-    const src = esc(encodeURI(p));
-    const alt = esc(p.split('/').pop().replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '));
-    const media = /\.(mp4|webm)$/i.test(p)
-      ? `<video src="${src}" controls loop muted playsinline></video>`
-      : `<img src="${src}" alt="${alt}">`;
-    return `<figure${layout ? ` class="${layout}"` : ''} contenteditable="false">${media}</figure>`;
-  }
-
-  async function addLink(markDirty) {
-    const doc = $('#doc');
-    saveSelection(doc);
-    const sel = getSelection();
-    const hasText = sel.rangeCount && !sel.isCollapsed;
-    const url = await ask('Add a link', 'Web address', 'https://', hasText ? '' : 'Select some text first to turn it into a link, or the address itself will be inserted.');
-    if (!url) return;
-    if (!/^(https?:\/\/|mailto:|#|[\w./-]+\.html)/i.test(url)) { toast('Links need to start with https://, mailto: or be a page like project_nimbus.html', true); return; }
-    restoreSelection(doc);
-    if (hasText) document.execCommand('createLink', false, url);
-    else document.execCommand('insertHTML', false, `<a href="${esc(url)}">${esc(url)}</a>`);
-    markDirty();
-  }
-
-  // ---------- Figure toolbar ----------
-  let activeFigure = null;
-  const bar = $('#figure-bar');
-  function showFigureBar(fig, doc, markDirty) {
-    $$('.doc figure.selected').forEach((f) => f.classList.remove('selected'));
-    activeFigure = fig;
-    fig.classList.add('selected');
-    const inGallery = !!fig.closest('.md-gallery');
-    $$('[data-layout]', bar).forEach((b) => {
-      b.hidden = inGallery;
-      b.setAttribute('aria-pressed', String(fig.classList.contains(b.dataset.layout)));
-    });
-    bar.hidden = false;
-    const r = fig.getBoundingClientRect();
-    // Sit just inside the image's top edge, below the sticky formatting toolbar.
-    const tb = $('.toolbar');
-    const minTop = tb ? tb.getBoundingClientRect().bottom + 8 : 70;
-    bar.style.top = `${window.scrollY + Math.max(r.top + 8, minTop)}px`;
-    bar.style.left = `${window.scrollX + Math.max(8, Math.min(r.left + 8, window.innerWidth - bar.offsetWidth - 8))}px`;
-    bar.onclick = async (e) => {
-      const b = e.target.closest('button');
-      if (!b || !activeFigure) return;
-      const f = activeFigure;
-      if (b.dataset.layout) {
-        ['img-wide', 'img-left', 'img-right', 'img-small'].forEach((c) => f.classList.remove(c));
-        f.classList.add(b.dataset.layout);
-      }
-      const act = b.dataset.act;
-      if (act === 'caption') {
-        const cur = f.querySelector('figcaption');
-        const text = await ask('Caption', 'Shown under the image', cur ? cur.textContent : '');
-        if (text === null) return;
-        if (!text.trim()) cur && cur.remove();
-        else if (cur) cur.textContent = text.trim();
-        else { const c = document.createElement('figcaption'); c.textContent = text.trim(); f.appendChild(c); }
-      }
-      if (act === 'alt') {
-        const media = f.querySelector('img');
-        if (!media) { toast('Videos do not need alt text.'); return; }
-        const text = await ask('Describe the image', 'Alt text', media.alt, 'Read aloud by screen readers and used by Google. Describe what the image shows.');
-        if (text === null) return;
-        media.alt = text.trim();
-      }
-      if (act === 'up' || act === 'down') {
-        const unit = f.closest('.md-gallery') && f.parentElement.children.length > 1 ? f : (f.closest('.md-gallery') || f);
-        const sib = act === 'up' ? unit.previousElementSibling : unit.nextElementSibling;
-        if (sib) act === 'up' ? sib.before(unit) : sib.after(unit);
-      }
-      if (act === 'remove') {
-        const gallery = f.closest('.md-gallery');
-        f.remove();
-        if (gallery && !gallery.querySelector('figure')) gallery.remove();
-        hideFigureBar();
-      } else {
-        showFigureBar(f, doc, markDirty);
-      }
-      markDirty();
-    };
-  }
-  function hideFigureBar() {
-    bar.hidden = true;
-    activeFigure = null;
-    $$('.doc figure.selected').forEach((f) => f.classList.remove('selected'));
-  }
-  window.addEventListener('scroll', () => { if (activeFigure) hideFigureBar(); }, { passive: true });
 
   // ---------- Prompt dialog ----------
   function ask(title, label, value = '', help = '') {
@@ -805,53 +547,6 @@
         go.textContent = 'Publish now';
       }
     };
-  }
-
-  // ---------- HTML cleaning for paste (the server sanitizes again on save) ----------
-  const KEEP = new Set(['P', 'H2', 'H3', 'H4', 'STRONG', 'EM', 'U', 'S', 'A', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'PRE', 'CODE', 'HR', 'BR', 'FIGURE', 'FIGCAPTION', 'IMG', 'VIDEO', 'DIV', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD']);
-  const RENAME = { B: 'strong', I: 'em', H1: 'h2' };
-  const DROP = new Set(['SCRIPT', 'STYLE', 'META', 'LINK', 'TITLE', 'IFRAME', 'OBJECT', 'SVG', 'NOSCRIPT', 'TEMPLATE', 'FORM', 'BUTTON', 'INPUT']);
-  const ATTRS = { A: ['href'], IMG: ['src', 'alt'], VIDEO: ['src', 'controls', 'loop', 'muted', 'playsinline'], FIGURE: ['class'], DIV: ['class'] };
-  const CLASSES = ['md-gallery', 'img-wide', 'img-left', 'img-right', 'img-small', 'callout', 'specs'];
-
-  function cleanHtml(html) {
-    const doc = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
-    const walk = (node) => {
-      for (const child of [...node.childNodes]) {
-        if (child.nodeType === 8) { child.remove(); continue; }
-        if (child.nodeType !== 1) continue;
-        if (DROP.has(child.tagName)) { child.remove(); continue; }
-        walk(child);
-        let el = child;
-        if (RENAME[el.tagName]) {
-          const n = doc.createElement(RENAME[el.tagName]);
-          n.append(...el.childNodes);
-          el.replaceWith(n);
-          el = n;
-        }
-        if (el.tagName === 'SPAN' && /font-weight:\s*(bold|[6-9]00)/.test(el.getAttribute('style') || '')) {
-          const n = doc.createElement('strong'); n.append(...el.childNodes); el.replaceWith(n); el = n;
-        }
-        if (!KEEP.has(el.tagName)) { el.replaceWith(...el.childNodes); continue; }
-        const allowed = ATTRS[el.tagName] || [];
-        for (const a of [...el.attributes]) {
-          if (a.name === 'contenteditable') continue;
-          if (!allowed.includes(a.name)) el.removeAttribute(a.name);
-        }
-        if (el.hasAttribute('class')) {
-          const keep = el.className.split(/\s+/).filter((c) => CLASSES.includes(c));
-          if (keep.length) el.className = keep.join(' '); else el.removeAttribute('class');
-        }
-        if (el.tagName === 'DIV' && !el.classList.length) {
-          const hasBlocks = [...el.children].some((c) => /^(P|H[2-4]|UL|OL|BLOCKQUOTE|PRE|FIGURE|DIV|TABLE|HR)$/.test(c.tagName));
-          if (hasBlocks) { el.replaceWith(...el.childNodes); continue; }
-          const p = doc.createElement('p'); p.append(...el.childNodes); el.replaceWith(p);
-        }
-        if (el.tagName === 'A' && /^\s*javascript:/i.test(el.getAttribute('href') || '')) el.removeAttribute('href');
-      }
-    };
-    walk(doc.body);
-    return doc.body.innerHTML;
   }
 
   route();

@@ -28,17 +28,7 @@
 
 <main id="view" tabindex="-1"></main>
 
-<div class="figure-bar" id="figure-bar" hidden role="toolbar" aria-label="Image options">
-  <button type="button" data-layout="img-wide">Full width</button>
-  <button type="button" data-layout="img-left">Left</button>
-  <button type="button" data-layout="img-right">Right</button>
-  <button type="button" data-layout="img-small">Small</button>
-  <button type="button" data-act="caption">Caption</button>
-  <button type="button" data-act="alt">Alt text</button>
-  <button type="button" data-act="up" aria-label="Move up">↑</button>
-  <button type="button" data-act="down" aria-label="Move down">↓</button>
-  <button type="button" data-act="remove" class="danger">Remove</button>
-</div>
+
 
 <dialog id="media-dialog" aria-labelledby="media-title">
   <div class="dialog-head"><h2 id="media-title">Add an image</h2><button class="close-x" type="button" data-close aria-label="Close">×</button></div>
@@ -78,6 +68,7 @@
 </dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/admin/editor.js"></script>
 <script src="/admin/app.js"></script>
 </body>
 </html>

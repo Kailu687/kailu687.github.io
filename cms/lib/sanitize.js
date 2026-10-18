@@ -3,21 +3,27 @@
 // dropped with their contents, and only safe attributes and URLs survive.
 
 const ALLOWED = {
-  p: ['class'], h2: [], h3: [], h4: [], strong: [], b: [], em: [], i: [], u: [], s: [],
-  a: ['href', 'title'], ul: [], ol: [], li: [], blockquote: [], pre: [], code: [],
-  hr: [], br: [], figure: ['class'], figcaption: [], div: ['class'], span: ['class'],
+  p: ['class'], h2: ['class'], h3: ['class'], h4: ['class'], strong: [], b: [], em: [], i: [], u: [], s: [],
+  mark: [], sup: [], sub: [],
+  a: ['href', 'title'], ul: [], ol: [], li: ['class'], blockquote: ['class'], pre: [], code: [],
+  hr: [], br: [], figure: ['class'], figcaption: ['class'], div: ['class', 'data-youtube'], span: ['class'],
   img: ['src', 'alt', 'width', 'height'],
   video: ['src', 'controls', 'loop', 'muted', 'autoplay', 'playsinline', 'poster', 'aria-label'],
-  table: [], thead: [], tbody: [], tr: [], th: [], td: [],
+  table: [], thead: [], tbody: [], tr: [], th: ['class'], td: ['class'],
 };
 const VOID = new Set(['hr', 'br', 'img']);
 const DROP_WITH_CONTENT = new Set(['script', 'style', 'iframe', 'object', 'embed', 'noscript', 'template', 'svg', 'math', 'form', 'textarea', 'select', 'head', 'title']);
 // Layout pieces the site's stylesheet knows how to draw.
+// Keep in step with CLASS_OK in admin/editor.js and with assets/css/content.css.
 const CLASSES = new Set([
-  'md-gallery', 'md-figure', 'img-wide', 'img-left', 'img-right', 'img-small', 'callout',
-  'spec-grid', 'spec', 'k', 'v', 'note', 'split', 'media-box', 'tag', 'muted',
+  'md-gallery', 'md-figure', 'img-wide', 'img-left', 'img-right', 'img-center', 'img-small',
+  'w-25', 'w-33', 'w-50', 'w-66', 'w-75', 'w-100',
+  'fs-sm', 'fs-lg', 'fs-xl',
+  'c-accent', 'c-blue', 'c-muted', 'c-white', 'c-green', 'c-amber', 'c-red',
+  'ta-center', 'ta-right', 'ta-justify',
+  'callout', 'note', 'spec-grid', 'spec', 'k', 'v', 'split', 'media-box', 'embed', 'tag', 'muted',
 ]);
-const RENAME = { b: 'strong', i: 'em', h1: 'h2' };
+const RENAME = { b: 'strong', i: 'em', h1: 'h2', h5: 'h4', h6: 'h4', strike: 's', del: 's' };
 
 // Browsers ignore tabs, newlines and control characters inside URLs, so strip
 // them before checking the scheme ("java\tscript:" must not slip through).
@@ -50,6 +56,7 @@ function cleanAttrs(name, raw) {
     if (key === 'src' || key === 'poster') val = safeUrl(val, { image: true });
     if (key === 'class') val = val.split(/\s+/).filter((c) => CLASSES.has(c)).join(' ');
     if ((key === 'width' || key === 'height') && !/^\d{1,4}$/.test(val)) val = null;
+    if (key === 'data-youtube' && !/^[\w-]{11}$/.test(val)) val = null;
     if (val === null || (key === 'class' && !val)) continue;
     const boolean = ['controls', 'loop', 'muted', 'autoplay', 'playsinline'].includes(key);
     out.push(boolean ? key : `${key}="${encodeAttr(val)}"`);
@@ -101,6 +108,8 @@ function tidy(html) {
     prev = html;
     html = html.replace(/<span>((?:(?!<\/?span\b)[\s\S])*)<\/span>/g, '$1');
   } while (html !== prev);
+  // A heading can't hold paragraphs; if the editor produced one, keep the paragraphs.
+  html = html.replace(/<(h[2-4])(?:\s[^>]*)?>\s*(<(?:p|div|ul|ol|blockquote|pre|figure|table)[\s>][\s\S]*?)<\/\1>/g, '$2');
   return html
     .replace(/<p>(\s|&nbsp;|<br>)*<\/p>/g, '')
     .replace(/\n{3,}/g, '\n\n')

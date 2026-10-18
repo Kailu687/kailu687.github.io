@@ -56,6 +56,15 @@ function enhance(html, siteDir) {
   // Galleries use the site's media grid.
   html = html.replace(/<div class="md-gallery">/g, '<div class="media-grid media-block">');
 
+  // YouTube blocks become privacy-friendly embeds (no cookies until played).
+  html = html.replace(/<div (?=[^>]*class="embed")(?=[^>]*data-youtube="([\w-]{11})")[^>]*>\s*<\/div>/g, (_, id) =>
+    `<div class="embed"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="YouTube video" loading="lazy" ` +
+    'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
+    'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>');
+
+  // Wide tables scroll sideways on phones instead of squashing.
+  html = html.replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, '</table></div>');
+
   html = html.replace(/<img\b[^>]*>/g, (tag) => {
     const src = attrOf(tag, 'src');
     if (!src) return tag;

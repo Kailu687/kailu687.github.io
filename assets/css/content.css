@@ -1,32 +1,71 @@
 /* Extra styles for pages written in the portfolio CMS (projects and blog posts).
-   Layout, panels, tags, spec grids, media grids and the lightbox come from site.css. */
+   Layout, panels, tags, spec grids, media grids and the lightbox come from site.css.
+   Class names here match the CMS editor (cms/admin/editor.js) and its sanitizer. */
 
 /* Article text */
 .content-page .panel h3{margin-top:22px}
+.content-page .panel h4{margin-top:18px;font-size:17px;color:var(--heading,#fff)}
 .content-page .panel > ul,.content-page .panel > ol{margin-top:10px}
 .content-page .panel ul + p,.content-page .panel ol + p{margin-top:14px}
+.content-page li ul,.content-page li ol{margin-top:6px}
 .content-page blockquote{border-left:3px solid var(--accent);padding:6px 0 6px 16px;margin:16px 0;color:#cfe6f5;font-style:italic}
-.content-page pre{background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:10px;padding:14px;overflow-x:auto;margin:16px 0}
+.content-page pre{background:rgba(0,0,0,0.35);border:1px solid var(--glass-border);border-radius:10px;padding:14px 16px;overflow-x:auto;margin:16px 0;line-height:1.55}
 .content-page code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:0.92em}
 .content-page :not(pre) > code{background:rgba(0,208,255,0.08);padding:1px 6px;border-radius:6px}
+.content-page mark{background:rgba(0,208,255,0.22);color:#fff;padding:0 3px;border-radius:4px}
 .content-page hr{border:0;border-top:1px solid var(--glass-border);margin:24px 0}
-.content-page table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15px;display:block;overflow-x:auto}
-.content-page th,.content-page td{border:1px solid rgba(255,255,255,0.08);padding:8px 10px;text-align:left}
-.content-page th{background:rgba(0,208,255,0.06)}
+.content-page .table-wrap{overflow-x:auto;margin:16px 0}
+.content-page table{border-collapse:collapse;width:100%;font-size:15px}
+.content-page th,.content-page td{border:1px solid rgba(255,255,255,0.08);padding:8px 10px;text-align:left;vertical-align:top}
+.content-page th{background:rgba(0,208,255,0.06);color:var(--heading,#fff)}
 .content-page .panel::after{content:"";display:block;clear:both}
 .callout{margin:16px 0;padding:14px 16px;border-radius:12px;border:1px solid rgba(0,208,255,0.3);background:rgba(0,208,255,0.06)}
+.content-page .split > div > :first-child{margin-top:0}
+
+/* Text size, colour and alignment */
+.fs-sm{font-size:0.85em}
+.fs-lg{font-size:1.25em}
+.fs-xl{font-size:1.6em;line-height:1.3}
+.c-white{color:#fff}
+.c-accent{color:var(--accent,#00d0ff)}
+.c-blue{color:#2aa0ff}
+.c-muted{color:var(--muted,#95a3b3)}
+.c-green{color:#3ee6a0}
+.c-amber{color:#ffc65c}
+.c-red{color:#ff6b7a}
+.ta-center{text-align:center}
+.ta-right{text-align:right}
+.ta-justify{text-align:justify}
 
 /* Images placed in the editor */
-.content-page .panel > figure,.content-page .split > figure{margin:20px 0}
-.content-page .zoomable img{max-height:520px}
-.content-page figure video{display:block;width:100%;height:auto;max-height:520px;object-fit:contain;border-radius:12px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.05)}
+.content-page .panel > figure,.content-page .split figure{margin:20px 0}
+.content-page .zoomable img{max-height:560px}
+.content-page figure video{display:block;width:100%;height:auto;max-height:560px;object-fit:contain;border-radius:12px;border:1px solid var(--glass-border);background:rgba(255,255,255,0.05)}
+.content-page figure.w-25{width:25%}
+.content-page figure.w-33{width:33.333%}
+.content-page figure.w-50{width:50%}
+.content-page figure.w-66{width:66.666%}
+.content-page figure.w-75{width:75%}
+.content-page figure.w-100,.content-page figure.img-wide{width:100%}
+.content-page figure.img-center,.content-page figure.img-small{margin-left:auto;margin-right:auto}
+.content-page figure.img-small{max-width:340px}
 .content-page figure.img-left,.content-page figure.img-right{width:min(46%,420px)}
+.content-page figure.img-left[class*="w-"],.content-page figure.img-right[class*="w-"]{max-width:none}
+.content-page figure.img-left.w-25,.content-page figure.img-right.w-25{width:25%}
+.content-page figure.img-left.w-33,.content-page figure.img-right.w-33{width:33.333%}
+.content-page figure.img-left.w-50,.content-page figure.img-right.w-50{width:50%}
+.content-page figure.img-left.w-66,.content-page figure.img-right.w-66{width:66.666%}
+.content-page figure.img-left.w-75,.content-page figure.img-right.w-75{width:75%}
 .content-page figure.img-left{float:left;margin:6px 24px 12px 0}
 .content-page figure.img-right{float:right;margin:6px 0 12px 24px}
-.content-page figure.img-small{max-width:340px;margin-left:auto;margin-right:auto}
+.content-page .media-grid figure{width:auto;margin:0}
 .content-page .media-grid .zoomable img{height:240px;max-height:none}
+.content-page .embed{position:relative;aspect-ratio:16/9;margin:20px 0;border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);background:#000}
+.content-page .embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media (max-width:640px){
-  .content-page figure.img-left,.content-page figure.img-right{float:none;width:100%;margin:16px 0}
+  .content-page figure.img-left,.content-page figure.img-right{float:none;width:100% !important;margin:16px 0}
+  .content-page figure.w-25,.content-page figure.w-33{width:66.666%}
+  .content-page figure.w-50,.content-page figure.w-66,.content-page figure.w-75{width:100%}
 }
 
 /* Only shown in the dashboard's preview */
