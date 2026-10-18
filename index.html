@@ -1,375 +1,225 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-  <link rel="icon" type="image/png" sizes="32x32" href="Images/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="Images/favicon-16x16.png">
-<link rel="shortcut icon" href="favicon.ico">
-  <meta name="description" content="Kailash — ECE undergrad, aviation enthusiast, building projects like Nimbus 007 and SecureBeam.">
-<meta name="keywords" content="Kailash, ECE, VIT Chennai, Project Nimbus, SIH 2025, electronics, aviation, drone, portfolio">
-<meta name="author" content="Kailash">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
 
-  gtag('config', 'G-T9LBFG5H67');
-</script>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kailash — Engineering Tomorrow</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <title>Kailash Amarnath — ECE Student &amp; Aviation Enthusiast</title>
+  <meta name="description" content="Portfolio of Kailash Amarnath, an ECE student at VIT Chennai building electronics, embedded-systems, drone and aerospace projects, including Project Nimbus for Smart India Hackathon 2025.">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/">
+  <meta name="theme-color" content="#001027">
+
+  <!-- Social previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="Kailash Amarnath — ECE Student &amp; Aviation Enthusiast">
+  <meta property="og:description" content="Electronics, embedded systems, drones and aerospace: an engineering student documenting what he builds, breaks and learns.">
+  <meta property="og:url" content="https://kailashamarnath.me/">
+  <meta property="og:image" content="https://kailashamarnath.me/Images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="KAILASH, ECE Student and Aviation Enthusiast, with the K-aircraft logo">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+
+  <script>
+    // Skip the intro loader on repeat visits in this session and for reduced motion.
+    (function(d){
+      d.classList.remove('no-js');
+      var seen = false;
+      try { seen = sessionStorage.getItem('loaderSeen') === '1'; } catch (e) {}
+      if (seen || window.matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('skip-loader');
+    })(document.documentElement);
+  </script>
+
   <style>
-    html{scroll-behavior:smooth;}
-    :root{--bg-1:#000004;--bg-2:#001027;--accent:#00d0ff;--muted:#95a3b3;--glass-border:rgba(255,255,255,0.06);--max-width:1100px;font-family:Inter,system-ui}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#d7eaf6}
-    header.nav{position:fixed;top:20px;left:0;right:0;margin:auto;max-width:var(--max-width);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);border-radius:12px;border:1px solid var(--glass-border);z-index:40}
-    .brand{display:flex;gap:12px;align-items:center}.logo{font-weight:800;letter-spacing:2px;font-size:18px;color:white}.subtitle{font-size:12px;color:var(--muted)}
-    nav.links{display:flex;gap:20px}nav.links a{color:rgba(215,234,246,0.9);padding:6px 10px;border-radius:8px;font-weight:600;text-decoration:none !important;}
-    nav.links a:hover{background:rgba(0,208,255,0.06)}
-    #page-wrap{opacity:0;transition:opacity 1s ease}
-    .container{max-width:var(--max-width);margin:auto;padding:140px 24px 80px}
-    .hero{min-height:78vh;display:grid;grid-template-columns:1fr 520px;gap:40px;align-items:center}
-    .eyebrow{text-transform:uppercase;font-size:12px;color:var(--muted)}h1{font-size:46px;color:white}.accent{color:var(--accent)}
-    p.lead{color:var(--muted);max-width:680px}.panel{margin-top:48px;padding:28px;border-radius:14px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border)}
-    .reveal{opacity:0;transform:translateY(10px);transition:all .7s ease}.reveal.visible{opacity:1;transform:none}
-
-    /* LOADER */
+    /* Homepage-only styles */
+    #page-wrap{opacity:0;transition:opacity .8s ease}
+    #page-wrap.ready,.no-js #page-wrap,.skip-loader #page-wrap{opacity:1}
+    .no-js #loader-screen,.skip-loader #loader-screen{display:none}
     body.loading{overflow:hidden}
-    #loader-screen{position:fixed;inset:0;background:#02040a;z-index:9999;display:flex;align-items:center;justify-content:center}
+    .no-js body.loading,.skip-loader body.loading{overflow:auto}
+
+    #loader-screen{position:fixed;inset:0;background:#02040a;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity .6s ease;cursor:pointer}
+    #loader-screen.done{opacity:0;pointer-events:none}
     #loader-card{width:min(620px,92%);padding:24px;background:rgba(10,14,28,0.6);border-radius:14px;border:1px solid rgba(0,208,255,0.08);backdrop-filter:blur(10px);box-shadow:0 10px 50px rgba(0,208,255,0.1)}
-    #terminal-text{white-space:pre-line;font-family:Inter, sans-serif;font-weight:500;color:#cdecff;min-height:50px;font-size:16px;letter-spacing:0.4px}
+    #terminal-text{white-space:pre-line;font-weight:500;color:#cdecff;min-height:50px;font-size:16px;letter-spacing:0.4px}
     #progress{height:12px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;margin-top:14px}
-    #progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#2aa0ff)}
-    #loader-sub{margin-top:8px;color:var(--muted);font-size:13px}
-  
-    /* HYBRID FUTURISTIC + GLASS BUTTONS */
-    .btn{ text-decoration:none;
-      padding:12px 20px;
-      border-radius:12px;
-      font-weight:600;
-      display:inline-block;
-      text-align:center;
-      cursor:pointer;
-      color:white;
-      border:1px solid rgba(0,208,255,0.35);
-      background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      backdrop-filter:blur(6px);
-      transition:all .25s ease;
-      box-shadow:0 0 0 rgba(0,208,255,0);
+    #progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+    #loader-sub{margin-top:8px;color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px}
+
+    .hero{min-height:78vh;display:grid;grid-template-columns:1fr minmax(0,480px);gap:40px;align-items:center}
+    .hero h1{font-size:clamp(30px,5vw,46px);min-height:2.5em;margin-top:10px}
+    .cursor{display:inline-block;color:var(--accent);margin-left:2px;animation:blink .7s infinite;font-weight:400}
+    @keyframes blink{50%{opacity:0}}
+    #particle-field{width:100%;height:440px;border-radius:12px;touch-action:pan-y}
+
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding:0;list-style:none}
+    .chips li{margin:0}
+
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;min-height:auto;gap:28px}
+      #particle-field{height:240px}
     }
-    .btn:hover{
-      background:linear-gradient(180deg, rgba(0,208,255,0.18), rgba(0,160,255,0.12));
-      border-color:rgba(0,208,255,0.55);
-      box-shadow:0 6px 20px rgba(0,208,255,0.35);
-      transform:translateY(-2px);
-    }
-    .btn.primary{
-      background:linear-gradient(90deg,var(--accent),#2aa0ff);
-      color:#001;
-      font-weight:700;
-      border:1px solid rgba(255,255,255,0.18);
-      box-shadow:0 4px 14px rgba(0,208,255,0.3);
-    }
-    .btn.primary:hover{
-      box-shadow:0 8px 28px rgba(0,208,255,0.45);
-      transform:translateY(-2px);
-    }
+  </style>
 
-    /* Card Hover Animations */
-    .project-card{
-      padding:20px;
-      border-radius:12px;
-      background:rgba(255,255,255,0.03);
-      border:1px solid var(--glass-border);
-      backdrop-filter:blur(6px);
-      transition:all .25s ease;
-      color:white;
-      text-decoration:none;
-    }
-    .project-card:hover{
-      transform:translateY(-4px);
-      border-color:rgba(0,208,255,0.4);
-      box-shadow:0 6px 22px rgba(0,208,255,0.3);
-      background:rgba(255,255,255,0.06);
-    }
-    .cursor {
-  display: inline-block;
-  color: var(--accent);
-  margin-left: 2px;
-  animation: blink 0.7s infinite;
-  font-weight: 400;
-}
-
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-
-
-
-
-    nav.links a:visited{color:rgba(215,234,246,0.9);}
-
-    /* Particle Field Canvas */
-    #particle-field{width:100%;height:100%;background:transparent;}
-</style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Kailash Amarnath",
+    "alternateName": "Kailash",
+    "url": "https://kailashamarnath.me/",
+    "image": "https://kailashamarnath.me/Images/og-image.jpg",
+    "description": "Electronics and Communication Engineering student at VIT Chennai interested in embedded systems, avionics, drones and aerospace engineering.",
+    "affiliation": { "@type": "CollegeOrUniversity", "name": "VIT Chennai" },
+    "knowsAbout": ["Electronics", "Embedded systems", "Avionics", "Drones", "Aerospace engineering", "PCB design"],
+    "sameAs": [
+      "https://www.linkedin.com/in/kailash-amarnath-b248b8273",
+      "https://github.com/kailu687"
+    ]
+  }
+  </script>
 </head>
 
 <body class="loading">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <div id="loader-screen">
+  <div id="loader-screen" aria-hidden="true">
     <div id="loader-card">
       <div id="terminal-text"></div>
-      <div id="progress"><div id="progress-bar"></div></div>
-      <div id="loader-sub">Loading — <span id="progress-percent">0%</span></div>
+      <div id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-bar"></div></div>
+      <div id="loader-sub"><span>Loading — <span id="progress-percent">0%</span></span><span>Tap or press any key to skip</span></div>
     </div>
   </div>
 
   <div id="page-wrap">
-  <header class="nav">
-    <div class="brand"><div class="logo">KAILASH</div><div class="subtitle">ECE Student · Aviation Enthusiast</div></div>
-    <nav class="links"><a href="#home">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="#contact">Contact</a></nav>
-  </header>
+    <header class="nav">
+      <a class="brand" href="./" aria-label="Kailash, home">
+        <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+        <span class="logo">KAILASH</span>
+        <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <nav class="links" id="nav-links" aria-label="Main">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-  <main class="container">
-    <section id="home" class="hero reveal">
-      <div>
-        <div class="eyebrow">It's not the plane, it's the pilot</div>
-        <h1>
-  <span id="typing"></span><span class="cursor">|</span>
-</h1>
-
-
-
-        <p class="lead">Just another ECE student still figuring things out — trying, making, breaking, and learning from all of it.</p>
-        <div class="cta-row" style="display:flex; gap:14px; margin-top:22px;">
-          <a class="btn primary" href="#projects">Projects</a>
-          <a class="btn primary" href="#blog">Blog</a>
-          <a class="btn primary" href="#contact">Contact</a>
+    <main id="main" class="container">
+      <section id="home" class="hero reveal" aria-labelledby="hero-heading">
+        <div>
+          <p class="eyebrow">It's not the plane, it's the pilot</p>
+          <h1 id="hero-heading">
+            <span class="sr-only">Kailash: ECE undergrad by choice, aviator by passion.</span>
+            <span id="typing" aria-hidden="true"></span><span class="cursor" aria-hidden="true">|</span>
+          </h1>
+          <p class="lead">Just another ECE student still figuring things out — trying, making, breaking, and learning from all of it.</p>
+          <div class="cta-row">
+            <a class="btn primary" href="#projects">Projects</a>
+            <a class="btn" href="#blog">Blog</a>
+            <a class="btn" href="#contact">Contact</a>
+          </div>
         </div>
-      </div>
-      <canvas id="particle-field" class="stage reveal" style="width:100%;height:100%;border-radius:12px;"></canvas>
-    </section>
+        <canvas id="particle-field" aria-hidden="true"></canvas>
+      </section>
 
-    <section id="about" class="panel reveal">
-      <h2>About</h2>
-      <p>Hey, I’m Kailash — a first‑year ECE student who fell in love with aircraft long before touching an engineering textbook. I’m not an expert, not a prodigy… just someone who genuinely enjoys learning, building, and exploring whatever pulls me deeper into the world of aerospace and electronics.</p>
-      <p>I don’t know exactly where this path leads — maybe aerospace, maybe research, maybe something completely different — but I love the journey.You could say I’m committed… not to a relationship, but to aircrafts.</p>
+      <section id="about" class="panel reveal" aria-labelledby="about-heading">
+        <h2 id="about-heading">About</h2>
+        <p>Hey, I’m Kailash — a first‑year ECE student who fell in love with aircraft long before touching an engineering textbook. I’m not an expert, not a prodigy… just someone who genuinely enjoys learning, building, and exploring whatever pulls me deeper into the world of aerospace and electronics.</p>
+        <p>I don’t know exactly where this path leads — maybe aerospace, maybe research, maybe something completely different — but I love the journey. You could say I’m committed… not to a relationship, but to aircrafts.</p>
+        <ul class="chips" aria-label="Interests">
+          <li class="tag">Electronics</li>
+          <li class="tag">Embedded systems</li>
+          <li class="tag">Avionics</li>
+          <li class="tag">Drones</li>
+          <li class="tag">Aerospace</li>
+          <li class="tag">PCB design</li>
+        </ul>
+      </section>
 
-    </section>
-    <section id="projects" class="panel reveal">
-      <h2>Projects</h2>
-      <div class="project-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:20px;">
-        <a href="project_nimbus.html" class="project-card">
-          <h3>Project Nimbus</h3>
-          <p> My entry for the Smart India Hackathon 2025</p>
-        </a>
-        <a href="securebeam.html" class="project-card">
-          <h3>SecureBeam</h3>
-          <p>Encrypted laser-based communication system.(Yet to be Published)</p>
-        </a>
-      </div>
-    </section>
+      <section id="projects" class="panel reveal" aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Projects</h2>
+        <div class="card-grid">
+          <!-- cms:projects:start -->
+          <a href="project_nimbus.html" class="project-card">
+            <div class="tag-row"><span class="tag">SIH 2025</span><span class="tag muted">Avionics</span></div>
+            <h3>Project Nimbus</h3>
+            <p>A hybrid VTOL disaster‑relief drone concept, and my entry for the Smart India Hackathon 2025.</p>
+            <span class="card-cta">Read the project →</span>
+          </a>
+          <div class="project-card is-soon">
+            <div class="tag-row"><span class="tag muted">Coming soon</span></div>
+            <h3>SecureBeam</h3>
+            <p>Encrypted laser‑based communication system. Write‑up yet to be published.</p>
+          </div>
+          <!-- cms:projects:end -->
+        </div>
+      </section>
 
-    <footer>© <span id="year"></span> Kailash</footer>
-  <section id="blog" class="panel reveal" style="margin-top:48px;">
-      <h2>Blog</h2>
-      <div class="blog-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:20px;">
-        <a href="blog1.html" class="project-card">
-          <h3>Project Nimbus (Coming Soon...)</h3>
-          <p>My first time experience of SIH. The what,how and why???</p>
-        </a>
-      </div>
-    </section>
+      <section id="blog" class="panel reveal" aria-labelledby="blog-heading">
+        <h2 id="blog-heading">Blog</h2>
+        <div class="card-grid">
+          <!-- cms:blog:start -->
+          <div class="project-card is-soon">
+            <div class="tag-row"><span class="tag muted">Coming soon</span></div>
+            <h3>Project Nimbus</h3>
+            <p>My first time experience of SIH. The what, how and why???</p>
+          </div>
+          <!-- cms:blog:end -->
+        </div>
+      </section>
 
-    <section id="contact" class="panel reveal" style="margin-top:48px;">
-      <h2>Contact</h2>
-      <p>Email: <a href="mailto:kailash@example.com" style="color:var(--accent)">kailash.dak2007@gmail.com</a></p>
-      <p>Phone: <span style="color:var(--accent)">+91 9445050953</span></p>
-      <p>LinkedIn: <a href="https://linkedin.com/in/kailash-amarnath-b248b8273" target="_blank" style="color:var(--accent)">View Profile</a></p>
-    </section>
+      <section id="contact" class="panel reveal" aria-labelledby="contact-heading">
+        <h2 id="contact-heading">Contact</h2>
+        <p>Want to talk projects, aircraft or internships? Reach out.</p>
+        <ul class="contact-list">
+          <li><a href="mailto:kailash.dak2007@gmail.com"><span class="label">Email</span>kailash.dak2007@gmail.com</a></li>
+          <li><a href="tel:+919445050953"><span class="label">Phone</span>+91 94450 50953</a></li>
+          <li><a href="https://www.linkedin.com/in/kailash-amarnath-b248b8273" target="_blank" rel="noopener"><span class="label">LinkedIn</span>View profile ↗</a></li>
+          <li><a href="https://github.com/kailu687" target="_blank" rel="noopener"><span class="label">GitHub</span>kailu687 ↗</a></li>
+        </ul>
+      </section>
+    </main>
 
-  </main>
+    <footer class="site-footer">
+      <span>© <span data-year>2026</span> Kailash Amarnath</span>
+      <nav aria-label="Footer">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </footer>
   </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', ()=>{
-
-  const termText = document.getElementById('terminal-text');
-  const loader = document.getElementById('loader-screen');
-  const page = document.getElementById('page-wrap');
-  const bar = document.getElementById('progress-bar');
-  const percent = document.getElementById('progress-percent');
-  const revealEls = [...document.querySelectorAll('.reveal')];
-
-  const lines=[
-    'Preparing systems...',
-    'Optimizing modules...',
-    'Starting engines...',
-    'Final checks...',
-    'Ready.'
-  ];
-
-  let l=0,c=0,p=0;
-  function stepProgress(amount){ 
-    p=Math.min(100,p+amount); 
-    bar.style.width = p + '%'; 
-    percent.textContent = Math.round(p) + '%'; 
-  }
-
-  function typeLoader(){
-    if(l<lines.length){
-      const cur = lines[l];
-      if(c < cur.length){
-        termText.textContent += cur.charAt(c);
-        c++; stepProgress(0.6);
-        setTimeout(typeLoader, 10);
-      } else {
-        termText.textContent += "\n";
-        l++; c=0; stepProgress(6);
-        setTimeout(typeLoader, 140);
-      }
-    } else {
-      const fin = setInterval(()=>{
-        if(p >= 100){ clearInterval(fin); fadeOut(); return; }
-        stepProgress(6);
-      }, 80);
-    }
-  }
-
-  /* ----------------------------------------------------------
-     HERO TYPE + DELETE LOOP
-  ----------------------------------------------------------- */
-  function heroTypeLoop() {
-      const element = document.getElementById("typing");
-      const texts = [
-          "ECE undergrad by choice. Aviator by passion.",
-          "Still figuring things out — trying, making and breaking.",
-          "Building cool things one failure at a time.",
-          "Engineering my own flight path."
-      ];
-
-      let i = 0;
-      let j = 0;
-      let deleting = false;
-
-      function loop() {
-          let current = texts[i];
-
-          if (!deleting) {
-              element.textContent = current.substring(0, j + 1);
-              j++;
-              if (j === current.length) {
-                  setTimeout(() => deleting = true, 1200);
-              }
-          } else {
-              element.textContent = current.substring(0, j - 1);
-              j--;
-              if (j === 0) {
-                  deleting = false;
-                  i = (i + 1) % texts.length;
-              }
-          }
-          setTimeout(loop, deleting ? 45 : 55);
-      }
-      loop();
-  }
-
-  /* ----------------------------------------------------------
-     FADE OUT LOADER → START TYPING
-  ----------------------------------------------------------- */
-  function fadeOut(){
-    loader.style.transition = 'opacity .6s ease';
-    loader.style.opacity = '0';
-
-    setTimeout(()=>{
-      if(loader.parentNode) loader.parentNode.removeChild(loader);
-      document.body.classList.remove('loading');
-      page.style.opacity = '1';
-
-      revealEls.forEach((el,i)=> 
-        setTimeout(()=> el.classList.add('visible'), 150*i)
-      );
-
-      heroTypeLoop();  // <-- Start hero typing animation here
-    }, 600);
-  }
-
-  /* ----------------------------------------------------------
-     PARTICLE FIELD (unchanged)
-  ----------------------------------------------------------- */
-  const canvas=document.getElementById('particle-field');
-  const ctx=canvas.getContext('2d');
-  function resize(){canvas.width=canvas.clientWidth;canvas.height=canvas.clientHeight;} 
-  resize(); 
-  window.addEventListener('resize',resize);
-
-  const particles=Array.from({length:120},()=>{let x=Math.random()*canvas.width, y=Math.random()*canvas.height; return {x,y,ox:x,oy:y,vx:(Math.random()-.5)*0.4,vy:(Math.random()-.5)*0.4,size:1+Math.random()*2};});
-  let mouse={x:null,y:null};
-
-  canvas.addEventListener('mousemove',e=>{
-    const r=canvas.getBoundingClientRect();
-    mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
-  });
-
-  function animate(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-
-      if(mouse.x!==null){
-        let dx = mouse.x - p.x,
-            dy = mouse.y - p.y,
-            dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist < 200 && dist>0){
-          let force = (200 - dist) / 200;
-          p.vx += (dx / dist) * force * 0.12;
-          p.vy += (dy / dist) * force * 0.12;
-        }
-      }
-
-      let sx = p.ox - p.x;
-      let sy = p.oy - p.y;
-      p.vx += sx * 0.002;
-      p.vy += sy * 0.002;
-
-      p.vx *= 0.92;
-      p.vy *= 0.92;
-      p.x += p.vx;
-      p.y += p.vy;
-
-      if(p.x<0 || p.x>canvas.width){ p.vx *= -0.6; p.x = Math.max(0, Math.min(canvas.width, p.x)); }
-      if(p.y<0 || p.y>canvas.height){ p.vy *= -0.6; p.y = Math.max(0, Math.min(canvas.height, p.y)); }
-
-      ctx.fillStyle='rgba(0,200,255,0.85)';
-      ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
-    });
-
-    for(let i=0;i<particles.length;i++){
-      for(let j=i+1;j<particles.length;j++){
-        let a=particles[i],b=particles[j];let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
-        if(d<140){
-          ctx.strokeStyle='rgba(0,180,255,'+(1-d/140)+')';
-          ctx.lineWidth=0.7;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
-        }
-      }
-    }
-
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  // start loader typing
-  typeLoader();
-  document.getElementById('year').textContent = new Date().getFullYear();
-});
-</script>
-
-
+  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/home.js" defer></script>
 </body>
 </html>

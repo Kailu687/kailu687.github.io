@@ -1,192 +1,268 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-  <link rel="icon" type="image/png" sizes="32x32" href="Images/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="Images/favicon-16x16.png">
-<link rel="shortcut icon" href="favicon.ico">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-T9LBFG5H67');
-</script>
+  <title>Project Nimbus: Hybrid VTOL Disaster-Relief Drone (SIH 2025) — Kailash Amarnath</title>
+  <meta name="description" content="Project Nimbus is a hybrid VTOL tilt-rotor disaster-relief drone concept built for the Smart India Hackathon 2025 internal round at VIT Chennai: design targets, CAD, STM32H743 flight-computer schematic, app interface and lessons learned.">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/project_nimbus.html">
+  <meta name="theme-color" content="#001027">
 
-<title>Project Nimbus — Kailash</title>
+  <!-- Social previews -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="Project Nimbus: Hybrid VTOL Disaster-Relief Drone">
+  <meta property="og:description" content="A tilt-rotor VTOL drone concept for delivering medical supplies after floods and earthquakes. My Smart India Hackathon 2025 entry and avionics work.">
+  <meta property="og:url" content="https://kailashamarnath.me/project_nimbus.html">
+  <meta property="og:image" content="https://kailashamarnath.me/Images/CAD%20Model%20Top%20View.png">
+  <meta property="og:image:alt" content="Top view of the Nimbus 007 CAD model">
+  <meta name="twitter:card" content="summary_large_image">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<style>
-html {
-  scroll-behavior: smooth;
-}
-:root{--bg-1:#000004;--bg-2:#001027;--accent:#00d0ff;--muted:#95a3b3;--glass-border:rgba(255,255,255,0.06);--max-width:1100px;font-family:Inter,system-ui}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#d7eaf6}
-header.nav{position:fixed;top:20px;left:0;right:0;margin:auto;max-width:var(--max-width);padding:12px 28px;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);border-radius:12px;border:1px solid var(--glass-border);z-index:40}
-.brand{display:flex;gap:12px;align-items:center}.logo{font-weight:800;letter-spacing:2px;font-size:18px;color:white}.subtitle{font-size:12px;color:var(--muted)}
-nav.links{display:flex;gap:20px}nav.links a{color:rgba(215,234,246,0.9);padding:6px 10px;border-radius:8px;font-weight:600;text-decoration:none !important;}nav.links a:hover{background:rgba(0,208,255,0.06)}
-.container{max-width:var(--max-width);margin:auto;padding:140px 24px 80px}
-.panel{margin-top:40px;padding:28px;border-radius:14px;background:rgba(255,255,255,0.02);border:1px solid var(--glass-border)}
-h1{font-size:42px;color:white;font-weight:800;margin-bottom:6px}
-.breadcrumb{font-size:13px;color:var(--muted);margin-bottom:18px}
-.img-block{margin-top:16px}
-.img-box img:hover {
-  transform: scale(1.02);
-  transition: 0.3s ease;
-  filter: drop-shadow(0 0 4px #00d0ff55);
-}
-.img-box{width:100%;height:220px;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
-.footer{text-align:center;color:var(--muted);margin-top:60px;font-size:14px}
-</style>
-<style>
-/* Lightbox modal */
-#imgModal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:9999}
-#imgModal img{max-width:90%;max-height:90%;border-radius:12px;}
-</style>
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CreativeWork",
+        "name": "Project Nimbus",
+        "headline": "Project Nimbus: Hybrid VTOL Disaster-Relief Drone",
+        "description": "A hybrid VTOL tilt-rotor disaster-relief drone concept developed for the Smart India Hackathon 2025 internal selection round at VIT Chennai.",
+        "url": "https://kailashamarnath.me/project_nimbus.html",
+        "image": "https://kailashamarnath.me/Images/CAD%20Model%20Top%20View.png",
+        "author": { "@type": "Person", "name": "Kailash Amarnath", "url": "https://kailashamarnath.me/" },
+        "keywords": "VTOL, tilt-rotor, drone, disaster relief, avionics, STM32H743, KiCad, Smart India Hackathon 2025"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://kailashamarnath.me/" },
+          { "@type": "ListItem", "position": 2, "name": "Projects", "item": "https://kailashamarnath.me/#projects" },
+          { "@type": "ListItem", "position": 3, "name": "Project Nimbus" }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
-<header class="nav">
-  <div class="brand"><div class="logo">KAILASH</div><div class="subtitle">ECE Student · Aviation Enthusiast</div></div>
-  <nav class="links"><a href="index.html#home">Home</a><a href="index.html#about">About</a><a href="index.html#projects">Projects</a><a href="index.html#contact">Contact</a></nav>
-</header>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-<main class="container">
-  <div class="breadcrumb">Home → Projects → <span style="color:var(--accent)">Project Nimbus</span></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:nowrap;">
-    <h1 style="margin:0;white-space:nowrap;">Project Nimbus</h1>
-    <div class="img-box" style="width:140px;height:140px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-        <img src="Images/Project Nimbus Logo.png" style="width:100%;height:100%;object-fit:contain;">
-    </div>
-</div>
-<div class="subtitle" style="color:var(--accent);font-size:18px;margin-bottom:10px"> Smart India Hackathon 2025 Project</div>
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Kailash, home">
+      <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+      <span class="logo">KAILASH</span>
+      <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="links" id="nav-links" aria-label="Main">
+      <a href="./#home">Home</a>
+      <a href="./#about">About</a>
+      <a href="./#projects" aria-current="page">Projects</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </header>
 
-  <section class="panel">
-    <h2>Overview</h2>
-    <p>Thrilled to present Project Nimbus, our entry for the Smart India Hackathon internal round at VIT Chennai! From 864 teams in Round-1, only 212 advanced — and we were proud to be one of them. Nimbus is a hybrid VTOL disaster‑relief drone designed to deliver medical supplies and communication devices to remote regions during earthquakes, floods, and other emergencies.</p>
-  </section>
+  <main id="main" class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="./">Home</a></li>
+        <li><a href="./#projects">Projects</a></li>
+        <li><span aria-current="page">Project Nimbus</span></li>
+      </ol>
+    </nav>
 
-  <section class="panel">
-    <h2>The Problem</h2>
-    <p>Our challenge was to build:</p>
-    <ul style="margin-left:20px;margin-top:10px">
-      <li>A drone capable of operating in disaster zones</li>
-      <li>AI-based real-time navigation + obstacle avoidance</li>
-      <li>Payload capacity ≥ 5 kg</li>
-      <li>Reliable delivery to remote locations</li>
-    </ul>
-    <p style="margin-top:10px">Traditional drones either lack range (multirotors) or require runways (fixed‑wings).</p><br>
-    <p>Our solution??? Nimbus 007.</p><br>
-    <p>Nimbus solves this through a hybrid VTOL + fixed‑wing configuration.</p>
-  </section>
-
-  <section class="panel">
-    <h2>Nimbus 007 Highlights</h2>
-    <ul style="margin-left:20px;margin-top:10px">
-      <li>MTOW: 23 kg (Payload: 7 kg + 0.5 kg safety margin)</li>
-      <li>Range: ~40 km</li>
-      <li>Cruise Speed: ~68 km/hr</li>
-      <li>VTOL takeoff + 90° tilt-rotor forward flight transition</li>
-      <li>Avionics: Custom Pixhawk-class MCU (STM32H743VIHx)</li>
-      <li>Redundant power distribution + safety logic</li>
-      <li>CAD Design: FreeCAD for structural modeling + analysis</li>
-            
-    </ul>
-  <div class="img-block">
-    <h3>CAD Model</h3>
-    <div style="display:flex;gap:20px;flex-wrap:wrap;">
-
-      <div class="img-box" style="flex:1;min-width:200px;height:220px;" onclick="openImg('Images/CAD Model.png')">
-        <img src="Images/CAD Model.png" style="width:100%;height:100%;object-fit:contain;">
+    <div class="page-title">
+      <div>
+        <h1>Project Nimbus</h1>
+        <p class="page-subtitle">Smart India Hackathon 2025 Project</p>
+        <div class="meta-row">
+          <span class="tag">Hybrid VTOL</span>
+          <span class="tag">Avionics</span>
+          <span class="tag muted">Concept &amp; design</span>
+        </div>
       </div>
-
-      <div class="img-box" style="flex:1;min-width:200px;height:220px;" onclick="openImg('Images/CAD Model Top View.png')">
-        <img src="Images/CAD Model Top View.png" style="width:100%;height:100%;object-fit:contain;">
-      </div>
-
-    </div>
-  </div>
-
-  </section>
-
-  <section class="panel">
-    <h2>My Role — Avionics</h2>
-    <p>I worked primarily in the avionics sub‑team, handling:</p>
-    <ul style="margin-left:20px;margin-top:10px">
-      <li>Designing the schematic of our indigenous flight computer</li>
-      <li>Power distribution & safety logic</li>
-      <li>Sensor + subsystem integration planning</li>
-      <li>KiCAD schematic → PCB preparation</li>
-    </ul>
-
-    <div class="img-block">
-      <h3>Flight Computer Schematic</h3>
-      <div class="img-box" style="height:420px;cursor:pointer;" onclick="openImg('Images/Kicad.png')">
-        <img src="Images/Kicad.png" style="width:100%;height:100%;object-fit:contain;">
-      </div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>App Interface</h2>
-    <p>We developed a monitoring interface concept for mission status, alerts, and telemetry visualization.</p>
-    <div class="img-box" style="display:flex;gap:20px;flex-wrap:wrap;height:auto;padding:20px;">
-  <img src="Images/ss1.png" style="width:45%;border-radius:12px;cursor:pointer;" onclick="openImg('Images/ss1.png')">
-  <img src="Images/ss2.png" style="width:45%;border-radius:12px;cursor:pointer;" onclick="openImg('Images/ss2.png')">
-
-  <img src="Images/ss3.png" style="width:45%;border-radius:12px;cursor:pointer;" onclick="openImg('Images/ss3.png')">
-  <img src="Images/ss4.png" style="width:45%;border-radius:12px;cursor:pointer;" onclick="openImg('Images/ss4.png')">
-</div>
-  </section>
-
-  <section class="panel">
-  <h2>Tilt Mechanism Animation</h2>
-  <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-    
-    <!-- LEFT SIDE – TEXT -->
-    <div style="flex:1;min-width:250px;">
-      <p>Here is the tilt-rotor transition mechanism visualized in motion. Nimbus 007 takes off like a conventional quadcopter and  the forward 2 rotors tilt 90 degree to start working like a fixed-wing aircraft thus improving speed and accuracy.</p>
-    </div>
-
-    <!-- RIGHT SIDE – GIF -->
-    <div style="flex:1;min-width:250px;">
-      <div class="img-box" style="height:420px;">
-        <img src="Images/Tiltmech.gif" style="width:100%;height:100%;object-fit:contain;">
+      <div class="logo-box">
+        <picture>
+          <source srcset="Images/Project%20Nimbus%20Logo.webp" type="image/webp">
+          <img src="Images/Project%20Nimbus%20Logo.png" alt="Project Nimbus logo: a delivery drone carrying a parcel" width="140" height="140">
+        </picture>
       </div>
     </div>
 
-  </div>
-</section>
+    <section class="panel reveal" aria-labelledby="overview">
+      <h2 id="overview">Overview</h2>
+      <p>Thrilled to present Project Nimbus, our entry for the Smart India Hackathon internal round at VIT Chennai! From 864 teams in Round 1, only 212 advanced — and we were proud to be one of them. Nimbus is a hybrid VTOL disaster‑relief drone designed to deliver medical supplies and communication devices to remote regions during earthquakes, floods, and other emergencies.</p>
+    </section>
 
+    <section class="panel reveal" aria-labelledby="problem">
+      <h2 id="problem">The Problem</h2>
+      <p>Our challenge was to build:</p>
+      <ul style="margin-top:10px">
+        <li>A drone capable of operating in disaster zones</li>
+        <li>AI-based real-time navigation + obstacle avoidance</li>
+        <li>Payload capacity ≥ 5 kg</li>
+        <li>Reliable delivery to remote locations</li>
+      </ul>
+      <p style="margin-top:14px">Traditional drones either lack range (multirotors) or require runways (fixed‑wings).</p>
+      <p>Our solution??? Nimbus 007.</p>
+      <p>Nimbus solves this through a hybrid VTOL + fixed‑wing configuration.</p>
+    </section>
 
-  <section class="panel">
-    <h2>Structural Analysis</h2>
-    <p>We planned to perform stress analysis and subsystem-level validation in FreeCAD. But due to computational limits, full-scale simulations are being planned to split into modular studies.</p>
-  </section>
+    <section class="panel reveal" aria-labelledby="highlights">
+      <h2 id="highlights">Nimbus 007 Highlights</h2>
+      <div class="spec-grid">
+        <div class="spec"><div class="k">MTOW</div><div class="v">~23 kg</div></div>
+        <div class="spec"><div class="k">Payload</div><div class="v">7 kg <span style="font-size:14px;font-weight:600;color:var(--muted)">+0.5 kg margin</span></div></div>
+        <div class="spec"><div class="k">Range</div><div class="v">~40 km</div></div>
+        <div class="spec"><div class="k">Cruise speed</div><div class="v">~68 km/h</div></div>
+      </div>
+      <ul style="margin-top:18px">
+        <li>VTOL takeoff + 90° tilt-rotor forward flight transition</li>
+        <li>Avionics: Custom Pixhawk-class MCU (STM32H743VIHx)</li>
+        <li>Redundant power distribution + safety logic</li>
+        <li>CAD Design: FreeCAD for structural modeling + analysis</li>
+      </ul>
+      <p class="note">These figures are design targets for the Nimbus 007 concept, not results measured on a flying aircraft.</p>
 
-  <section class="panel">
-    <h2>Outcome & Reflection</h2>
-    <p>We didn’t make it to the national top 50, but Nimbus 007 gave us real engineering exposure — avionics, CAD, simulation, teamwork, and rapid prototyping. Nimbus 007 doesn't end here. This is just the beginning of aerospace journey. </p>
-  </section>
-  <section class="panel">
-    <h2>Disclaimer:</h2>
-    <p>Project Nimbus is an independent student innovation initiative and bears no connection to similarly named programs whatsoever✌ </p>
-  </section>
-  <div class="footer">© <script>document.write(new Date().getFullYear())</script> Kailash</div>
-</main>
+      <div class="media-block">
+        <h3>CAD Model</h3>
+        <div class="media-grid">
+          <figure>
+            <button class="zoomable" type="button" data-full="Images/CAD%20Model.png" aria-label="Enlarge CAD model, 3D view">
+              <picture>
+                <source srcset="Images/CAD%20Model.webp" type="image/webp">
+                <img src="Images/CAD%20Model.png" alt="Nimbus 007 CAD model, 3D view" width="859" height="616" loading="lazy" decoding="async">
+              </picture>
+            </button>
+            <figcaption>3D view</figcaption>
+          </figure>
+          <figure>
+            <button class="zoomable" type="button" data-full="Images/CAD%20Model%20Top%20View.png" aria-label="Enlarge CAD model, top view">
+              <picture>
+                <source srcset="Images/CAD%20Model%20Top%20View.webp" type="image/webp">
+                <img src="Images/CAD%20Model%20Top%20View.png" alt="Nimbus 007 CAD model, top view" width="1120" height="700" loading="lazy" decoding="async">
+              </picture>
+            </button>
+            <figcaption>Top view</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
 
-<div id="imgModal" onclick="this.style.display='none'">
-    <img id="modalImg" src="">
-</div>
-<script>
-function openImg(src){
-  document.getElementById('modalImg').src = src;
-  document.getElementById('imgModal').style.display = 'flex';
-}
-</script>
+    <section class="panel reveal" aria-labelledby="role">
+      <h2 id="role">My Role — Avionics</h2>
+      <p>I worked primarily in the avionics sub‑team, handling:</p>
+      <ul style="margin-top:10px">
+        <li>Designing the schematic of our indigenous flight computer</li>
+        <li>Power distribution &amp; safety logic</li>
+        <li>Sensor + subsystem integration planning</li>
+        <li>KiCad schematic → PCB preparation</li>
+      </ul>
+
+      <div class="media-block">
+        <h3>Flight Computer Schematic</h3>
+        <figure>
+          <button class="zoomable" type="button" data-full="Images/Kicad.png" aria-label="Enlarge flight computer schematic">
+            <picture>
+              <source srcset="Images/Kicad.webp" type="image/webp">
+              <img src="Images/Kicad.png" alt="KiCad schematic of the STM32H743-based flight computer" width="885" height="826" loading="lazy" decoding="async" style="max-height:520px">
+            </picture>
+          </button>
+          <figcaption>KiCad schematic of the flight computer. Tap to enlarge.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="app">
+      <h2 id="app">App Interface</h2>
+      <p>We developed a monitoring interface concept for mission status, alerts, and telemetry visualization.</p>
+      <div class="media-grid media-block">
+        <button class="zoomable" type="button" data-full="Images/ss1.png" aria-label="Enlarge app screenshot 1">
+          <picture><source srcset="Images/ss1.webp" type="image/webp"><img src="Images/ss1.png" alt="Mission app: visual tracking view with live camera and map" width="1918" height="966" loading="lazy" decoding="async"></picture>
+        </button>
+        <button class="zoomable" type="button" data-full="Images/ss2.png" aria-label="Enlarge app screenshot 2">
+          <picture><source srcset="Images/ss2.webp" type="image/webp"><img src="Images/ss2.png" alt="Mission app screenshot 2" width="1897" height="1135" loading="lazy" decoding="async"></picture>
+        </button>
+        <button class="zoomable" type="button" data-full="Images/ss3.png" aria-label="Enlarge app screenshot 3">
+          <picture><source srcset="Images/ss3.webp" type="image/webp"><img src="Images/ss3.png" alt="Mission app screenshot 3" width="1918" height="951" loading="lazy" decoding="async"></picture>
+        </button>
+        <button class="zoomable" type="button" data-full="Images/ss4.png" aria-label="Enlarge app screenshot 4">
+          <picture><source srcset="Images/ss4.webp" type="image/webp"><img src="Images/ss4.png" alt="Mission app screenshot 4" width="1897" height="1145" loading="lazy" decoding="async"></picture>
+        </button>
+      </div>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="tilt">
+      <h2 id="tilt">Tilt Mechanism Animation</h2>
+      <div class="split">
+        <p>Here is the tilt-rotor transition mechanism visualized in motion. Nimbus 007 takes off like a conventional quadcopter, and the forward two rotors tilt 90 degrees so it can fly like a fixed-wing aircraft, improving speed and accuracy.</p>
+        <div class="media-box">
+          <video autoplay muted loop playsinline preload="none" poster="Images/Tiltmech-poster.jpg" width="502" height="836" style="width:100%;height:auto;max-height:440px;object-fit:contain" aria-label="Animation of the Nimbus 007 tilt-rotor mechanism rotating from vertical to forward flight">
+            <source src="Images/Tiltmech.webm" type="video/webm">
+            <source src="Images/Tiltmech.mp4" type="video/mp4">
+            <img src="Images/Tiltmech.gif" alt="Tilt-rotor mechanism animation" loading="lazy">
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="structural">
+      <h2 id="structural">Structural Analysis</h2>
+      <p>We planned to perform stress analysis and subsystem-level validation in FreeCAD. Due to computational limits, the full-scale simulations are planned to be split into modular studies.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="outcome">
+      <h2 id="outcome">Outcome &amp; Reflection</h2>
+      <p>We didn’t make it to the national top 50, but Nimbus 007 gave us real engineering exposure — avionics, CAD, simulation, teamwork, and rapid prototyping. Nimbus 007 doesn't end here. This is just the beginning of my aerospace journey.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="disclaimer">
+      <h2 id="disclaimer">Disclaimer</h2>
+      <p>Project Nimbus is an independent student innovation initiative and bears no connection to similarly named programs whatsoever ✌</p>
+    </section>
+
+    <div class="cta-row" style="margin-top:40px">
+      <a class="btn" href="./#projects">← All projects</a>
+      <a class="btn primary" href="./#contact">Get in touch</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Kailash Amarnath</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
 </body>
 </html>

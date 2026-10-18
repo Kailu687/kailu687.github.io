@@ -1,0 +1,20 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <title>Kailash</title>
+  <defs>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="6" y1="6" x2="40" y2="40">
+      <stop offset="0" stop-color="#5fe6ff"/>
+      <stop offset="1" stop-color="#2aa0ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="#001027"/>
+  <g fill="url(#g)">
+    <!-- fuselage + tailplane: the upright stroke of the K -->
+    <path d="M18 6c1.7 0 2.4 2 2.4 4.4V32.4l4.3 2.9v2L18 35.9l-6.7 1.4v-2l4.3-2.9V10.4C15.6 8 16.3 6 18 6z"/>
+    <!-- left wing -->
+    <path d="M15.9 18.6v5.2L5.5 28v-2.4z"/>
+    <!-- right wing, swept up into the K's upper arm -->
+    <path d="M20.1 19.4 37.2 10l2.1 2.3-19.2 13z"/>
+    <!-- lower leg of the K -->
+    <path d="M20.1 21.4 39.3 35.4 37 37.8 20.1 26.1z"/>
+  </g>
+</svg>

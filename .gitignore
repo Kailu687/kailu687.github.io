@@ -1,0 +1,8 @@
+# Older local CMS experiment (Node server), not part of the public site
+Website CMS/
+node_modules/
+.env
+.env.*
+
+# Local Claude tooling
+.claude/
