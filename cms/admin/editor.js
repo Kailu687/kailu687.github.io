@@ -89,7 +89,11 @@
           <button type="button" data-insert="code"><b>Code block</b><span>Firmware, scripts, commands</span></button>
           <button type="button" data-insert="specs"><b>Spec cards</b><span>Key numbers, like range or mass</span></button>
           <button type="button" data-insert="columns"><b>Two columns</b><span>Side-by-side text or images</span></button>
-          <button type="button" data-insert="callout"><b>Callout</b><span>A highlighted box</span></button>
+          <button type="button" data-insert="callout"><b>Callout</b><span>A highlighted cyan box</span></button>
+          <button type="button" data-insert="success"><b>Success box</b><span>Green, for results that worked</span></button>
+          <button type="button" data-insert="warning"><b>Warning box</b><span>Amber, for gotchas and caveats</span></button>
+          <button type="button" data-insert="button"><b>Button</b><span>A link styled as a button</span></button>
+          <button type="button" data-insert="details"><b>Collapsible section</b><span>Hidden until the reader clicks</span></button>
           <button type="button" data-insert="note"><b>Note</b><span>A quiet side note</span></button>
           <button type="button" data-insert="quote"><b>Quote</b></button>
           <button type="button" data-insert="hr"><b>Divider</b></button>
@@ -367,6 +371,13 @@
       if (!id) { ctx.toast("That doesn't look like a YouTube link.", true); return; }
       return insertBlock(`<div class="embed" data-youtube="${id}"></div><p><br></p>`);
     }
+    if (kind === 'button') {
+      const label = await ctx.ask('Add a button', 'Button text', 'View on GitHub');
+      if (!label) return;
+      const url = await ctx.ask('Add a button', 'Where it goes', 'https://', 'A web address, or a page like project_nimbus.html');
+      if (!url || !/^(https?:\/\/|mailto:|[\w./-]+\.html)/i.test(url.trim())) { if (url) ctx.toast('That link needs to start with https:// or be a page like project_nimbus.html', true); return; }
+      return insertBlock(`<p><a class="btn-link" href="${esc(url.trim())}">${esc(label.trim())}</a></p><p><br></p>`);
+    }
     if (kind === 'table') {
       const size = await ctx.ask('Insert a table', 'Columns × rows', '3 x 3', 'For example 3 x 4 means 3 columns and 4 rows. The first row is the header.');
       if (!size) return;
@@ -384,6 +395,9 @@
       specs: ['<div class="spec-grid"><div class="spec"><div class="k">Mass</div><div class="v">1.2 kg</div></div><div class="spec"><div class="k">Range</div><div class="v">5 km</div></div><div class="spec"><div class="k">Power</div><div class="v">12 W</div></div></div><p><br></p>', '.k'],
       columns: ['<div class="split"><div><p>Left column</p></div><div><p>Right column</p></div></div><p><br></p>', '.split p'],
       callout: ['<p class="callout">Something worth pointing out.</p><p><br></p>', '.callout'],
+      success: ['<p class="callout callout-ok">This worked.</p><p><br></p>', '.callout'],
+      warning: ['<p class="callout callout-warn">Watch out for this.</p><p><br></p>', '.callout'],
+      details: ['<details open><summary>Click to expand</summary><p>Hidden content goes here.</p></details><p><br></p>', 'summary'],
       note: ['<p class="note">A short side note.</p><p><br></p>', '.note'],
       quote: ['<blockquote>Quote</blockquote><p><br></p>', 'blockquote'],
       hr: ['<hr><p><br></p>', 'p'],
@@ -856,12 +870,36 @@
     $$('[data-menu]', ctx.toolbar).forEach((b) => b.setAttribute('aria-expanded', 'false'));
   }
 
+  // Typing "## " at the start of a line makes a heading, "- " a list, and so on.
+  function markdownShortcut(at) {
+    const p = at && at.closest('p');
+    if (!p || p.closest('li,td,th,.callout,.note,summary,details') || p.classList.length) return false;
+    const r = currentRange();
+    if (!r || !r.collapsed) return false;
+    const before = document.createRange();
+    before.selectNodeContents(p);
+    before.setEnd(r.startContainer, r.startOffset);
+    const typed = before.toString();
+    const map = { '#': 'h2', '##': 'h3', '###': 'h4', '>': 'blockquote', '-': 'ul', '*': 'ul', '1.': 'ol', '```': 'pre', '---': 'hr' };
+    const tag = map[typed];
+    if (!tag || p.textContent !== typed) return false;
+    p.textContent = '';
+    p.innerHTML = '<br>';
+    placeCaret(p);
+    if (tag === 'ul') exec('insertUnorderedList');
+    else if (tag === 'ol') exec('insertOrderedList');
+    else if (tag === 'hr') { const hr = document.createElement('hr'); p.before(hr); }
+    else setBlock(tag);
+    ctx.markDirty();
+    return true;
+  }
+
   // ---------- Clean-up ----------
-  const KEEP = new Set(['P', 'H2', 'H3', 'H4', 'STRONG', 'EM', 'U', 'S', 'A', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'PRE', 'CODE', 'HR', 'BR', 'FIGURE', 'FIGCAPTION', 'IMG', 'VIDEO', 'DIV', 'SPAN', 'MARK', 'SUP', 'SUB', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD']);
+  const KEEP = new Set(['DETAILS', 'SUMMARY', 'P', 'H2', 'H3', 'H4', 'STRONG', 'EM', 'U', 'S', 'A', 'UL', 'OL', 'LI', 'BLOCKQUOTE', 'PRE', 'CODE', 'HR', 'BR', 'FIGURE', 'FIGCAPTION', 'IMG', 'VIDEO', 'DIV', 'SPAN', 'MARK', 'SUP', 'SUB', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD']);
   const RENAME = { B: 'strong', I: 'em', H1: 'h2', H5: 'h4', H6: 'h4', STRIKE: 's', DEL: 's' };
   const DROP = new Set(['SCRIPT', 'STYLE', 'META', 'LINK', 'TITLE', 'IFRAME', 'OBJECT', 'SVG', 'NOSCRIPT', 'TEMPLATE', 'FORM', 'BUTTON', 'INPUT', 'TEXTAREA', 'SELECT']);
-  const ATTRS = { A: ['href'], IMG: ['src', 'alt'], VIDEO: ['src', 'controls', 'loop', 'muted', 'playsinline', 'autoplay', 'poster', 'aria-label'], DIV: ['data-youtube'] };
-  const CLASS_OK = /^(md-gallery|img-(wide|left|right|center|small)|w-(25|33|50|66|75|100)|fs-(sm|lg|xl)|c-(accent|blue|muted|white|green|amber|red)|ta-(center|right|justify)|callout|note|spec-grid|spec|k|v|split|media-box|embed|tag|muted)$/;
+  const ATTRS = { A: ['href'], DETAILS: ['open'], IMG: ['src', 'alt'], VIDEO: ['src', 'controls', 'loop', 'muted', 'playsinline', 'autoplay', 'poster', 'aria-label'], DIV: ['data-youtube'] };
+  const CLASS_OK = /^(md-gallery|img-(wide|left|right|center|small)|w-(25|33|50|66|75|100)|fs-(sm|lg|xl)|c-(accent|blue|muted|white|green|amber|red)|ta-(center|right|justify)|callout|callout-ok|callout-warn|btn-link|note|spec-grid|spec|k|v|split|media-box|embed|tag|muted)$/;
 
   function cleanHtml(html) {
     const d = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html');
@@ -934,6 +972,7 @@
   function prepare(root) {
     $$('figure', root).forEach((f) => { f.setAttribute('contenteditable', 'false'); f.setAttribute('draggable', 'true'); });
     $$('.md-gallery', root).forEach((g) => g.setAttribute('contenteditable', 'false'));
+    $$('details', root).forEach((d) => d.setAttribute('open', ''));
     $$('table, .spec-grid', root).forEach((t) => t.setAttribute('draggable', 'false'));
     $$('video', root).forEach((v) => { v.muted = true; v.removeAttribute('autoplay'); });
     $$('.embed', root).forEach((em) => {
@@ -951,6 +990,7 @@
     $$('[contenteditable]', clone).forEach((el) => el.removeAttribute('contenteditable'));
     $$('[draggable]', clone).forEach((el) => el.removeAttribute('draggable'));
     $$('[data-preview]', clone).forEach((el) => el.remove());
+    $$('details', clone).forEach((d) => d.removeAttribute('open'));
     $$('.selected, .dragging', clone).forEach((el) => el.classList.remove('selected', 'dragging'));
     $$('[class=""]', clone).forEach((el) => el.removeAttribute('class'));
     normalize(clone);
@@ -1079,6 +1119,9 @@
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); addLink(); return; }
       if (ctx.selectedFigure && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); figureAction('remove'); return; }
       if (pre && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); exec('insertText', '\n'); return; }
+      if (e.key === ' ' && !pre && markdownShortcut(at)) { e.preventDefault(); return; }
+      // Clicking a summary in the editor shouldn't fold the section away.
+      if (e.key === 'Enter' && at && at.closest('summary')) { e.preventDefault(); const d = at.closest('details'); const p = d.querySelector(':scope > p') || d.appendChild(Object.assign(document.createElement('p'), { innerHTML: '<br>' })); placeCaret(p); return; }
       if (e.key === 'Tab') {
         if (pre) { e.preventDefault(); exec('insertText', '  '); return; }
         const cell = at && at.closest('td,th');
@@ -1100,6 +1143,13 @@
       if (files.length) { uploadFiles(files); return; }
       const r = currentRange();
       const inPre = r && (r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement).closest('pre');
+      const text = cd.getData('text/plain').trim();
+      // A YouTube link pasted on its own line becomes an embedded video.
+      const block = r && (r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement).closest('p');
+      if (!inPre && youtubeId(text) && /^https?:\/\//.test(text) && block && !block.textContent.trim()) {
+        insertBlock(`<div class="embed" data-youtube="${youtubeId(text)}"></div><p><br></p>`);
+        return;
+      }
       const html = cd.getData('text/html');
       if (html && !inPre) {
         const tmpDiv = document.createElement('div');

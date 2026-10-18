@@ -73,6 +73,7 @@
     leaveGuard = null;
     dirty = false;
     if (window.CMSEditor) CMSEditor.unmount();
+    document.body.classList.remove('focus-mode');
     const hash = location.hash || '#/';
     $$('.topnav a').forEach((a) => {
       const target = a.getAttribute('href');
@@ -222,6 +223,7 @@
           <div id="toolbar-slot"></div>
           <div id="doc" class="doc" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${one} content"
             data-placeholder="Start writing… Use “Section heading” to start each new panel, like Overview or The Problem."></div>
+          <div class="doc-meta"><span id="wordcount"></span><span class="row"><button class="btn ghost small" type="button" id="focus-btn" title="Hide everything but the writing (Esc to leave)">Focus mode</button><button class="btn ghost small" type="button" id="help-btn">Shortcuts</button></span></div>
           <p class="editor-help">Click an image to place or resize it, drag it to move it anywhere, or drag its round corner to resize. Drop or paste images straight into the text. Each “Section heading” starts a new panel on the page.</p>
         </div>
 
@@ -317,6 +319,40 @@
 
     const editor = CMSEditor.mount({ doc, toolbar: $('#toolbar-slot'), html: entry.body, markDirty, pickMedia, upload, ask, toast });
 
+    // Word count and reading time.
+    const countWords = () => {
+      const n = (doc.innerText.match(/\S+/g) || []).length;
+      $('#wordcount').textContent = `${n} word${n === 1 ? '' : 's'} · ${Math.max(1, Math.round(n / 200))} min read`;
+    };
+    countWords();
+    doc.addEventListener('input', countWords);
+
+    // Focus mode hides the sidebar and menus so only the writing is on screen.
+    const setFocus = (on) => { document.body.classList.toggle('focus-mode', on); $('#focus-btn').textContent = on ? 'Exit focus mode' : 'Focus mode'; };
+    $('#focus-btn').addEventListener('click', () => setFocus(!document.body.classList.contains('focus-mode')));
+    $('#help-btn').addEventListener('click', () => showShortcuts());
+
+    // A safety copy in this browser every few seconds, in case the laptop or browser closes before you save.
+    const backupKey = `cms-backup:${type}:${slug || 'new'}`;
+    try {
+      const saved = JSON.parse(localStorage.getItem(backupKey) || 'null');
+      if (saved && saved.body && saved.body !== editor.getHTML() && saved.at > Date.now() - 7 * 864e5) {
+        const when = new Date(saved.at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+        if (confirm(`There's unsaved writing for this page from ${when}. Bring it back?`)) {
+          CMSEditor.mount({ doc, toolbar: $('#toolbar-slot'), html: saved.body, markDirty, pickMedia, upload, ask, toast });
+          if (saved.title) $('#title').value = saved.title;
+          markDirty();
+          countWords();
+        } else localStorage.removeItem(backupKey);
+      }
+    } catch { /* browser storage unavailable */ }
+    const backupTimer = setInterval(() => {
+      if (!$('#doc')) { clearInterval(backupTimer); return; }
+      if (!dirty) return;
+      try { localStorage.setItem(backupKey, JSON.stringify({ at: Date.now(), title: $('#title').value, body: editor.getHTML() })); } catch { /* full or blocked */ }
+    }, 5000);
+    const clearBackup = () => { try { localStorage.removeItem(backupKey); } catch { /* ignore */ } };
+
     const save = async () => {
       const payload = {
         slug: $('#slug').value.trim(),
@@ -343,6 +379,7 @@
           : await api('PUT', `/api/entry/${type}/${current.slug}`, payload);
         current = r.entry;
         dirty = false;
+        clearBackup();
         const s = $('#save-state');
         s.textContent = `Saved ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
         s.className = 'save-state saved';
@@ -398,6 +435,36 @@
     $(`#${key}`).value = value;
     $(`#${key}-thumb`).style.backgroundImage = value ? `url('/${encodeURI(value).replace(/'/g, '%27')}')` : '';
   }
+
+  // ---------- Shortcuts ----------
+  function showShortcuts() {
+    let dlg = $('#shortcuts-dialog');
+    if (!dlg) {
+      dlg = document.createElement('dialog');
+      dlg.id = 'shortcuts-dialog';
+      const rows = [
+        ['Ctrl + S', 'Save'], ['Ctrl + B / I / U', 'Bold, italic, underline'], ['Ctrl + K', 'Add or edit a link'],
+        ['Ctrl + Z / Y', 'Undo, redo'], ['Tab / Shift + Tab', 'Indent a list item, next table cell, or indent code'],
+        ['# then space', 'Section heading (## heading, ### small heading)'], ['- then space', 'Bulleted list (1. for numbered)'],
+        ['> then space', 'Quote'], ['``` then space', 'Code block'], ['--- then space', 'Divider'],
+        ['Paste a YouTube link', 'On an empty line it becomes a video'], ['Drop or paste images', 'They upload and appear where you are'],
+        ['Click an image', 'Place it left, centre or right, resize, caption'], ['Drag an image', 'Move it anywhere'],
+        ['Delete', 'Removes the selected image'], ['Esc', 'Leave focus mode'],
+      ];
+      dlg.innerHTML = `<div class="dialog-head"><h2>Keyboard shortcuts</h2><button class="close-x" type="button" aria-label="Close">×</button></div>
+        <div class="dialog-body"><table class="shortcuts">${rows.map(([k, v]) => `<tr><td><kbd>${esc(k)}</kbd></td><td>${esc(v)}</td></tr>`).join('')}</table></div>`;
+      dlg.querySelector('.close-x').onclick = () => dlg.close();
+      document.body.appendChild(dlg);
+    }
+    dlg.showModal();
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('focus-mode') && !document.querySelector('dialog[open]')) {
+      document.body.classList.remove('focus-mode');
+      const b = $('#focus-btn');
+      if (b) b.textContent = 'Focus mode';
+    }
+  });
 
   // ---------- Prompt dialog ----------
   function ask(title, label, value = '', help = '') {

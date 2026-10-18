@@ -5,7 +5,8 @@
 const ALLOWED = {
   p: ['class'], h2: ['class'], h3: ['class'], h4: ['class'], strong: [], b: [], em: [], i: [], u: [], s: [],
   mark: [], sup: [], sub: [],
-  a: ['href', 'title'], ul: [], ol: [], li: ['class'], blockquote: ['class'], pre: [], code: [],
+  details: [], summary: [],
+  a: ['href', 'title', 'class'], ul: [], ol: [], li: ['class'], blockquote: ['class'], pre: [], code: [],
   hr: [], br: [], figure: ['class'], figcaption: ['class'], div: ['class', 'data-youtube'], span: ['class'],
   img: ['src', 'alt', 'width', 'height'],
   video: ['src', 'controls', 'loop', 'muted', 'autoplay', 'playsinline', 'poster', 'aria-label'],
@@ -21,7 +22,7 @@ const CLASSES = new Set([
   'fs-sm', 'fs-lg', 'fs-xl',
   'c-accent', 'c-blue', 'c-muted', 'c-white', 'c-green', 'c-amber', 'c-red',
   'ta-center', 'ta-right', 'ta-justify',
-  'callout', 'note', 'spec-grid', 'spec', 'k', 'v', 'split', 'media-box', 'embed', 'tag', 'muted',
+  'callout', 'callout-ok', 'callout-warn', 'btn-link', 'note', 'spec-grid', 'spec', 'k', 'v', 'split', 'media-box', 'embed', 'tag', 'muted',
 ]);
 const RENAME = { b: 'strong', i: 'em', h1: 'h2', h5: 'h4', h6: 'h4', strike: 's', del: 's' };
 

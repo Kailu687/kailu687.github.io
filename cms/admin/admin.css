@@ -234,3 +234,18 @@ dialog::backdrop{background:rgba(0,0,8,0.7);backdrop-filter:blur(3px)}
 .doc .c-green{color:#3ee6a0}.doc .c-amber{color:#ffc65c}.doc .c-red{color:#ff6b7a}
 .doc .ta-center{text-align:center}.doc .ta-right{text-align:right}.doc .ta-justify{text-align:justify}
 .editor-help{margin-top:10px;font-size:12.5px;color:var(--muted)}
+
+/* Word count, focus mode, shortcuts, new blocks in the editor */
+.doc-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:var(--muted)}
+body.focus-mode .topbar,body.focus-mode .side,body.focus-mode .editor-help{display:none}
+body.focus-mode .editor-layout{grid-template-columns:minmax(0,860px);justify-content:center}
+body.focus-mode #toolbar-slot{top:8px}
+body.focus-mode .doc{min-height:80vh}
+.shortcuts{border-collapse:collapse;width:100%;font-size:14px}
+.shortcuts td{padding:7px 8px;border-bottom:1px solid var(--border)}
+.shortcuts kbd{font:600 12.5px ui-monospace,Consolas,monospace;background:rgba(0,208,255,0.1);border:1px solid rgba(0,208,255,0.3);border-radius:6px;padding:2px 7px;color:#fff;white-space:nowrap}
+.doc .callout.callout-ok{border-color:rgba(62,230,160,0.4);background:rgba(62,230,160,0.07)}
+.doc .callout.callout-warn{border-color:rgba(255,198,92,0.45);background:rgba(255,198,92,0.07)}
+.doc a.btn-link{display:inline-block;padding:9px 18px;border-radius:11px;font-weight:700;text-decoration:none;color:#001;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.doc details{margin:14px 0;border:1px solid var(--border);border-radius:12px;padding:0 14px 4px}
+.doc summary{padding:10px 0;font-weight:700;color:#fff;cursor:text;list-style:"▾  "}

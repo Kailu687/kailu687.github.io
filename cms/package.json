@@ -4,8 +4,8 @@
   "private": true,
   "description": "Private local dashboard for writing projects and blog posts on Kailash's portfolio.",
   "scripts": {
-    "cms": "node server.js",
-    "start": "node server.js",
+    "cms": "node start.js",
+    "start": "node start.js",
     "build": "node lib/build.js",
     "signin": "node signin.js",
     "test": "node test/run.js"

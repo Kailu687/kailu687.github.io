@@ -111,7 +111,9 @@ function renderPage(entry, site, { preview = false } = {}) {
   };
   const date = entry.date && entry.type === 'blog'
     ? `<span class="tag muted"><time datetime="${attr(entry.date)}">${formatDate(entry.date)}</time></span>` : '';
-  const tags = entry.tags.map((t, i) => `<span class="tag${i ? ' muted' : ''}">${attr(t)}</span>`).join('');
+  const words = bodyHtml(entry).replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+  const readTime = entry.type === 'blog' && words > 120 ? `<span class="tag muted">${Math.max(1, Math.round(words / 200))} min read</span>` : '';
+  const tags = entry.tags.map((t, i) => `<span class="tag${i ? ' muted' : ''}">${attr(t)}</span>`).join('') + readTime;
   const values = {
     pageTitle: attr(`${entry.seoTitle || entry.title} — ${site.author}`),
     title: attr(entry.title),
