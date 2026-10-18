@@ -371,14 +371,13 @@
         <div class="dialog-body stack">${options.map(([key, label, help]) =>
           `<button type="button" class="choice" data-key="${esc(key)}"><b>${esc(label)}</b><span>${esc(help || '')}</span></button>`).join('')}</div>`;
       document.body.appendChild(dlg);
-      let result = null;
+      let done = false;
+      const finish = (v) => { if (done) return; done = true; dlg.close(); dlg.remove(); resolve(v); };
       dlg.addEventListener('click', (e) => {
         const b = e.target.closest('button');
-        if (!b) return;
-        result = b.dataset.key || null;
-        dlg.close();
+        if (b) finish(b.dataset.key || null);
       });
-      dlg.addEventListener('close', () => { dlg.remove(); resolve(result); });
+      dlg.addEventListener('cancel', () => finish(null));
       dlg.showModal();
       const first = dlg.querySelector('.choice');
       if (first) first.focus();

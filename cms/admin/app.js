@@ -477,8 +477,14 @@
     dlg.returnValue = '';
     dlg.showModal();
     input.select();
+    // Resolve on the button press itself (the dialog's close event can arrive late).
     return new Promise((resolve) => {
-      dlg.addEventListener('close', () => resolve(dlg.returnValue === 'ok' ? input.value : null), { once: true });
+      let done = false;
+      const finish = (v) => { if (done) return; done = true; form.removeEventListener('submit', onSubmit); resolve(v); };
+      const form = dlg.querySelector('form');
+      const onSubmit = (e) => finish(e.submitter && e.submitter.value === 'ok' ? input.value : null);
+      form.addEventListener('submit', onSubmit);
+      dlg.addEventListener('close', () => finish(dlg.returnValue === 'ok' ? input.value : null), { once: true });
     });
   }
 
