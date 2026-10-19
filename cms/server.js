@@ -19,6 +19,7 @@ const { build, renderPage, SITE_DIR } = require('./lib/build');
 const { sanitize } = require('./lib/sanitize');
 const git = require('./lib/git');
 const home = require('./lib/home');
+const products = require('./lib/products');
 
 const PORT = Number(process.env.CMS_PORT) || 4321;
 const ADMIN_DIR = path.join(__dirname, 'admin');
@@ -265,6 +266,14 @@ async function api(req, res, url) {
     if (m === 'PUT') {
       const saved = home.write(await readJson(req));
       return send(res, 200, { home: saved, build: rebuild() });
+    }
+  }
+
+  if (resource === 'products') {
+    if (m === 'GET') return send(res, 200, products.read() || { products: [] });
+    if (m === 'PUT') {
+      const saved = products.write(await readJson(req));
+      return send(res, 200, { ...saved, build: rebuild() });
     }
   }
 

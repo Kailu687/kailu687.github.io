@@ -1,6 +1,6 @@
 // Turns content files into the public static site:
 //   - one <slug>.html page per published project or post
-//   - the Projects and Blog card grids inside index.html
+//   - the Projects, Products and Blog card grids inside index.html
 //   - sitemap.xml
 // Only files this generator wrote (marked with its generator meta tag) are
 // ever overwritten or removed, so hand-written pages are never clobbered.
@@ -12,6 +12,7 @@ const { render, escapeHtml } = require('./markdown');
 const { sanitize } = require('./sanitize');
 const { enhance } = require('./media');
 const home = require('./home');
+const products = require('./products');
 
 // CMS_SITE_DIR lets tests build into a copy of the site instead of the real one.
 const SITE_DIR = path.resolve(process.env.CMS_SITE_DIR || path.join(__dirname, '..', '..'));
@@ -270,6 +271,7 @@ function build({ adopt = [] } = {}) {
     let html = fs.readFileSync(indexFile, 'utf8');
     html = replaceRegion(html, 'projects', 'card-grid', cardsHtml('projects'));
     html = replaceRegion(html, 'blog', 'card-grid', cardsHtml('blog'));
+    html = products.apply(html);
     html = home.apply(html);
     result.indexUpdated = writeIfChanged(indexFile, html);
   }

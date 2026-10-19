@@ -67,6 +67,7 @@
     [/^#\/(projects|blog)\/edit\/([a-z0-9_-]+)$/, (m) => renderEditor(m[1], m[2])],
     [/^#\/settings$/, renderSettings],
     [/^#\/home$/, renderHome],
+    [/^#\/products$/, renderProducts],
   ];
 
   async function route() {
@@ -116,6 +117,7 @@
         <a class="card big-action" href="#/projects/new"><strong>＋ New project</strong><span class="muted">Specs, build logs, images, diagrams and GIFs.</span></a>
         <a class="card big-action" href="#/blog/new"><strong>＋ New blog post</strong><span class="muted">Write it like a document, drop images anywhere.</span></a>
         <a class="card big-action" href="#/home"><strong>✎ Edit home page</strong><span class="muted">Tagline, typing phrases, About, contact links.</span></a>
+        <a class="card big-action" href="#/products"><strong>＋ Add a product</strong><span class="muted">Apps and tools you've released, like Aurora.</span></a>
         <div class="card"><h2>Your content</h2>
           <p><b style="color:#fff">${count('published')}</b> published · <b style="color:#fff">${count('coming-soon')}</b> coming soon · <b style="color:#fff">${count('draft')}</b> drafts</p>
           <div class="row" style="margin-top:12px"><a class="btn small" href="#/projects">Projects</a><a class="btn small" href="#/blog">Blog</a></div>
@@ -260,6 +262,86 @@
     };
     $('#home-save').onclick = save;
     document.onkeydown = (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's' && $('#home-save')) { e.preventDefault(); save(); } };
+  }
+
+  // ---------- Products ----------
+  const PRODUCT_STATUS = {
+    released: 'Released (card links to its page)',
+    'coming-soon': 'Coming soon (card without a link)',
+    hidden: 'Hidden (not on the site)',
+  };
+  const thumbUrl = (v) => (/^https?:/i.test(v) ? encodeURI(v) : '/' + encodeURI(v)).replace(/'/g, '%27');
+
+  async function renderProducts() {
+    await refresh();
+    const data = await api('GET', '/api/products');
+    view.innerHTML = `
+      <div class="page-title"><div><h1>Products</h1><p>Things you've released, shown as cards in the Products section of the home page, in this order. Each card links to the product's own page.</p></div>
+        <div class="row"><button class="btn" type="button" id="add-product">＋ New product</button><button class="btn primary" type="button" id="products-save">Save</button></div></div>
+      <div class="home-grid" id="products"></div>`;
+
+    const markDirty = () => { dirty = true; };
+    leaveGuard = () => !dirty || confirm('You have unsaved changes. Leave without saving?');
+    const box = $('#products');
+    const empty = () => {
+      if (!$('.product-row', box)) box.innerHTML = '<div class="empty">No products yet. Add your first one.</div>';
+    };
+    const row = (p = { status: 'released', tags: [] }) => {
+      $('.empty', box)?.remove();
+      const d = document.createElement('section');
+      d.className = 'card stack product-row';
+      d.innerHTML = `
+        <div class="row" style="justify-content:space-between"><h2 data-title>${esc(p.name || 'New product')}</h2>
+          <div class="row"><button class="btn small ghost" type="button" data-up title="Move earlier" aria-label="Move earlier">↑</button>
+          <button class="btn small danger" type="button" data-del>Remove</button></div></div>
+        <label class="field"><span class="label">Name</span><input class="input" data-k="name" value="${esc(p.name)}" maxlength="80"></label>
+        <label class="field"><span class="label">Link</span><input class="input" data-k="link" value="${esc(p.link)}" placeholder="https://kailashamarnath.me/Aurora/"><small>The product's own page. The whole card opens it.</small></label>
+        <label class="field"><span class="label">Short description</span><textarea class="input" data-k="summary" rows="3" maxlength="400">${esc(p.summary)}</textarea></label>
+        <label class="field"><span class="label">Tags</span><input class="input" data-k="tags" value="${esc((p.tags || []).join(', '))}" placeholder="Music player, Open source"><small>Up to 3, separated with commas.</small></label>
+        <label class="field"><span class="label">Button text</span><input class="input" data-k="cta" value="${esc(p.cta)}" maxlength="40" placeholder="Open ${esc(p.name || 'it')}"></label>
+        <div class="field"><span class="label">Icon</span>
+          <div class="image-field">
+            <div class="thumb" data-thumb style="${p.icon ? `background-image:url('${thumbUrl(p.icon)}')` : ''}"></div>
+            <input class="input" data-k="icon" value="${esc(p.icon)}" placeholder="https://… or choose an image" aria-label="Icon address">
+            <button class="btn small" type="button" data-pick>Choose</button>
+          </div><small>A square logo works best.</small></div>
+        <label class="field"><span class="label">Visibility</span><select class="input" data-k="status">${Object.entries(PRODUCT_STATUS)
+          .map(([k, v]) => `<option value="${k}"${p.status === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>`;
+      const icon = $('[data-k=icon]', d);
+      const setThumb = () => { $('[data-thumb]', d).style.backgroundImage = icon.value.trim() ? `url('${thumbUrl(icon.value.trim())}')` : ''; };
+      icon.addEventListener('change', setThumb);
+      $('[data-k=name]', d).addEventListener('input', (e) => { $('[data-title]', d).textContent = e.target.value || 'New product'; });
+      $('[data-pick]', d).onclick = async () => {
+        const picked = await pickMedia({ multiple: false, imagesOnly: true, title: 'Choose an icon' });
+        if (picked && picked[0]) { icon.value = picked[0]; setThumb(); markDirty(); }
+      };
+      $('[data-del]', d).onclick = () => {
+        if (!confirm(`Remove ${$('[data-k=name]', d).value || 'this product'}?`)) return;
+        d.remove(); markDirty(); empty();
+      };
+      $('[data-up]', d).onclick = () => { if (d.previousElementSibling) { d.previousElementSibling.before(d); markDirty(); } };
+      box.appendChild(d);
+      return d;
+    };
+    (data.products || []).forEach((p) => row(p));
+    empty();
+    $('#add-product').onclick = () => { const d = row(); markDirty(); $('[data-k=name]', d).focus(); };
+    view.addEventListener('input', markDirty);
+
+    const save = async () => {
+      const list = $$('.product-row', box).map((r) => Object.fromEntries($$('[data-k]', r).map((i) => [i.dataset.k, i.value.trim()])));
+      if (list.some((p) => !p.name)) { toast('Give every product a name, or remove the empty one.', true); return; }
+      $('#products-save').disabled = true;
+      try {
+        const r = await api('PUT', '/api/products', { products: list });
+        dirty = false;
+        reportBuild(r.build);
+        toast('Products saved. Publish when you are ready.');
+        refreshPublishCount();
+      } catch (err) { toast(err.message, true); } finally { $('#products-save').disabled = false; }
+    };
+    $('#products-save').onclick = save;
+    document.onkeydown = (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's' && $('#products-save')) { e.preventDefault(); save(); } };
   }
 
   // ---------- Settings ----------

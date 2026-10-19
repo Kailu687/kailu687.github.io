@@ -147,6 +147,12 @@ a.project-card .card-cta{margin-top:auto;padding-top:10px;color:var(--accent);fo
   color:var(--accent);background:rgba(0,208,255,0.08);border:1px solid rgba(0,208,255,0.22);
 }
 .tag.muted{color:var(--muted);background:rgba(255,255,255,0.04);border-color:var(--glass-border)}
+.product-head{display:flex;gap:14px;align-items:center;margin-bottom:4px}
+.product-icon{
+  width:56px;height:56px;flex-shrink:0;border-radius:14px;object-fit:cover;
+  border:1px solid var(--glass-border);box-shadow:0 4px 18px rgba(0,208,255,0.18);
+}
+a.product-card:hover .product-icon{box-shadow:0 6px 24px rgba(0,208,255,0.35)}
 
 /* ---------- Contact ---------- */
 .contact-list{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:14px}

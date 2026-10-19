@@ -28,6 +28,9 @@ It needs Node.js 18 or newer and nothing else: there is nothing to `npm install`
   - Draft: only in the dashboard.
   - Coming soon: a card on the home page, no page yet.
   - Published: its own page, plus a card.
+- **Products** lists things you've released, like Aurora. Each one is a card in the
+  Products section of the home page that opens the product's own page. Set a product
+  to Coming soon to show it without a link, or Hidden to take it off the site.
 - **Save** (Ctrl+S) keeps your work on this laptop and rebuilds the local copy of the
   site. **Preview** shows the page exactly as visitors will see it.
 - **Publish** (top right) shows every changed file, then commits and pushes them to
@@ -38,6 +41,7 @@ It needs Node.js 18 or newer and nothing else: there is nothing to `npm install`
 | What | Where |
 | --- | --- |
 | Your writing (private, never published) | `cms/content/projects/*.html`, `cms/content/blog/*.html` |
+| Products | `cms/content/products.json` (or the Products tab) |
 | Site-wide settings | `cms/content/site.json` (or the Settings tab) |
 | Previous versions of each file (last 20) | `cms/content/.history/` |
 | Deleted items | `cms/content/.trash/` |

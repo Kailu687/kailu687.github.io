@@ -128,6 +128,7 @@ textarea.input{resize:vertical;min-height:70px}
 .status-pick b{color:#fff;display:block;font-size:14px}
 .status-pick span{color:var(--muted);font-size:12px}
 .image-field{display:flex;gap:10px;align-items:center}
+.image-field .input{flex:1;min-width:0}
 .image-field .thumb{width:56px;height:56px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.04) center/contain no-repeat;flex-shrink:0}
 .save-state{font-size:13px;color:var(--muted)}
 .save-state.dirty{color:var(--warn)}
