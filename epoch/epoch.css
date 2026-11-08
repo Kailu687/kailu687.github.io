@@ -1,0 +1,83 @@
+/* Epoch product page. Builds on /assets/css/site.css; only what the site does not already provide. */
+
+.epoch-hero{padding-top:8px}
+.epoch-hero h1{font-size:clamp(34px,6vw,52px);font-weight:800;margin:10px 0 14px}
+.epoch-hero .lead{max-width:680px}
+.wordmark{display:flex;align-items:center;gap:14px}
+.wordmark img{width:56px;height:56px;border-radius:14px;border:1px solid var(--glass-border);box-shadow:0 4px 18px rgba(0,208,255,0.18);object-fit:cover}
+.wordmark span{font-weight:800;letter-spacing:3px;font-size:22px;color:var(--heading)}
+
+/* Status badges: always carry a text label, never colour alone */
+.status{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;border:1px solid;white-space:nowrap;vertical-align:middle;
+}
+.status.done{color:#6ee7a8;background:rgba(110,231,168,.08);border-color:rgba(110,231,168,.35)}
+.status.wip{color:#ffd166;background:rgba(255,209,102,.08);border-color:rgba(255,209,102,.35)}
+.status.plan{color:#c3b5ff;background:rgba(195,181,255,.08);border-color:rgba(195,181,255,.35)}
+
+.two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:18px}
+.box{padding:18px 20px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border)}
+.box h3{margin-bottom:6px}
+.box p{color:var(--muted);font-size:15px}
+.box.accent-box{border-color:var(--accent-border)}
+
+/* Steps */
+.steps{list-style:none;padding:0;counter-reset:step;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px}
+.steps li{counter-increment:step;margin:0;padding:18px 18px 18px 60px;position:relative;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border)}
+.steps li::before{
+  content:counter(step);position:absolute;left:16px;top:16px;width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+  color:var(--accent);border:1px solid var(--accent-border);background:rgba(0,208,255,0.08);
+}
+.steps h3{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:17px}
+.steps p{color:var(--muted);font-size:15px}
+
+/* Example box for "Let Epoch decide" */
+.example{margin-top:18px;padding:16px 18px;border-radius:12px;background:rgba(0,208,255,0.05);border:1px solid var(--accent-border)}
+.example .k{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600}
+.example blockquote{margin:4px 0 12px;color:var(--heading);font-size:17px}
+.example ul{color:var(--text);font-size:15px}
+
+/* Status table */
+.table-wrap{margin-top:16px}
+table.cap{width:100%;border-collapse:collapse;font-size:15px}
+table.cap caption{text-align:left;color:var(--muted);font-size:14px;padding-bottom:10px}
+table.cap th,table.cap td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--glass-border);vertical-align:top}
+table.cap th{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600}
+table.cap td:first-child{color:var(--heading);font-weight:600;width:34%}
+table.cap td:nth-child(2){white-space:nowrap}
+table.cap td:last-child{color:var(--muted)}
+@media (max-width:640px){
+  table.cap thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  table.cap,table.cap tbody,table.cap tr,table.cap td{display:block;width:100%}
+  table.cap tr{padding:12px 0;border-bottom:1px solid var(--glass-border)}
+  table.cap td{border:0;padding:2px 0}
+  table.cap td:first-child{width:100%}
+}
+
+/* Screenshots */
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:18px}
+.shots figure{border:1px solid var(--glass-border);border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.03)}
+.shots img{width:100%;height:auto}
+.shots figcaption{padding:10px 12px;text-align:left}
+
+/* Download */
+.hash{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;word-break:break-all;color:var(--heading)}
+dl.facts{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin-top:14px;font-size:15px}
+dl.facts dt{color:var(--muted)}
+dl.facts dd{margin:0;min-width:0}
+@media (max-width:480px){dl.facts{grid-template-columns:1fr;gap:0}dl.facts dd{margin-bottom:10px}}
+
+/* FAQ */
+details{border:1px solid var(--glass-border);border-radius:12px;background:rgba(255,255,255,0.03);margin-top:10px}
+details summary{cursor:pointer;padding:14px 18px;font-weight:600;color:var(--heading);min-height:44px}
+details[open] summary{border-bottom:1px solid var(--glass-border)}
+details div{padding:12px 18px 16px;color:var(--muted)}
+
+/* Roadmap */
+.roadmap{list-style:none;padding:0;margin-top:16px;border-left:2px solid var(--glass-border);margin-left:6px}
+.roadmap li{margin:0;padding:0 0 18px 20px;position:relative}
+.roadmap li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--bg-2);border:2px solid var(--accent)}
+.roadmap h3{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:4px}
+.roadmap p{color:var(--muted);font-size:15px}
