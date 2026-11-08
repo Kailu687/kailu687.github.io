@@ -1,6 +1,6 @@
-/* Epoch releases, read live from GitHub Releases. Change REPO to point at another repository. */
+﻿/* Epoch releases, read live from GitHub Releases. Change REPO to point at another repository. */
 (function () {
-  var REPO = 'kailu687/portfolio';
+  var REPO = 'kailu687/epoch';
   var API = 'https://api.github.com/repos/' + REPO + '/releases';
   var PAGE = 'https://github.com/' + REPO + '/releases';
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -36,7 +36,7 @@
           b.href = a.browser_download_url;
           b.textContent = 'Download Epoch ' + rel.tag_name.replace(/^v/, '') + ' for Windows';
           b.setAttribute('download', '');
-          if (note) note.textContent = 'Latest stable release · ' + size(a.size) + ' · ' + date(rel.published_at);
+          if (note) note.textContent = 'Latest stable release Â· ' + size(a.size) + ' Â· ' + date(rel.published_at);
         } else {
           b.href = '/epoch/releases/';
           b.textContent = 'See available builds';
