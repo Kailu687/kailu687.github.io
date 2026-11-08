@@ -14,7 +14,7 @@
   </script>
 
   <title>Epoch: local-first AutoML workbench — Kailash Amarnath</title>
-  <meta name="description" content="Epoch is a local-first AutoML workbench in development: give it a tabular dataset, and it chooses the method, trains, validates on a locked test set and delivers the best validated model it finds. See what is built and what is planned.">
+  <meta name="description" content="Epoch is a local-first AutoML workbench, now in beta: give it a tabular dataset, and it chooses the method, trains, validates on a locked test set and delivers the best validated model it finds. See what is built and what is planned.">
   <meta name="author" content="Kailash Amarnath">
   <link rel="canonical" href="https://kailashamarnath.me/epoch/">
   <meta name="theme-color" content="#001027">
@@ -22,7 +22,7 @@
   <!-- Social previews -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Kailash Amarnath">
-  <meta property="og:title" content="Epoch: local-first AutoML workbench (in development)">
+  <meta property="og:title" content="Epoch: local-first AutoML workbench (beta)">
   <meta property="og:description" content="Give Epoch a dataset. It picks the method, trains, validates on a locked test set and delivers the best validated model it finds. Honest status of what is built and what is planned.">
   <meta property="og:url" content="https://kailashamarnath.me/epoch/">
   <meta property="og:image" content="https://kailashamarnath.me/Images/og-image.jpg">
@@ -83,7 +83,7 @@
       <h1 id="hero-heading">Give it a dataset. Epoch picks the method.</h1>
       <p class="lead">Epoch is a local-first AutoML workbench for tabular data. It analyses your dataset, chooses an approach, trains and tunes candidate models, validates them honestly on a locked test set, and hands back the best validated model it finds, with a report.</p>
       <div class="meta-row">
-        <span class="status wip">In development</span>
+        <span class="status wip">Beta</span>
         <span class="tag muted">Tabular classification &amp; regression</span>
         <span class="tag muted">Windows</span>
         <span class="tag muted">Local-first</span>
@@ -92,85 +92,79 @@
         <a class="btn primary" href="/epoch/download/">Download</a>
         <a class="btn" href="#status">What is built today</a>
       </div>
-      <p class="note">Epoch does not promise the best possible model for every dataset. Some data is too small, mislabelled, or needs domain knowledge, and Epoch is designed to say so instead of manufacturing confidence. Parts of this page describe features still being built; each one is labelled.</p>
+      <p class="note">Epoch does not promise the best possible model for every dataset. Some data is too small, mislabelled, or needs domain knowledge, and Epoch is designed to say so instead of manufacturing confidence. Anything not built yet is labelled Planned.</p>
     </section>
 
     <section id="decide" class="panel reveal" aria-labelledby="decide-heading">
-      <h2 id="decide-heading">Let Epoch decide <span class="status wip">In progress</span></h2>
-      <p>Most people with a spreadsheet are not machine-learning specialists. Describe your data in plain words, or just say you do not know, and Epoch chooses the setup for you and explains each choice.</p>
+      <h2 id="decide-heading">Let Epoch decide <span class="status done">In the 0.2 beta</span></h2>
+      <p>Describe your data in plain words, or just say you do not know, and Epoch chooses the setup and explains each choice. It works offline and asks a question only when it is unsure.</p>
       <div class="example">
         <div class="k">Example (illustrative)</div>
-        <blockquote>“Customer records. I want to know who will leave.”</blockquote>
-        <div class="k">Epoch would decide and explain</div>
+        <blockquote>“Customer records. I want to know who is likely to leave.”</blockquote>
+        <div class="k">Epoch decides and explains</div>
         <ul>
-          <li>the <strong>task</strong> (classification or regression) and the <strong>target</strong> column</li>
-          <li>the <strong>metric</strong> to optimise, and why it suits your data</li>
-          <li>the <strong>split strategy</strong>: stratified, random, grouped or time-ordered</li>
-          <li>the <strong>training budget</strong> and what to favour: accuracy, speed or simplicity</li>
-          <li>which columns to <strong>exclude</strong>, such as IDs or columns that leak the answer</li>
+          <li>what to <strong>predict</strong> and whether it is classification or regression</li>
+          <li>how to <strong>score</strong> models, and how to <strong>split</strong> the data (including same-person or time-ordered data)</li>
+          <li>how much <strong>effort</strong> to spend: Express, Balanced or Deep</li>
+          <li>which columns to <strong>leave out</strong>, such as IDs</li>
         </ul>
-        <p>It asks a question only when it is unsure, and flags low confidence rather than hiding it.</p>
       </div>
-      <p class="note">Status: the Advisor is being built now and is <strong>not in the current development build</strong>. In that build you choose the target and settings yourself; Epoch suggests a target and warns about problems. It is designed to work offline.</p>
+      <p class="note">You can change anything Epoch fills in. The advice is a starting point, and it flags low confidence instead of hiding it.</p>
     </section>
 
     <section id="how" class="panel reveal" aria-labelledby="how-heading">
       <h2 id="how-heading">How it works</h2>
-      <p>The workflow Epoch is built around. Each step shows whether it exists in the current development build.</p>
       <ol class="steps">
-        <li><h3>Import <span class="status done">Implemented</span></h3><p>Bring in a CSV. Excel and Parquet are planned.</p></li>
-        <li><h3>Understand <span class="status done">Implemented</span></h3><p>Profiles every column, finds missing values and duplicates, suggests a target, and warns about likely leakage and class imbalance.</p></li>
-        <li><h3>Plan <span class="status wip">In progress</span></h3><p>Today you pick the task and settings. The Advisor and an automatic planner that works within your time budget are being built.</p></li>
-        <li><h3>Train and tune <span class="status wip">In progress</span></h3><p>Several models train and are compared against a baseline, and you can cancel at any time. Automatic tuning and more model types are being built.</p></li>
-        <li><h3>Validate <span class="status done">Implemented</span></h3><p>Models are selected on a validation set. The test set stays locked and is scored once for the final candidate; any repeat use must be acknowledged and is logged.</p></li>
-        <li><h3>Report <span class="status plan">Planned</span></h3><p>The current build shows metrics, a comparison against a baseline and a confusion matrix in the app. A full HTML and JSON report is planned.</p></li>
-        <li><h3>Try <span class="status plan">Planned</span></h3><p>A panel to load a CSV or fill in a single row and see predictions. Today you can export a bundle with an inference helper.</p></li>
-        <li><h3>Improve with more data <span class="status plan">Planned</span></h3><p>Add new data to an existing model, check it matches the old schema and has not drifted, refit, and compare old against new on the same locked test.</p></li>
-        <li><h3>Recommendations <span class="status plan">Planned</span></h3><p>Diagnose over-fitting, imbalance, small data or suspected label noise, and suggest what to change or which kind of data to add.</p></li>
+        <li><h3>Import</h3><p>Bring in a CSV. Epoch checks it and keeps your original untouched.</p></li>
+        <li><h3>Understand</h3><p>Profiles every column and warns about missing values, duplicates, imbalance and likely leakage.</p></li>
+        <li><h3>Plan</h3><p>Let Epoch decide, or choose yourself: target, score, split and effort.</p></li>
+        <li><h3>Train and tune</h3><p>Many model types are screened, the promising ones are tuned and cross-validated within a time budget, and an ensemble is kept only when the gain is meaningful.</p></li>
+        <li><h3>Validate</h3><p>The test set stays locked. It is scored once for the final model, and any repeat use is logged.</p></li>
+        <li><h3>Report</h3><p>An HTML report with the results, the limits and what to try next.</p></li>
+        <li><h3>Try</h3><p>Load a CSV or enter one example and see the predictions.</p></li>
+        <li><h3>Improve with more data</h3><p>Add a new dataset. Epoch checks it fits and has not drifted, retrains on old and new, and compares both models on the same locked test rows plus a held-out slice of the new data.</p></li>
+        <li><h3>Recommendations</h3><p>Suggests what to change: more rows or more columns, weak classes, instability, leakage.</p></li>
       </ol>
     </section>
 
     <section id="screens" class="panel reveal" aria-labelledby="screens-heading">
-      <h2 id="screens-heading">The development build</h2>
-      <p>Screenshots of the current Windows development build. They use a synthetic demo dataset generated by the app, not real customer data.</p>
+      <h2 id="screens-heading">The app</h2>
+      <p>Screenshots of the 0.2 beta for Windows. They use synthetic demo data generated for testing, so the scores shown are not benchmarks.</p>
       <div class="shots">
-        <figure><button class="zoomable" type="button" data-full="/epoch/img/epoch-explorer.png" aria-label="Enlarge image: dataset explorer"><picture><source srcset="/epoch/img/epoch-explorer.webp" type="image/webp"><img src="/epoch/img/epoch-explorer.png" alt="Epoch dataset explorer showing a 500-row demo customers table with a column profile; the customer_id column is marked unique per row" width="1400" height="967" loading="lazy" decoding="async"></picture></button><figcaption>Dataset explorer: column profile with warnings (synthetic demo data).</figcaption></figure>
-        <figure><button class="zoomable" type="button" data-full="/epoch/img/epoch-results.png" aria-label="Enlarge image: results and comparison"><picture><source srcset="/epoch/img/epoch-results.webp" type="image/webp"><img src="/epoch/img/epoch-results.png" alt="Epoch results screen comparing baseline, logistic regression and random forest on validation macro-F1, with a confusion matrix and a single-use test evaluation button" width="1400" height="902" loading="lazy" decoding="async"></picture></button><figcaption>Results: candidates against a baseline on validation; test set not yet used (synthetic demo data, scores are not benchmarks).</figcaption></figure>
-        <figure><button class="zoomable" type="button" data-full="/epoch/img/epoch-export.png" aria-label="Enlarge image: export model"><picture><source srcset="/epoch/img/epoch-export.webp" type="image/webp"><img src="/epoch/img/epoch-export.png" alt="Epoch export screen with a pickle security warning and ONNX and safe model format listed as planned" width="1400" height="967" loading="lazy" decoding="async"></picture></button><figcaption>Export: a security warning about pickle files, and planned items shown as planned.</figcaption></figure>
+        <figure><button class="zoomable" type="button" data-full="/epoch/img/epoch-advisor.png" aria-label="Enlarge image: Let Epoch decide"><picture><source srcset="/epoch/img/epoch-advisor.webp" type="image/webp"><img src="/epoch/img/epoch-advisor.png" alt="Epoch task screen: a plain-language description, the Let Epoch decide button and the choices Epoch filled in" width="1770" height="1346" loading="lazy" decoding="async"></picture></button><figcaption>Let Epoch decide, from a plain-language description (synthetic demo data).</figcaption></figure>
+        <figure><button class="zoomable" type="button" data-full="/epoch/img/epoch-results.png" aria-label="Enlarge image: results and advice"><picture><source srcset="/epoch/img/epoch-results.webp" type="image/webp"><img src="/epoch/img/epoch-results.png" alt="Epoch results screen with a cross-validated comparison against a baseline and a leakage warning in the advice" width="1650" height="1140" loading="lazy" decoding="async"></picture></button><figcaption>Results and advice, with a leakage warning (synthetic demo data; training was still in progress).</figcaption></figure>
+        <figure><button class="zoomable" type="button" data-full="/epoch/img/epoch-improve.png" aria-label="Enlarge image: improve a model"><picture><source srcset="/epoch/img/epoch-improve.webp" type="image/webp"><img src="/epoch/img/epoch-improve.png" alt="Epoch improve screen comparing an old and a retrained model on the same locked test set, recommending keeping the old model" width="1770" height="1346" loading="lazy" decoding="async"></picture></button><figcaption>Improve a model: old against new on the same test rows (synthetic demo data).</figcaption></figure>
       </div>
     </section>
 
     <section id="status" class="panel reveal" aria-labelledby="status-heading">
       <h2 id="status-heading">What is built and what is not</h2>
-      <p>Source: the project's own status notes, last checked 8 November 2026. “Implemented” means it exists in the 0.1.0 development build and was exercised by the project's tests; it does not mean it is polished or tested on other machines.</p>
+      <p>Last checked 8 November 2026 against version 0.2.0 beta 1. “Implemented” means it ships in that beta and was tested; it does not mean it is polished or tested on every machine.</p>
       <div class="table-wrap">
         <table class="cap">
           <caption>Capability status</caption>
           <thead><tr><th scope="col">Capability</th><th scope="col">Status</th><th scope="col">Notes</th></tr></thead>
           <tbody>
-            <tr><td>CSV import, profiling, target suggestion</td><td><span class="status done">Implemented</span></td><td></td></tr>
-            <tr><td>Validation and leakage warnings</td><td><span class="status done">Implemented</span></td><td>Leakage probe is a heuristic, not a guarantee.</td></tr>
-            <tr><td>Seeded stratified or random split; preprocessing fit on training data only</td><td><span class="status done">Implemented</span></td><td></td></tr>
-            <tr><td>Train and compare several models</td><td><span class="status done">Implemented</span></td><td>Compared against a baseline on validation data.</td></tr>
-            <tr><td>Cancel training, live resource readout</td><td><span class="status done">Implemented</span></td><td></td></tr>
-            <tr><td>Locked test set, single-use evaluation</td><td><span class="status done">Implemented</span></td><td>Repeat use needs explicit acknowledgement and is logged.</td></tr>
-            <tr><td>Experiment history, model registry, export bundle</td><td><span class="status done">Implemented</span></td><td>Load exported bundles only from sources you trust.</td></tr>
-            <tr><td>Desktop app and command line (Windows)</td><td><span class="status done">Implemented</span></td><td>Desktop app and command line. Early builds are unsigned and tested on one machine.</td></tr>
-            <tr><td>“Let Epoch decide” Advisor</td><td><span class="status wip">In progress</span></td><td>Being built now; not in the current build.</td></tr>
-            <tr><td>Automatic tuning, more models, time budgets</td><td><span class="status wip">In progress</span></td><td>The AutoML engine is being built now; not in the current build.</td></tr>
-            <tr><td>Combining models for better results</td><td><span class="status wip">In progress</span></td><td>Not in the current build.</td></tr>
-            <tr><td>Group-aware and time-ordered splits</td><td><span class="status wip">In progress</span></td><td>Not in the current build.</td></tr>
-            <tr><td>Improve a model with more data</td><td><span class="status plan">Planned</span></td><td></td></tr>
-            <tr><td>Recommendations for what to change or add</td><td><span class="status plan">Planned</span></td><td></td></tr>
-            <tr><td>HTML and JSON report, “try your model” panel</td><td><span class="status plan">Planned</span></td><td></td></tr>
+            <tr><td>Tabular classification and regression from CSV</td><td><span class="status done">Implemented</span></td><td></td></tr>
+            <tr><td>“Let Epoch decide” Advisor</td><td><span class="status done">Implemented</span></td><td>Offline; asks only when unsure.</td></tr>
+            <tr><td>Model search, tuning and cross-validation</td><td><span class="status done">Implemented</span></td><td>Express, Balanced and Deep time budgets.</td></tr>
+            <tr><td>Ensembling</td><td><span class="status done">Implemented</span></td><td>Kept only when the gain is meaningful.</td></tr>
+            <tr><td>Locked test set, leakage warnings</td><td><span class="status done">Implemented</span></td><td>Leakage checks are heuristics, so they warn rather than promise.</td></tr>
+            <tr><td>HTML report and recommendations</td><td><span class="status done">Implemented</span></td><td></td></tr>
+            <tr><td>Try your model</td><td><span class="status done">Implemented</span></td><td>CSV or one example.</td></tr>
+            <tr><td>Improve a model with more data</td><td><span class="status done">Implemented</span></td><td>Compatibility and drift check, then old against new on the same test.</td></tr>
+            <tr><td>Export with report</td><td><span class="status done">Implemented</span></td><td>Load exported models only from sources you trust.</td></tr>
+            <tr><td>Windows app (beta)</td><td><span class="status done">Implemented</span></td><td>Unsigned beta; expect rough edges.</td></tr>
+            <tr><td>GPU use, pause and resume</td><td><span class="status plan">Planned</span></td><td></td></tr>
             <tr><td>Excel and Parquet import</td><td><span class="status plan">Planned</span></td><td></td></tr>
-            <tr><td>Safer export format (for example ONNX)</td><td><span class="status plan">Planned</span></td><td></td></tr>
-            <tr><td>Time series, audio, images, text</td><td><span class="status plan">Planned</span></td><td>Each needs its own pipeline, splitting and metrics.</td></tr>
-            <tr><td>Signed installer, clean-machine testing, GPU use</td><td><span class="status plan">Planned</span></td><td></td></tr>
+            <tr><td>Safer (non-pickle) export format</td><td><span class="status plan">Planned</span></td><td></td></tr>
+            <tr><td>Time series, audio, images, text</td><td><span class="status plan">Planned</span></td><td>Each needs its own pipeline and metrics.</td></tr>
+            <tr><td>Monitoring a deployed model for drift</td><td><span class="status plan">Planned</span></td><td></td></tr>
+            <tr><td>Code signing and an installer</td><td><span class="status plan">Planned</span></td><td></td></tr>
           </tbody>
         </table>
       </div>
-      <p class="note">No benchmark results are published yet. When Epoch is compared against other tools, only numbers that were actually measured, under equal budgets, will appear here.</p>
+      <p class="note">No benchmark results are published yet. When Epoch is compared with other tools, only numbers that were actually measured, under equal budgets, will appear here.</p>
     </section>
 
     <section id="trust" class="panel reveal" aria-labelledby="trust-heading">
@@ -192,17 +186,17 @@
         <div class="cta-row"><a class="btn primary" data-latest-stable href="/epoch/download/">Checking latest release…</a> <a class="btn" href="/epoch/releases/">All versions and notes</a></div>
         <p class="note" data-latest-note>Looking up the latest stable release.</p>
       </div>
-      <p class="note">Epoch is in development. Builds are unsigned, so Windows SmartScreen may warn, and early builds are missing features marked In progress or Planned above. Exported models should only be loaded from sources you trust.</p>
+      <p class="note">Epoch is in beta. Builds are unsigned, so Windows SmartScreen may warn. Exported models should only be loaded from sources you trust.</p>
     </section>
 
     <section id="faq" class="panel reveal" aria-labelledby="faq-heading">
       <h2 id="faq-heading">FAQ</h2>
       <details><summary>Will Epoch always find the best model?</summary><div>No. It searches within a budget you set and reports the best validated model it found. If the data is too small, mislabelled or needs domain knowledge, Epoch is meant to tell you so.</div></details>
-      <details><summary>What kinds of data does it support?</summary><div>Today: tabular data from CSV files, for classification and regression. Time series, audio, images and text are planned, and a supported file format does not by itself mean a supported task.</div></details>
+      <details><summary>What kinds of data does it support?</summary><div>Today: tabular data from CSV files, for classification and regression. Excel and Parquet, time series, audio, images and text are planned.</div></details>
       <details><summary>Does it need the internet or an account?</summary><div>It is designed to run locally with no account and no telemetry. Your dataset is meant to stay on your machine.</div></details>
-      <details><summary>Does “Let Epoch decide” use a cloud AI?</summary><div>No. It is designed to work offline, with no cloud AI required.</div></details>
-      <details><summary>Is the development build safe to run?</summary><div>Early builds are unsigned and were tested on one machine, so treat them as a preview. Only load exported models you created or trust.</div></details>
-      <details><summary>Is Epoch open source? Is there a price?</summary><div>No public source repository or support channel exists yet, and no pricing has been announced. Contact me below if you want to talk about it.</div></details>
+      <details><summary>Does “Let Epoch decide” use a cloud AI?</summary><div>No. The Advisor runs offline on your machine.</div></details>
+      <details><summary>Is the beta safe to run?</summary><div>Early builds are unsigned and were tested on one machine, so treat them as a preview. Only load exported models you created or trust.</div></details>
+      <details><summary>Is Epoch open source?</summary><div>The source code is public at <a href="https://github.com/kailu687/epoch" target="_blank" rel="noopener">github.com/kailu687/epoch</a>. No pricing has been announced. Contact me below with questions.</div></details>
       <details><summary>Where do I get older versions?</summary><div>On the <a href="/epoch/releases/">releases page</a>, which lists every version with its notes.</div></details>
     </section>
 
@@ -210,17 +204,16 @@
       <h2 id="roadmap-heading">Roadmap</h2>
       <p>In order of intent, not with dates.</p>
       <ol class="roadmap">
-        <li><h3>Tabular v0.1 <span class="status done">Implemented</span></h3><p>CSV classification and regression, locked test set, export, desktop app.</p></li>
-        <li><h3>AutoML engine and Advisor <span class="status wip">In progress</span></h3><p>“Let Epoch decide”, automatic tuning, more models, budgets, smarter splits, combining models.</p></li>
-        <li><h3>Improve, recommend, report <span class="status plan">Planned</span></h3><p>Improve with more data, recommendations, HTML report, try-your-model, Excel and Parquet, safer export.</p></li>
-        <li><h3>Packaging and release <span class="status plan">Planned</span></h3><p>Clean-machine testing, code signing, installer, and a measured benchmark against other tools under equal budgets.</p></li>
-        <li><h3>Beyond tabular <span class="status plan">Planned</span></h3><p>Time series and signals, audio, then images and text; later multimodal, monitoring and remote workers.</p></li>
+        <li><h3>Tabular AutoML <span class="status done">In the 0.2 beta</span></h3><p>Let Epoch decide, search and tuning, report, try, improve, recommendations.</p></li>
+        <li><h3>Polish and release <span class="status plan">Planned</span></h3><p>Clean-machine testing, code signing, an installer, a stable release, and a measured benchmark against other tools under equal budgets.</p></li>
+        <li><h3>More data and safer export <span class="status plan">Planned</span></h3><p>Excel and Parquet, a non-pickle export format, GPU use, pause and resume.</p></li>
+        <li><h3>Beyond tabular <span class="status plan">Planned</span></h3><p>Time series and signals, audio, then images and text; later monitoring after deployment.</p></li>
       </ol>
     </section>
 
     <section id="contact" class="panel reveal" aria-labelledby="contact-heading">
       <h2 id="contact-heading">Contact</h2>
-      <p>Questions about Epoch, or want to try the development build?</p>
+      <p>Questions about Epoch, or want to try the beta?</p>
       <ul class="contact-list">
         <li><a href="mailto:kailash.dak2007@gmail.com"><span class="label">Email</span>kailash.dak2007@gmail.com</a></li>
         <li><a href="https://www.linkedin.com/in/kailash-amarnath-b248b8273" target="_blank" rel="noopener"><span class="label">LinkedIn</span>View profile ↗</a></li>
@@ -242,4 +235,5 @@
   <script src="/assets/js/site.js" defer></script>
 </body>
 </html>
+
 

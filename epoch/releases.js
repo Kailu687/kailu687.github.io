@@ -28,19 +28,25 @@
   // Every [data-latest-stable] link/button points straight at the latest STABLE release file.
   var latestEls = document.querySelectorAll('[data-latest-stable]');
   if (latestEls.length) {
-    get(API + '/latest').then(function (rel) { // GitHub's "latest" never returns prereleases or drafts
+    // GitHub's "latest" never returns prereleases or drafts; with no stable release yet, offer the newest beta, labelled as such.
+    get(API + '/latest').then(function (rel) {
+      if (rel && pick(rel.assets)) return rel;
+      return get(API + '?per_page=10').then(function (all) {
+        return (all || []).filter(function (r) { return !r.draft && pick(r.assets); })[0] || null;
+      });
+    }).then(function (rel) {
       var a = rel && pick(rel.assets);
       latestEls.forEach(function (b) {
         var note = b.parentNode.querySelector('[data-latest-note]') || document.querySelector('[data-latest-note]');
         if (a) {
           b.href = a.browser_download_url;
-          b.textContent = 'Download Epoch ' + rel.tag_name.replace(/^v/, '') + ' for Windows';
+          b.textContent = 'Download Epoch ' + rel.tag_name.replace(/^v/, '') + (rel.prerelease ? ' (beta)' : '') + ' for Windows';
           b.setAttribute('download', '');
-          if (note) note.textContent = 'Latest stable release Â· ' + size(a.size) + ' Â· ' + date(rel.published_at);
+          if (note) note.textContent = (rel.prerelease ? 'Beta, unsigned; no stable release yet' : 'Latest stable release') + ' - ' + size(a.size) + ' - ' + date(rel.published_at);
         } else {
           b.href = '/epoch/releases/';
           b.textContent = 'See available builds';
-          if (note) note.textContent = 'There is no stable release yet. Development builds, if any, are listed on the releases page.';
+          if (note) note.textContent = 'There is no stable release yet. Betas, if any, are listed on the releases page.';
         }
       });
     }).catch(function () {
@@ -60,13 +66,13 @@
         if (i === 0) d.open = true;
         var s = el('summary');
         s.appendChild(el('strong', null, r.name || r.tag_name));
-        var chip = el('span', 'status ' + (r.prerelease ? 'wip' : 'done'), r.prerelease ? 'Development build' : 'Stable');
+        var chip = el('span', 'status ' + (r.prerelease ? 'wip' : 'done'), r.prerelease ? 'Beta' : 'Stable');
         chip.style.marginLeft = '10px';
         s.appendChild(chip);
         s.appendChild(el('span', 'rel-date', ' ' + date(r.published_at)));
         d.appendChild(s);
         var body = el('div');
-        if (r.prerelease) body.appendChild(el('p', 'note', 'Development build: unsigned and for evaluation. It may be missing features described on the Epoch page.'));
+        if (r.prerelease) body.appendChild(el('p', 'note', 'Beta: unsigned and for evaluation. It may be missing features described on the Epoch page.'));
         (r.body || 'No release notes.').split(/\n{2,}/).forEach(function (para) {
           var lines = para.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
           if (lines.every(function (l) { return /^[-*] /.test(l); })) {
