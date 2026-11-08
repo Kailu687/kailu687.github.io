@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
+
+  <title>Vircator Horn Designer — Kailash Amarnath</title>
+  <meta name="description" content="Design a TM01-to-TE11 mode-converting corrugated horn for a vircator at any frequency: full dimensions, mode-cutoff checks, the simulated conversion band and an Ansys HFSS build script.">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/horn-designer.html">
+  <meta name="theme-color" content="#001027">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="Vircator Horn Designer">
+  <meta property="og:description" content="Mode-converting corrugated horn for vircators, scaled to any frequency, with HFSS-backed limits stated plainly.">
+  <meta property="og:url" content="https://kailashamarnath.me/horn-designer.html">
+
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+  <style>
+    .hd{--mono:"JetBrains Mono",ui-monospace,monospace;--metal:#22344a;--air:#020814;--curve:#00d0ff;--warm:#ffb454;--good:#4fd18b;--warn:#ffb454;--bad:#ff6b6b}
+    .hd .tool{display:grid;grid-template-columns:280px minmax(0,1fr);gap:20px;align-items:start;margin-top:24px}
+    @media (max-width:860px){.hd .tool{grid-template-columns:minmax(0,1fr)}}
+    .hd .box{padding:20px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);min-width:0}
+    .hd .box h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin:0 0 12px}
+    .hd form{display:grid;gap:14px}
+    .hd label{display:grid;gap:6px;font-size:14px;font-weight:600;color:var(--heading)}
+    .hd label small{font-weight:400;color:var(--muted)}
+    .hd input{font:500 16px var(--mono);padding:10px 12px;border-radius:8px;border:1px solid var(--glass-border);background:rgba(0,0,0,0.35);color:var(--heading);width:100%}
+    .hd input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .hd .results{display:grid;gap:16px;min-width:0}
+    .hd .limits{border-color:rgba(255,180,84,0.45);background:rgba(255,180,84,0.06)}
+    .hd .limits h2{color:var(--warm)}
+    .hd .limits ul{margin:0;padding-left:18px;display:grid;gap:8px}
+    .hd .limits li{color:var(--text)}
+    .hd .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+    .hd .stat b{display:block;font:500 22px var(--mono);color:var(--heading);font-variant-numeric:tabular-nums}
+    .hd .stat span{font-size:13px;color:var(--muted)}
+    .hd .two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px}
+    @media (max-width:1000px){.hd .two{grid-template-columns:minmax(0,1fr)}}
+    .hd svg{display:block;width:100%;height:auto}
+    .hd .tick{fill:var(--muted);font:11px var(--mono)} .hd .lab{fill:var(--muted);font:12px Inter,sans-serif} .hd .grid{stroke:rgba(255,255,255,0.08)}
+    .hd table{width:100%;border-collapse:collapse;font-size:14px}
+    .hd table,.hd td,.hd tr{border-left:0;border-right:0;border-top:0;background:none}
+    .hd td{padding:7px 0;border-bottom:1px solid var(--glass-border);vertical-align:top;color:var(--text)}
+    .hd td:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;padding-left:12px;color:var(--heading)}
+    .hd tr:last-child td{border-bottom:0}
+    .hd .checks{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+    .hd .checks li{display:flex;gap:10px;align-items:baseline}
+    .hd .dot{width:9px;height:9px;border-radius:50%;flex:none}
+    .hd .dot.good{background:var(--good)} .hd .dot.warn{background:var(--warn)} .hd .dot.bad{background:var(--bad)}
+    .hd .hd-note{font-size:14px;color:var(--muted);margin:10px 0 0}
+    .hd pre{background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:8px;padding:12px;overflow:auto;max-height:420px;font:12px/1.45 var(--mono);color:var(--text);margin-top:10px}
+    .hd details summary{cursor:pointer;font-weight:600;color:var(--heading)}
+    .hd .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:8px}
+    .hd .legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px}
+    .hd .copy{margin-top:10px}
+  </style>
+</head>
+<body class="content-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Kailash, home">
+      <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+      <span class="logo">KAILASH</span>
+      <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="links" id="nav-links" aria-label="Main">
+      <a href="./#home">Home</a>
+      <a href="./#about">About</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products" aria-current="page">Products</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" class="container hd">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="./">Home</a></li>
+        <li><a href="./#products">Products</a></li>
+        <li><span aria-current="page">Vircator Horn Designer</span></li>
+      </ol>
+    </nav>
+
+    <div class="page-title">
+      <div>
+        <h1>Vircator Horn Designer</h1>
+        <div class="meta-row"><span class="tag">HPM</span><span class="tag muted">Antennas</span><span class="tag muted">Ansys HFSS</span><span class="tag muted">Research tool</span></div>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top:14px">A virtual cathode oscillator (vircator) radiates the TM01 mode, which has a null on boresight. This corrugated horn converts TM01 to TE11 inside its own grooves: the groove centres are offset sideways by δ·sin(2πz/Λ<sub>B</sub>). Enter your vircator's frequency and get the full design, scaled exactly from the HFSS-simulated 3.665 GHz horn.</p>
+
+    <div class="tool">
+      <div class="box">
+        <h2>Your vircator</h2>
+        <form id="form">
+          <label for="f">Frequency (GHz)<input id="f" type="number" step="0.001" min="0.3" max="100" value="3.665"></label>
+          <button class="btn primary" id="go" type="submit">Design horn</button>
+          <p class="hd-note" style="margin:0">Every length is multiplied by 3.665 / f. A metal horn obeys Maxwell's equations exactly under this scaling, so the simulated performance carries over unchanged.</p>
+        </form>
+      </div>
+
+      <div class="results">
+        <section class="box limits" aria-labelledby="lim-h">
+          <h2 id="lim-h">Limits, read these first</h2>
+          <ul id="limits"></ul>
+        </section>
+
+        <section class="box" aria-live="polite">
+          <h2>At your frequency</h2>
+          <div class="stats" id="stats"></div>
+        </section>
+
+        <section class="box">
+          <h2>Longitudinal section (to scale, groove offset drawn ×3)</h2>
+          <div style="overflow-x:auto"><svg id="sec" viewBox="0 0 900 260" role="img" aria-label="Horn cross-section"></svg></div>
+        </section>
+
+        <div class="two">
+          <section class="box">
+            <h2>Simulated TM01 → TE11 conversion</h2>
+            <svg id="plot" viewBox="0 0 520 300" role="img" aria-label="Simulated conversion against frequency"></svg>
+            <div class="legend"><span><i style="background:var(--curve)"></i>HFSS converter simulation, scaled to your frequency</span><span><i style="background:rgba(255,180,84,0.35);height:9px"></i>≥50 % band</span></div>
+          </section>
+          <section class="box">
+            <h2>Dimensions</h2>
+            <table id="dims"></table>
+          </section>
+        </div>
+
+        <section class="box">
+          <h2>Checks</h2>
+          <ul class="checks" id="checks"></ul>
+        </section>
+
+        <section class="box">
+          <h2>Ansys HFSS build script</h2>
+          <details><summary>Converter model for AEDT (Automation → Run Script)</summary>
+            <p class="hd-note">Builds the converter section as a half model with two 2-mode wave ports and a frequency sweep around your frequency. It does not solve. Conversion is |S(P2:1,P1:2)|². The project is saved next to the script.</p>
+            <button class="btn copy" id="copy" type="button">Copy script</button>
+            <pre id="script"></pre>
+          </details>
+        </section>
+
+        <section class="box">
+          <h2>About the design</h2>
+          <p class="hd-note" style="margin-top:0">The reference horn was simulated in Ansys HFSS 2025 R2 at 3.665 GHz. In the stand-alone converter, 75 % of the TM01 power converts to TE11, against 0.1 % without the groove offset. In the full horn fed with TM01, the on-axis realized gain is 13.65 dBi, against −13.87 dBi for the same horn without the offset. These are simulation results on a mesh that did not fully converge. No hardware has been built.</p>
+          <p class="hd-note">Research by Kailash A and Prof. Richards Joe Stanislaus, VIT Chennai.</p>
+        </section>
+      </div>
+    </div>
+
+    <div class="cta-row" style="margin-top:40px">
+      <a class="btn" href="./#products">← All products</a>
+      <a class="btn primary" href="./#contact">Get in touch</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Kailash Amarnath</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </footer>
+
+<script type="text/plain" id="tpl"># horn_build_aedt.py - run INSIDE AEDT 2025 R2:  Automation -> Run Script -> pick this file
+# Builds the vircator mode-converting corrugated horn models with the native AEDT API
+# Model building only; analysis is by hand (HFSS_Guide.pdf).
+#
+# Set WHAT below:  "cell"  -> one period, Eigenmode, periodic phase variable phs
+#                  "conv"  -> straight converter, 2 wave ports (2 modes each)
+#                  "horn"  -> full horn + air box + radiation boundary (COMPACT=True fits Student 64k tets)
+# A log is written next to this script: horn_build_log.txt  -> send it to me if anything fails.
+import os, traceback
+
+WHAT = "conv"
+LAMB = 330.0      # beat length in mm (replace with your result)
+DELTA = 3.0       # groove shift amplitude in mm (0 = plain-horn baseline; also a design variable)
+COMPACT = True    # smaller horn for the Student mesh limit
+F0 = 4.0          # GHz
+
+WD = os.path.dirname(os.path.abspath(__file__)) if "__file__" in dir() else os.path.expanduser("~")
+LOG = os.path.join(WD, "horn_build_log.txt")
+log = []
+def L(*a):
+    log.append(" ".join(str(x) for x in a))
+
+C = 299.792458
+lam = C / F0
+a = 34.0
+p = round(lam / 8, 3)
+tw = round(0.25 * p, 3)
+g = round(p - tw, 3)
+d0 = round(lam / 4, 3)
+d_in = 2.0   # shallow start: smooth-wall TM01 enters without reflection
+N_match = 5
+L_smooth = 30.0
+N_conv = max(1, int(round(LAMB / p)))
+R_ap = round((1.0 if COMPACT else 1.5) * lam, 2)
+L_flare = 150.0 if COMPACT else 300.0
+
+def mm(x):
+    return "%gmm" % x
+
+try:
+    oDesktop.RestoreWindow()
+    proj = oDesktop.NewProject()
+    dname = {"cell": "Horn_Cell", "conv": "Horn_Conv2", "horn": "Horn_Full"}[WHAT]
+    stype = "Eigenmode" if WHAT == "cell" else "HFSS Modal Network"
+    proj.InsertDesign("HFSS", dname, stype, "")
+    des = proj.SetActiveDesign(dname)
+    ed = des.SetActiveEditor("3D Modeler")
+    ed.SetModelUnits(["NAME:Units Parameter", "Units:=", "mm", "Rescale:=", False])
+    L("design", dname, stype)
+
+    def var(name, value):
+        des.ChangeProperty(["NAME:AllTabs", ["NAME:LocalVariableTab",
+            ["NAME:PropServers", "LocalVariables"],
+            ["NAME:NewProps", ["NAME:" + name, "PropType:=", "VariableProp", "UserDef:=", True, "Value:=", value]]]])
+    var("delta", mm(DELTA))
+    var("LamB", mm(LAMB))
+
+    def attrs(name):
+        return ["NAME:Attributes", "Name:=", name, "Flags:=", "", "Color:=", "(143 175 143)",
+                "Transparency:=", 0.6, "PartCoordinateSystem:=", "Global", "UDMId:=", "",
+                "MaterialValue:=", "\"vacuum\"", "SurfaceMaterialValue:=", "\"\"", "SolveInside:=", True,
+                "IsMaterialEditable:=", True, "UseMaterialAppearance:=", False, "IsLightweight:=", False]
+
+    def cyl(name, x, z, r, h):
+        ed.CreateCylinder(["NAME:CylinderParameters", "XCenter:=", x, "YCenter:=", "0mm", "ZCenter:=", mm(z),
+                           "Radius:=", mm(r), "Height:=", mm(h), "WhichAxis:=", "Z", "NumSides:=", "0"], attrs(name))
+        return name
+
+    def cone(name, z, r1, r2, h):
+        ed.CreateCone(["NAME:ConeParameters", "XCenter:=", "0mm", "YCenter:=", "0mm", "ZCenter:=", mm(z),
+                       "WhichAxis:=", "Z", "Height:=", mm(h), "BottomRadius:=", mm(r1), "TopRadius:=", mm(r2)],
+                      attrs(name))
+        return name
+
+    names = []
+    def groove(z0, r, d, shifted):
+        zc = z0 + g / 2
+        x = "delta*sin(2*3.14159265*%gmm/LamB)" % zc if shifted else "0mm"
+        names.append(cyl("gr%d" % len(names), x, z0, r + d, g))
+
+    def throat(z_start):
+        names.append(cyl("body", "0mm", z_start, a, L_smooth))
+        z = z_start + L_smooth
+        n_tot = N_match + N_conv
+        names.append(cyl("bore", "0mm", z, a, n_tot * p))
+        for n in range(n_tot):
+            z0 = z + n * p + tw / 2
+            if n < N_match:
+                groove(z0, a, d_in + (d0 - d_in) * n / (N_match - 1.0), False)
+            else:
+                groove(z0, a, d0, True)
+        return z + n_tot * p
+
+    if WHAT == "cell":
+        var("phs", "30deg")
+        names.append(cyl("body", "0mm", 0, a, p))
+        names.append(cyl("gr0", "0mm", tw / 2, a + d0, g))
+        z_end = p
+    elif WHAT == "conv":
+        z = throat(0.0)
+        names.append(cyl("out", "0mm", z, a, L_smooth))
+        z_end = z + L_smooth
+    else:
+        z = throat(0.0)
+        names.append(cone("flare", z, a, R_ap, L_flare))
+        nf = int(L_flare // p)
+        for n in range(nf - 1):
+            z0 = z + n * p + tw / 2
+            groove(z0, a + (R_ap - a) * (z0 - z) / L_flare, d0, False)
+        z_end = z + L_flare
+    L("objects", len(names), "z_end", z_end)
+
+    ed.Unite(["NAME:Selections", "Selections:=", ",".join(names)], ["NAME:UniteParameters", "KeepOriginals:=", False])
+    ed.Split(["NAME:Selections", "Selections:=", "body", "NewPartsModelFlag:=", "Model"],
+             ["NAME:SplitToParameters", "SplitPlane:=", "ZX", "WhichSide:=", "PositiveOnly", "ToolType:=", "PlaneTool",
+              "ToolEntityID:=", -1, "SplitCrossingObjectsOnly:=", False, "DeleteInvalidObjects:=", True])
+    L("united + split ok")
+
+    def face_at(body, x, y, z):
+        return ed.GetFaceByPosition(["NAME:FaceParameters", "BodyName:=", body,
+                                     "XPosition:=", mm(x), "YPosition:=", mm(y), "ZPosition:=", mm(z)])
+
+    bnd = des.GetModule("BoundarySetup")
+    f_sym = face_at("body", 0, 0, min(z_end / 2.0, 10.0))     # axis point lies on the y=0 cut face
+    f_lo = face_at("body", 5, 5, 0)
+    L("faces sym/lo", f_sym, f_lo)
+
+    if WHAT == "cell":
+        f_hi = face_at("body", 5, 5, p)
+        bnd.AssignSymmetry(["NAME:SymH", "Faces:=", [f_sym], "IsPerfectE:=", False])
+        bnd.AssignPrimary(["NAME:Primary", "Faces:=", [f_lo], ["NAME:CoordSysVector", "Origin:=", ["0mm", "0mm", "0mm"],
+                           "UPos:=", ["10mm", "0mm", "0mm"]], "ReverseV:=", False])
+        bnd.AssignSecondary(["NAME:Secondary", "Faces:=", [f_hi], ["NAME:CoordSysVector", "Origin:=", ["0mm", "0mm", mm(p)],
+                             "UPos:=", ["10mm", "0mm", mm(p)]], "ReverseV:=", True, "Primary:=", "Primary",
+                             "PhaseDelay:=", "InputPhaseDelay", "Phase:=", "phs"])
+        des.GetModule("AnalysisSetup").InsertSetup("HfssEigen", ["NAME:Eigen1", "MinimumFrequency:=", "2GHz",
+            "NumModes:=", 6, "MaxDeltaFreq:=", 1, "ConvergeOnRealFreq:=", False, "MaximumPasses:=", 10,
+            "MinimumPasses:=", 1, "MinimumConvergedPasses:=", 1, "PercentRefinement:=", 30, "IsEnabled:=", True,
+            "BasisOrder:=", 1, "DoLambdaRefine:=", True, "DoMaterialLambda:=", True, "SetLambdaTarget:=", False,
+            "Target:=", 0.4, "UseMaxTetIncrease:=", False])
+    else:
+        def port(name, fid):
+            bnd.AssignWavePort(["NAME:" + name, "Faces:=", [fid], "NumModes:=", 2, "RenormalizeAllTerminals:=", True,
+                                "UseLineModeAlignment:=", False, "DoDeembed:=", False,
+                                ["NAME:Modes", ["NAME:Mode1", "ModeNum:=", 1, "UseIntLine:=", False, "CharImp:=", "Zpi"],
+                                 ["NAME:Mode2", "ModeNum:=", 2, "UseIntLine:=", False, "CharImp:=", "Zpi"]],
+                                "ShowReporterFilter:=", False, "ReporterFilter:=", [True, True],
+                                "UseAnalyticAlignment:=", False])
+        sym = [f_sym]
+        if WHAT == "conv":
+            port("P1", f_lo)
+            port("P2", face_at("body", 5, 5, z_end))
+            passes, mds, fspan, npts = 6, 0.02, 0.15, 61
+        else:
+            pad = lam / 2
+            w = R_ap + d0 + pad
+            hz = pad + lam / 4
+            ed.CreateBox(["NAME:BoxParameters", "XPosition:=", mm(-w), "YPosition:=", "0mm", "ZPosition:=", mm(z_end),
+                          "XSize:=", mm(2 * w), "YSize:=", mm(w), "ZSize:=", mm(hz)], attrs("AirBox"))
+            sym.append(face_at("AirBox", R_ap + d0 + pad / 2, 0, z_end + hz / 2))
+            rad = [face_at("AirBox", w, w / 2, z_end + hz / 2), face_at("AirBox", -w, w / 2, z_end + hz / 2),
+                   face_at("AirBox", 0, w, z_end + hz / 2), face_at("AirBox", 0, w / 2, z_end + hz)]
+            bnd.AssignRadiation(["NAME:Rad1", "Faces:=", rad, "IsFssReference:=", False, "IsForPML:=", False])
+            port("P1", f_lo)
+            passes, mds, fspan, npts = 6, 0.03, 0.10, 21
+            L("airbox faces", sym, rad)
+        bnd.AssignSymmetry(["NAME:SymH", "Faces:=", sym, "IsPerfectE:=", False])
+        an = des.GetModule("AnalysisSetup")
+        an.InsertSetup("HfssDriven", ["NAME:Setup1", "Frequency:=", "%gGHz" % F0, "MaxDeltaS:=", mds,
+            "MaximumPasses:=", passes, "MinimumPasses:=", 1, "MinimumConvergedPasses:=", 1, "PercentRefinement:=", 30,
+            "IsEnabled:=", True, "BasisOrder:=", 1, "DoLambdaRefine:=", True, "DoMaterialLambda:=", True,
+            "SetLambdaTarget:=", False, "Target:=", 0.3333, "UseMaxTetIncrease:=", False, "PortAccuracy:=", 2,
+            "UseABCOnPort:=", False, "SetPortMinMaxTri:=", False, "UseDomains:=", False, "UseIterativeSolver:=", False,
+            "SaveRadFieldsOnly:=", False, "SaveAnyFields:=", True, "IESolverType:=", "Auto"])
+        an.InsertFrequencySweep("Setup1", ["NAME:Sweep1", "IsEnabled:=", True, "RangeType:=", "LinearCount",
+            "RangeStart:=", "%gGHz" % (F0 * (1 - fspan)), "RangeEnd:=", "%gGHz" % (F0 * (1 + fspan)),
+            "RangeCount:=", npts, "Type:=", "Interpolating", "SaveFields:=", False, "SaveRadFields:=", False,
+            "InterpTolerance:=", 0.5, "InterpMaxSolns:=", 250, "InterpMinSolns:=", 0, "InterpMinSubranges:=", 1,
+            "ExtrapToDC:=", False, "InterpUseS:=", True, "InterpUsePortImped:=", False, "InterpUsePropConst:=", True,
+            "UseDerivativeConvergence:=", False, "InterpDerivTolerance:=", 0.2, "UseFullBasis:=", True,
+            "EnforcePassivity:=", True, "PassivityErrorTolerance:=", 0.0001])
+        if WHAT == "horn":
+            des.GetModule("RadField").InsertInfiniteSphereSetup(["NAME:FF_cuts", "UseCustomRadiationSurface:=", False,
+                "ThetaStart:=", "-90deg", "ThetaStop:=", "90deg", "ThetaStep:=", "1deg",
+                "PhiStart:=", "0deg", "PhiStop:=", "90deg", "PhiStep:=", "90deg", "UseLocalCS:=", False])
+    L("boundaries + setup ok")
+    proj.SaveAs(os.path.join(WD, dname + ".aedt"), True)
+    L("saved", os.path.join(WD, dname + ".aedt"))
+except Exception:
+    L("ERROR", traceback.format_exc())
+open(LOG, "w").write("\n".join(log))
+</script>
+<script>
+(function(){
+const C=299.792458, X01=2.404826, X21=3.054237, XTM11=3.831706, X11=1.841184;
+const REF={f:3.665,a:34,p:9.369,tw:2.342,g:7.027,d0:18.737,d_in:2,N_match:5,L_smooth:30,N_conv:35,delta:3.9,LamB_conv:233,LamB_horn:227,R_ap:90,L_flare:150};
+const A_EFF=0.9807, BAND_FRAC=0.004;
+// HFSS stand-alone converter, delta = 3.9 mm, LamB = 233 mm (frequency in GHz at the 3.665 GHz design, conversion in %)
+const HFSS=[[3.650,13.5],[3.655,32.6],[3.660,61.2],[3.665,74.6],[3.670,54.6],[3.675,42.0],[3.680,44.5],[3.685,49.1],[3.690,45.7],[3.695,36.8],[3.700,28.9]];
+const $=id=>document.getElementById(id);
+const fmt=(v,n=2)=>Number(v).toFixed(n);
+function betas(f,ae){const k=2*Math.PI*f/C;return [k,Math.sqrt(Math.max(k*k-(X11/ae)**2,1e-12)),Math.sqrt(Math.max(k*k-(X01/ae)**2,1e-12))];}
+function beatLen(f,a){const [,b1,b0]=betas(f,A_EFF*a);return 2*Math.PI/(b1-b0);}
+function design(f){const s=REF.f/f,d={};for(const k in REF)d[k]=(k==='N_match'||k==='N_conv')?REF[k]:REF[k]*s;d.f=f;return d;}
+
+function compute(){
+  const f=parseFloat($('f').value);
+  if(!(f>0)){$('stats').innerHTML='<p class="hd-note">Enter a frequency above zero.</p>';return;}
+  const d=design(f), s=REF.f/f, bw=BAND_FRAC*f*1e3, lo=f*(1-BAND_FRAC/2), hi=f*(1+BAND_FRAC/2);
+  const LB0=beatLen(f,d.a);let bf=f,bm=1e9;for(let i=0;i<=4000;i++){const fv=0.95*f+0.1*f*i/4000;const m=Math.abs(beatLen(fv,d.a+0.1)-LB0);if(m<bm){bm=m;bf=fv;}}
+  const dfm=Math.abs(bf-f)*1e3;
+  $('limits').innerHTML=[
+    '<b>75 % is the peak, right at the design frequency</b> ('+fmt(f,3)+' GHz). Conversion drops away quickly on either side.',
+    'The usable band is where conversion stays <b>above about 50 %</b>, not at 75 %. That band is about <b>0.4 % of the centre frequency</b>: here about <b>'+fmt(bw,bw<10?1:0)+' MHz</b>, roughly '+fmt(lo,3)+'–'+fmt(hi,3)+' GHz. For scale, that is about 15 MHz at 3.665 GHz, about 30 MHz at 7.33 GHz and about 7 MHz at 1.8 GHz.',
+    '<b>Machining tolerance matters a lot.</b> A bore just 0.1 mm off shifts the peak by about <b>'+fmt(dfm,0)+' MHz</b> at this frequency, '+(dfm<1.3*bw?'which is about the whole band':'which is '+fmt(dfm/bw,1)+' times the whole band')+'. A real build needs tight tolerances or a tuning step.',
+    'All figures are <b>Ansys HFSS simulations</b> on a mesh that did not fully converge. Nothing has been built or measured yet.'
+  ].map(t=>'<li>'+t+'</li>').join('');
+  $('stats').innerHTML=[[ '75 %','Peak conversion, at '+fmt(f,3)+' GHz only'],['≈'+fmt(bw,bw<10?1:0)+' MHz','Band with ≥50 % conversion (0.4 %)'],['±'+fmt(dfm,0)+' MHz','Peak shift per 0.1 mm bore error'],['13.65 dBi','Simulated on-axis realized gain (plain horn −13.87)'],[(d.L_smooth+(d.N_match+d.N_conv)*d.p+d.L_flare).toFixed(0)+' mm','Total horn length']]
+    .map(x=>'<div class="stat"><b>'+x[0]+'</b><span>'+x[1]+'</span></div>').join('');
+  const L=d.N_conv*d.p;
+  $('dims').innerHTML=[['Wavelength λ',fmt(C/f,2)+' mm'],['Bore radius a',fmt(d.a,3)+' mm'],['Groove pitch',fmt(d.p,3)+' mm'],['Groove width / tooth',fmt(d.g,3)+' / '+fmt(d.tw,3)+' mm'],
+    ['Groove depth / outer radius',fmt(d.d0,3)+' / '+fmt(d.a+d.d0,3)+' mm'],['Input smooth pipe',fmt(d.L_smooth,2)+' mm'],['Matching grooves',d.N_match+', depth '+fmt(d.d_in,2)+' → '+fmt(d.d0,2)+' mm'],
+    ['Offset grooves',d.N_conv+' ('+fmt(L,1)+' mm)'],['Offset amplitude δ',fmt(d.delta,3)+' mm'],['Beat period Λ_B, converter',fmt(d.LamB_conv,2)+' mm'],['Beat period Λ_B, full horn',fmt(d.LamB_horn,2)+' mm'],
+    ['Groove centre offset','x = δ·sin(2πz/Λ_B)'],['Corrugated flare',fmt(d.L_flare,1)+' mm, r '+fmt(d.a,2)+' → '+fmt(d.R_ap,2)+' mm']]
+    .map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');
+  const fc=X=>X*C/(2*Math.PI*A_EFF*d.a);
+  $('checks').innerHTML=[['good','TM01 cutoff '+fmt(fc(X01),3)+' GHz, 6 % below the design frequency. TM01 is quite dispersive this close to cutoff, which is part of why the band is narrow.'],
+    ['good','TE21 cutoff '+fmt(fc(X21),3)+' GHz and TM11 cutoff '+fmt(fc(XTM11),3)+' GHz, both well above the band.'],
+    ['warn','Hold the bore radius to a few hundredths of a millimetre, or plan a tuning step (for example a short adjustable section).'],
+    ['warn','A vircator whose frequency drifts more than about ±'+fmt(bw/2,bw<20?1:0)+' MHz during the pulse will leave the ≥50 % band.']]
+    .map(c=>'<li><span class="dot '+c[0]+'"></span><span>'+c[1]+'</span></li>').join('');
+  drawPlot(f,s,lo,hi); drawSection(d); $('script').textContent=makeScript(d);
+}
+function drawPlot(f,s,lo,hi){
+  const pts=HFSS.map(q=>[q[0]/s,q[1]/100]);const W=520,H=300,l=46,r=14,t=12,b=40,x0=pts[0][0],x1=pts[pts.length-1][0];
+  const X=v=>l+(v-x0)/(x1-x0)*(W-l-r), Y=v=>t+(1-v)*(H-t-b);
+  let g='<rect x="'+X(lo)+'" y="'+t+'" width="'+(X(hi)-X(lo))+'" height="'+(H-t-b)+'" fill="rgba(255,180,84,0.18)"/>';
+  for(let v=0;v<=1.001;v+=0.25)g+='<line class="grid" x1="'+l+'" x2="'+(W-r)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text class="tick" x="'+(l-6)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+Math.round(v*100)+'</text>';
+  for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4;g+='<text class="tick" x="'+X(v)+'" y="'+(H-b+16)+'" text-anchor="middle">'+v.toFixed(v<2?4:3)+'</text>';}
+  g+='<text class="lab" x="'+((l+W-r)/2)+'" y="'+(H-6)+'" text-anchor="middle">Frequency (GHz)</text><text class="lab" transform="translate(13,'+((t+H-b)/2)+') rotate(-90)" text-anchor="middle">Conversion (%)</text>';
+  g+='<line x1="'+l+'" x2="'+(W-r)+'" y1="'+Y(0.5)+'" y2="'+Y(0.5)+'" stroke="rgba(255,255,255,0.35)" stroke-dasharray="4 4"/>';
+  g+='<path d="'+pts.map((q,i)=>(i?'L':'M')+X(q[0]).toFixed(1)+' '+Y(q[1]).toFixed(1)).join('')+'" fill="none" stroke="var(--curve)" stroke-width="2.5"/>';
+  g+=pts.map(q=>'<circle cx="'+X(q[0])+'" cy="'+Y(q[1])+'" r="3" fill="var(--curve)"/>').join('');
+  g+='<circle cx="'+X(f)+'" cy="'+Y(0.746)+'" r="6" fill="none" stroke="var(--warm)" stroke-width="2"/><text class="tick" x="'+(X(f)+9)+'" y="'+(Y(0.746)-6)+'">75 % peak</text>';
+  $('plot').innerHTML=g;
+}
+function drawSection(d){
+  const Ltot=d.L_smooth+(d.N_match+d.N_conv)*d.p+d.L_flare, Rmax=d.R_ap+d.d0*1.08;
+  const W=900,padx=20,sc=(W-2*padx)/Ltot,H=Math.max(140,2*Rmax*sc+10),cy=H/2,ex=3,Z=z=>padx+z*sc,R=r=>r*sc;
+  const up=[[0,d.a]],dn=[[0,-d.a]],zc0=d.L_smooth,nt=d.N_match+d.N_conv;
+  for(let n=0;n<nt;n++){const g0=zc0+n*d.p+d.tw/2,g1=g0+d.g,dep=n<d.N_match?d.d_in+(d.d0-d.d_in)*n/(d.N_match-1):d.d0;
+    const x=n<d.N_match?0:d.delta*Math.sin(2*Math.PI*(g0+d.g/2)/d.LamB_conv)*ex;
+    up.push([g0,d.a],[g0,d.a+dep+x],[g1,d.a+dep+x],[g1,d.a]);dn.push([g0,-d.a],[g0,-d.a-dep+x],[g1,-d.a-dep+x],[g1,-d.a]);}
+  const zf=zc0+nt*d.p,nf=Math.floor(d.L_flare/d.p),rf=z=>d.a+(d.R_ap-d.a)*(z-zf)/d.L_flare;
+  up.push([zf,d.a]);dn.push([zf,-d.a]);
+  for(let n=0;n<nf-1;n++){const g0=zf+n*d.p+d.tw/2,g1=g0+d.g;up.push([g0,rf(g0)],[g0,rf(g0)+d.d0],[g1,rf(g0)+d.d0],[g1,rf(g1)]);dn.push([g0,-rf(g0)],[g0,-rf(g0)-d.d0],[g1,-rf(g0)-d.d0],[g1,-rf(g1)]);}
+  up.push([Ltot,d.R_ap]);dn.push([Ltot,-d.R_ap]);
+  const poly=up.concat(dn.reverse()).map(q=>Z(q[0]).toFixed(1)+','+(cy-R(q[1])).toFixed(1)).join(' ');
+  const lab=(z,t)=>'<text class="tick" x="'+Z(z)+'" y="'+(H+12)+'" text-anchor="middle">'+t+'</text>';
+  $('sec').setAttribute('viewBox','0 0 '+W+' '+(H+18));
+  $('sec').innerHTML='<rect x="'+padx+'" y="'+(cy-R(Rmax))+'" width="'+(W-2*padx)+'" height="'+2*R(Rmax)+'" fill="var(--metal)" rx="3"/><polygon points="'+poly+'" fill="var(--air)"/>'+
+    '<line x1="'+padx+'" x2="'+(W-padx)+'" y1="'+cy+'" y2="'+cy+'" stroke="rgba(255,255,255,0.3)" stroke-dasharray="6 4" stroke-width=".8"/>'+
+    '<line x1="'+Z(zc0+d.N_match*d.p)+'" x2="'+Z(zf)+'" y1="'+(cy-R(Rmax))+'" y2="'+(cy-R(Rmax))+'" stroke="var(--warm)" stroke-width="4"/>'+
+    lab(d.L_smooth/2,'TM01 in')+lab(zc0+d.N_match*d.p+d.N_conv*d.p/2,'converter: '+d.N_conv+' offset grooves')+lab(zf+d.L_flare/2,'flare, TE11 out');
+}
+function makeScript(d){
+  const src=$('tpl').textContent.replace(/^\n/,'').split('\n'),r=v=>String(+v.toFixed(3));
+  const iW=src.findIndex(l=>l.startsWith('WHAT =')),iF=src.findIndex(l=>l.startsWith('F0 =')),jC=src.findIndex(l=>l.startsWith('C = 299.792458')),jL=src.findIndex(l=>l.startsWith('L_flare ='));
+  const head=['WHAT = "conv"','LAMB = '+r(d.LamB_conv)+'          # beat period, mm (full horn: '+r(d.LamB_horn)+')','DELTA = '+r(d.delta)+'         # groove offset amplitude, mm','COMPACT = True','F0 = '+r(d.f)+'            # GHz (generated at kailashamarnath.me/horn-designer.html)'];
+  const body=['C = 299.792458','lam = C / F0','a = '+r(d.a),'p = '+r(d.p),'tw = '+r(d.tw),'g = '+r(d.g),'d0 = '+r(d.d0),'d_in = '+r(d.d_in),'N_match = '+d.N_match,'L_smooth = '+r(d.L_smooth),'N_conv = '+d.N_conv,'R_ap = '+r(d.R_ap),'L_flare = '+r(d.L_flare)];
+  const tag='Horn_Conv_'+String(+d.f.toFixed(4)).replace('.','p')+'GHz';
+  return src.slice(0,iW).concat(head,src.slice(iF+1,jC),body,src.slice(jL+1)).map(l=>l.replace('"conv": "Horn_Conv2"','"conv": "'+tag+'"')).join('\n');
+}
+$('form').addEventListener('submit',e=>{e.preventDefault();compute();});
+$('f').addEventListener('change',compute);
+$('copy').addEventListener('click',async()=>{const b=$('copy');try{await navigator.clipboard.writeText($('script').textContent);b.textContent='Copied';}catch(e){const rg=document.createRange();rg.selectNodeContents($('script'));const s=getSelection();s.removeAllRanges();s.addRange(rg);b.textContent='Selected, press Ctrl+C';}setTimeout(()=>b.textContent='Copy script',2000);});
+compute();
+})();
+</script>
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>
