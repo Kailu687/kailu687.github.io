@@ -375,8 +375,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <div class="wrap">
       <div class="head">
         <span class="eyebrow"><span class="pair" style="--c:var(--pair-brown)"></span>Routers</span>
-        <h2>One interface for the router you already have</h2>
-        <p class="lede">How much RouterView can do depends on what your router lets software read and change. Bars show the support level: see devices, see per-device usage, then apply protection on the router itself. Routers marked planned aren't supported yet.</p>
+        <h2>Built first for the router your ISP gave you</h2>
+        <p class="lede">Most homes use the router their internet provider installed, so that's where RouterView starts, beginning with the TP-Link Archer routers that providers like ACT Fibernet hand out. Bars show the support level: see devices, see per-device usage, then apply protection on the router itself. Nothing is listed as supported until it has been tested on a real router.</p>
       </div>
       <div class="routers" id="routerGrid"></div>
       <p class="note">Exact features vary by model and firmware version.</p>
@@ -430,8 +430,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
         <details><summary>Can RouterView read my messages or passwords?</summary><p>No. Almost everything on the web is HTTPS, so RouterView sees the same kind of outline your router sees: which device, which service, how much data, and when. It never decrypts traffic.</p></details>
         <details><summary>Why does it need my router's admin password?</summary><p>To read the device list and traffic counters, and to change settings when you turn protection on. The password is encrypted on the machine running RouterView and used only to talk to your router.</p></details>
         <details><summary>Is network activity the same as screen time?</summary><p>No. A phone can download an update in a drawer, and a laptop can sit on YouTube in a background tab. RouterView shows when a device was active on the network and calls it online activity.</p></details>
-        <details><summary>Which routers work today?</summary><p>Routers running OpenWrt get the full feature set. Any other router works in basic mode: RouterView finds your devices from the network and shows your ISP exposure report. Adapters for UniFi, MikroTik, ASUS, TP-Link, FRITZ!Box and ISP-supplied routers are planned. You can also try everything with the built-in demo router.</p></details>
-        <details><summary>What if my ISP gave me the router and locked it down?</summary><p>Basic mode still works, and RouterView will tell you whether the router reports to your ISP. Many people add their own OpenWrt router behind the ISP's box for full control.</p></details>
+        <details><summary>Which routers work today?</summary><p>Routers running OpenWrt get the full feature set today. Any other router works in basic mode: RouterView finds your devices from the network and shows your ISP exposure report. Full support for ISP-supplied routers comes first, starting with the TP-Link Archer AX23 from ACT Fibernet, which is being tested now. UniFi, MikroTik, ASUS and FRITZ!Box are planned.</p></details>
+        <details><summary>What if my ISP gave me the router and locked it down?</summary><p>That's the case RouterView is built for. Basic mode works on any router today, and RouterView tells you whether your router reports to your ISP. Full support for ISP-supplied TP-Link Archer routers is in testing, and we'll only list it as supported once it works on real hardware.</p></details>
         <details><summary>Can I use it from my phone?</summary><p>Yes, through the web app. Open it in your phone's browser on home Wi-Fi, enter the pairing code, and add it to your home screen if you like. The agent keeps doing the work.</p></details>
       </div>
     </div>
@@ -548,19 +548,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
   /* ---------- Router grid ---------- */
   var routers=[
+    ["ISP-supplied TP-Link Archer","Starting with the Archer AX23 from ACT Fibernet. Testing now",0,"In testing"],
+    ["Other ISP-supplied routers","Next, after the Archer adapter",0,"Planned"],
     ["OpenWrt","OpenWrt routers, via ubus",3],
     ["Any router","Basic mode: devices found on your network",1],
-    ["Demo router","A simulated home of 10 devices",3],
     ["UniFi","Planned",0],
     ["MikroTik","Planned",0],
     ["ASUS","Planned",0],
-    ["TP-Link","Planned",0],
     ["FRITZ!Box","Planned",0],
-    ["ISP-supplied routers","Planned",0]
+    ["Demo router","A simulated home of 10 devices, to look around",3]
   ];
   document.getElementById('routerGrid').innerHTML=routers.map(function(r){
     var bars="";for(var i=1;i<=3;i++)bars+='<i class="'+(i<=r[2]?'on':'')+'"></i>';
-    var lab=["Not yet supported","Devices","Devices + usage","Full control"][r[2]];
+    var lab=r[3]||["Not yet supported","Devices","Devices + usage","Full control"][r[2]];
     return '<div class="rt"><b>'+r[0]+'</b><span>'+r[1]+'</span><div class="lvlbar" role="img" aria-label="'+lab+'">'+bars+'</div><span>'+lab+'</span></div>';
   }).join("");
 })();
