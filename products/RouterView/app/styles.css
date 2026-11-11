@@ -177,3 +177,6 @@ table.data th { color: var(--text-2); font-weight: 600; }
   .flow { grid-template-columns: 1fr; } .flow .arrow { transform: rotate(90deg); }
   .tile .value { font-size: 24px; }
 }
+.install-steps { padding-left: 20px; display: grid; gap: 10px; margin: 16px 0; }
+.install-steps li { padding-left: 4px; }
+.demo-banner a { color: inherit; text-decoration: underline; }

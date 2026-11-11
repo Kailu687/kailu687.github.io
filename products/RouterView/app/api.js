@@ -105,14 +105,38 @@ function demoClient() {
   };
 }
 
+const LOCAL_AGENTS = ['http://127.0.0.1:7380', 'http://localhost:7380'];
+
+/** Pick up a pairing code handed back by the agent's /pair page (?pair=...), then strip it from the address bar. */
+function takePairingCode() {
+  try {
+    const u = new URL(location.href);
+    const code = u.searchParams.get('pair');
+    if (!code) return;
+    settings.token = code;
+    u.searchParams.delete('pair');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  } catch {}
+}
+
+export const demo = {
+  get chosen() { return LS.get('demoChosen', false); },
+  set chosen(v) { LS.set('demoChosen', v); },
+};
+
 export async function createApi() {
-  const candidates = [settings.agentUrl, location.protocol.startsWith('http') ? '' : null].filter(x => x !== null && x !== undefined);
+  takePairingCode();
+  const candidates = [settings.agentUrl || null, location.protocol.startsWith('http') ? '' : null, ...LOCAL_AGENTS].filter(x => x !== null);
+  let paired = null;
   for (const base of [...new Set(candidates)]) {
     try {
       const r = await fetch(base + '/api/status', { headers: settings.token ? { authorization: 'Bearer ' + settings.token } : {}, signal: AbortSignal.timeout(2500) });
-      if (r.status === 401) return { ...agentClient(base), needsPairing: true, base };
-      if (r.ok && (r.headers.get('content-type') || '').includes('json')) return { ...agentClient(base), base };
+      const json = (r.headers.get('content-type') || '').includes('json');
+      if (r.status === 401 && json) { const j = await r.json().catch(() => ({})); paired ||= { ...agentClient(base), needsPairing: true, base, pairUrl: j.pairUrl || null }; continue; }
+      if (r.ok && json) { demo.chosen = false; return { ...agentClient(base), base }; }
     } catch {}
   }
-  return demoClient();
+  if (paired) return paired;
+  if (demo.chosen) return demoClient();
+  return { mode: 'none', candidates: LOCAL_AGENTS };
 }

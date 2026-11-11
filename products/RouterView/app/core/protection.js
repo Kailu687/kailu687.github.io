@@ -66,11 +66,11 @@ export function buildPlan(level, caps, opts = {}) {
     steps.push({ kind: 'vpn', action: 'Create a WireGuard tunnel interface', detail: opts.vpn?.endpoint ? `Endpoint ${opts.vpn.endpoint}` : 'Using the VPN profile you import' });
     steps.push({ kind: 'vpn', action: 'Route home traffic through the tunnel', detail: (opts.exemptions?.length ? `Except ${opts.exemptions.length} exempted device(s)` : 'All devices') });
     steps.push({ kind: 'firewall', action: 'Add a kill switch: LAN traffic may only leave via the tunnel' });
-    steps.push({ kind: 'dns', action: 'Send DNS through the tunnel' });
+    steps.push({ kind: 'dns', action: 'Send DNS through the tunnel', detail: opts.vpn?.dns ? `Your VPN's resolver ${opts.vpn.dns}` : 'Encrypted DNS travels inside the tunnel' });
   }
   if (level >= 3) {
     steps.push({ kind: 'firewall', action: 'Redirect any device using hard-coded DNS (port 53) to the router' });
-    steps.push({ kind: 'firewall', action: 'Block DNS-over-TLS (853) and known public DoH endpoints that bypass the router' });
+    steps.push({ kind: 'firewall', action: 'Block DNS-over-TLS (853) and known public DoH endpoints that bypass the router', detail: 'Devices that try their own encrypted DNS fall back to the router' });
     steps.push({ kind: 'ipv6', action: 'Disable IPv6 outside the tunnel to stop leaks' });
   }
   return { level, levelInfo: LEVELS[level], compatible: missing.length === 0, missing, provider, steps, checks: checksFor(level), options: opts };
@@ -108,12 +108,18 @@ export async function activate({ plan, adapter, checker, onUpdate = () => {} }) 
   if (ok) {
     for (const c of plan.checks.filter(c => !['caps', 'baseline', 'snapshot', 'apply'].includes(c.id))) {
       const fn = checker[c.id];
-      if (!fn) continue;
-      if (!await run(c.id, () => fn.call(checker, plan))) { ok = false; break; }
+      // A check we cannot run is a failed check: never report "verified" without it.
+      if (!await run(c.id, async () => fn ? fn.call(checker, plan) : { ok: false, detail: 'This check is not available, so protection cannot be verified' })) { ok = false; break; }
     }
   }
   if (!ok) {
-    await adapter.restore(snap);
+    let restored;
+    try { restored = await adapter.restore(snap); } catch (err) { restored = { ok: false, detail: String(err?.message || err) }; }
+    if (!restored?.ok) {
+      state.rolledBack = false;
+      state.restoreError = restored?.detail || 'unknown error';
+      return finish(state, 'rollback_failed', `A check failed and RouterView could not restore your previous settings (${state.restoreError}). Restart your router; if the internet still does not work, restore the backup ${snap.id} from the router's admin page.`, onUpdate);
+    }
     const internet = await checker.baseline().catch(() => ({ ok: false }));
     state.rolledBack = true;
     return finish(state, 'rolled_back', internet.ok

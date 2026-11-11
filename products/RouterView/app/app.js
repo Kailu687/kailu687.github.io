@@ -1,4 +1,4 @@
-import { createApi, settings } from './api.js';
+import { createApi, settings, demo } from './api.js';
 import { usageBars, liveLines, fmtBytes } from './charts.js';
 import { parseWireGuard } from './core/wireguard.js';
 
@@ -46,6 +46,8 @@ async function render() {
   const hash = location.hash.slice(1) || '/';
   const [, page, arg] = hash.split('/');
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('active', a.dataset.nav === (page || 'overview') || (page === 'device' && a.dataset.nav === 'devices')));
+  if (api.mode === 'none') { $('#nav-foot').innerHTML = ''; return renderNoAgent(); }
+  if (api.needsPairing) return renderPairing();
   try {
     status = await api.status();
   } catch (e) {
@@ -65,7 +67,8 @@ async function render() {
   } catch (e) { renderError(e); }
 }
 function renderError(e) { view.innerHTML = `<div class="card empty"><h2>Something went wrong</h2><p>${esc(e.message)}</p><button class="btn" onclick="location.reload()">Try again</button></div>`; }
-const demoBanner = () => api.mode === 'demo' ? `<div class="demo-banner">Demo mode: this is a simulated home network running in your browser. Install the RouterView agent to see your real router.</div>` : '';
+const demoBanner = () => api.mode === 'demo' ? `<div class="demo-banner">Demo mode: this is a simulated home network, not yours. <a href="#" data-exit-demo>Connect your real router</a></div>` : '';
+document.addEventListener('click', async (e) => { if (!e.target.closest('[data-exit-demo]')) return; e.preventDefault(); demo.chosen = false; api = await createApi(); location.hash = '#/'; render(); });
 
 // ---------- setup flow ----------
 async function renderSetup(step = 1, ctx = {}) {
@@ -396,22 +399,47 @@ async function renderSettings() {
         <h3 class="section">Supported features</h3><div class="cap-list">${Object.entries(status.capabilityLabels).map(([k, l]) => `<div><span class="dot ${status.capabilities[k] ? 'on' : 'off'}"></span>${esc(l)}</div>`).join('')}</div>
         <div class="row section"><button class="btn danger" id="disconnect">Disconnect and delete local data</button></div>` : '<p class="muted">No router connected.</p><a class="btn primary" href="#/">Set up a router</a>'}</div>
       <div class="card"><h2>Agent connection</h2>
-        <p class="muted" style="font-size:14px">${api.mode === 'demo' ? 'No RouterView agent found, so you are in demo mode.' : `Connected to the agent at ${esc(api.base || location.host)}.`} The phone app needs the address and pairing code the agent prints when started with <span class="mono">--lan</span>.</p>
+        <p class="muted" style="font-size:14px">${api.mode === 'demo' ? 'You are exploring a demo network.' : `Connected to the agent at ${esc(api.base || location.host)}.`} The phone app needs the address and pairing code the agent prints when started with <span class="mono">--lan</span>.</p>
         <label class="field"><span>Agent address</span><input type="url" id="agent-url" placeholder="http://192.168.1.20:7380" value="${esc(settings.agentUrl)}"></label>
         <label class="field"><span>Pairing code</span><input type="text" id="token" value="${esc(settings.token)}"></label>
         <button class="btn" id="save-agent">Save and reconnect</button>
         <h3 class="section">Appearance</h3>
         <div class="seg" id="theme">${['system', 'light', 'dark'].map(t => `<button data-v="${t}" class="${(localStorage.getItem('rv:theme') || 'system') === t ? 'on' : ''}">${t[0].toUpperCase() + t.slice(1)}</button>`).join('')}</div>
-        <h3 class="section">Your data</h3><p class="faint">Everything RouterView collects (devices, usage, DNS history, router password) is stored only on the computer running the agent. Nothing is sent to RouterView or anyone else.</p></div>
+        <h3 class="section">Your data</h3><p class="faint">Everything RouterView collects (devices, usage, DNS history, and your router password, which is encrypted) is stored only on the computer running the agent. Nothing is sent to RouterView or anyone else.</p></div>
     </div>`;
   $('#disconnect')?.addEventListener('click', async () => { if (confirm('Disconnect the router and delete all locally stored history?')) { await api.disconnect(); location.hash = '#/'; render(); } });
-  $('#save-agent').onclick = async () => { settings.agentUrl = $('#agent-url').value.trim().replace(/\/$/, ''); settings.token = $('#token').value.trim(); api = await createApi(); toast(api.mode === 'agent' ? 'Connected to agent' : 'Agent not reachable, staying in demo mode'); render(); };
+  $('#save-agent').onclick = async () => { settings.agentUrl = $('#agent-url').value.trim().replace(/\/$/, ''); settings.token = $('#token').value.trim(); api = await createApi(); toast(api.mode === 'agent' ? 'Connected to agent' : 'Agent not reachable'); render(); };
   $('#theme').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; applyTheme(b.dataset.v); renderSettings(); };
 }
+const RELEASES = 'https://github.com/Kailu687/RouterView/releases/latest';
+const REPO = 'https://github.com/Kailu687/RouterView#quick-start';
+function returnUrl() { const u = new URL(location.href); u.searchParams.delete('pair'); u.hash = ''; return u.href; }
+
+// No agent answered: explain the one-time install, keep the demo as a secondary option.
+function renderNoAgent() {
+  view.innerHTML = `<div class="setup"><div class="card">
+    <h1>Connect RouterView on this computer</h1>
+    <p class="muted">Browsers can't talk to your router directly, so RouterView uses a small helper that runs on a computer at home. It reads your router and keeps all data on that computer. This page connects to it at <span class="mono">localhost:7380</span>.</p>
+    <ol class="install-steps">
+      <li><b>Install and open RouterView.</b> <a href="${RELEASES}" target="_blank" rel="noopener">Download for Windows</a>, unzip it and run <span class="mono">RouterView.exe</span>. On macOS or Linux, <a href="${REPO}" target="_blank" rel="noopener">run it from source</a> with Node 20: <span class="mono">node agent/src/server.js</span>.</li>
+      <li><b>Leave it running</b>, then come back here.</li>
+      <li><b>If your browser asks to let this site access devices on your local network, choose Allow.</b> That permission is what lets this page reach RouterView on your computer.</li>
+    </ol>
+    <div class="row between section"><a href="#" id="use-demo" class="faint">Just exploring? Try a demo network</a><button class="btn primary" id="retry">I've started it, check again</button></div>
+    <p class="faint section" style="font-size:13px">Using Safari? It blocks secure pages from talking to programs on your computer, so open <a href="http://localhost:7380">http://localhost:7380</a> directly instead.</p>
+  </div></div>`;
+  $('#retry').onclick = async () => { $('#retry').disabled = true; $('#retry').textContent = 'Looking…'; api = await createApi(); if (api.mode === 'none') { toast('RouterView is not running on this computer yet'); } render(); };
+  $('#use-demo').onclick = async (e) => { e.preventDefault(); demo.chosen = true; api = await createApi(); render(); };
+}
+
 function renderPairing() {
-  view.innerHTML = `<div class="setup"><div class="card"><h1>Pair with your RouterView agent</h1><p class="muted">Enter the pairing code shown in the agent window on your computer.</p>
-    <label class="field"><span>Pairing code</span><input type="text" id="token"></label><button class="btn primary" id="pair">Pair</button></div></div>`;
-  $('#pair').onclick = async () => { settings.token = $('#token').value.trim(); api = await createApi(); render(); };
+  const pairUrl = api.pairUrl && /^http:\/\/(localhost|127\.0\.0\.1):\d+\/pair$/.test(api.pairUrl) ? `${api.pairUrl}?return=${encodeURIComponent(returnUrl())}` : null;
+  view.innerHTML = `<div class="setup"><div class="card"><h1>Allow this page to use RouterView</h1>
+    <p class="muted">RouterView is running on this computer. To keep other websites out, it only answers pages you approve.</p>
+    ${pairUrl ? `<a class="btn primary" href="${esc(pairUrl)}">Approve this page</a><p class="faint section" style="font-size:13px">Opens RouterView on this computer, asks you to confirm, and brings you back here.</p>` : ''}
+    <details class="section"${pairUrl ? '' : ' open'}><summary class="faint">Enter a pairing code instead</summary>
+      <label class="field"><span>Pairing code</span><input type="text" id="token" autocomplete="off"></label><button class="btn" id="pair">Pair</button></details></div></div>`;
+  $('#pair').onclick = async () => { settings.token = $('#token').value.trim(); api = await createApi(); if (api.needsPairing) toast('That code did not work'); render(); };
 }
 function applyTheme(t) {
   try { localStorage.setItem('rv:theme', t); } catch {}
