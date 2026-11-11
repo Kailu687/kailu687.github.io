@@ -411,7 +411,7 @@ async function renderSettings() {
   $('#save-agent').onclick = async () => { settings.agentUrl = $('#agent-url').value.trim().replace(/\/$/, ''); settings.token = $('#token').value.trim(); api = await createApi(); toast(api.mode === 'agent' ? 'Connected to agent' : 'Agent not reachable'); render(); };
   $('#theme').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; applyTheme(b.dataset.v); renderSettings(); };
 }
-const RELEASES = 'https://github.com/Kailu687/RouterView/releases/latest';
+const RELEASES = 'https://kailashamarnath.me/products/RouterView/download/RouterView-Setup.exe';
 const REPO = 'https://github.com/Kailu687/RouterView#quick-start';
 function returnUrl() { const u = new URL(location.href); u.searchParams.delete('pair'); u.hash = ''; return u.href; }
 
@@ -421,7 +421,7 @@ function renderNoAgent() {
     <h1>Connect RouterView on this computer</h1>
     <p class="muted">Browsers can't talk to your router directly, so RouterView uses a small helper that runs on a computer at home. It reads your router and keeps all data on that computer. This page connects to it at <span class="mono">localhost:7380</span>.</p>
     <ol class="install-steps">
-      <li><b>Install and open RouterView.</b> <a href="${RELEASES}" target="_blank" rel="noopener">Download for Windows</a>, unzip it and run <span class="mono">RouterView.exe</span>. On macOS or Linux, <a href="${REPO}" target="_blank" rel="noopener">run it from source</a> with Node 20: <span class="mono">node agent/src/server.js</span>.</li>
+      <li><b>Install and open RouterView.</b> <a href="${RELEASES}">Download the Windows installer</a>, run it, and RouterView opens by itself.</li>
       <li><b>Leave it running</b>, then come back here.</li>
       <li><b>If your browser asks to let this site access devices on your local network, choose Allow.</b> That permission is what lets this page reach RouterView on your computer.</li>
     </ol>
