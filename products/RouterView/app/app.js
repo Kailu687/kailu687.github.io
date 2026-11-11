@@ -103,7 +103,7 @@ async function renderSetup(step = 1, ctx = {}) {
     view.innerHTML = `${demoBanner()}<div class="setup">${bar}<div class="card"><h1>What kind of router is it?</h1>
       <p class="muted">Each router family exposes different features. We'll show you exactly what works with yours.</p>
       ${adapters.map((a, i) => `<label class="choice ${i === 0 ? 'selected' : ''} ${a.status === 'planned' ? 'disabled' : ''}"><input type="radio" name="ad" value="${esc(a.id)}" ${i === 0 ? 'checked' : ''} ${a.status === 'planned' ? 'disabled' : ''}>
-        <div><b>${esc(a.name)}</b> ${a.id === ctx.suggested ? '<span class="badge accent">Detected</span>' : ''} ${a.status === 'planned' ? '<span class="badge">Coming soon</span>' : a.status === 'basic' ? '<span class="badge">Basic</span>' : '<span class="badge good">Full support</span>'}
+        <div><b>${esc(a.name)}</b> ${a.id === ctx.suggested ? '<span class="badge accent">Detected</span>' : ''} ${a.status === 'planned' ? '<span class="badge">Coming soon</span>' : a.status === 'basic' ? '<span class="badge">Basic</span>' : a.status === 'testing' ? '<span class="badge warn">In testing</span>' : '<span class="badge good">Full support</span>'}
         <div class="faint">${esc(a.description)}</div></div></label>`).join('')}
       <div class="row between section"><button class="btn" id="back">Back</button><button class="btn primary" id="next">Continue</button></div></div></div>`;
     bindChoices();
