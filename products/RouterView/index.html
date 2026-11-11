@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/Images/routerview.svg" type="image/svg+xml">
+<link rel="canonical" href="https://kailashamarnath.me/products/RouterView/">
+<meta property="og:title" content="RouterView">
+<meta property="og:description" content="See what your ISP sees. Then stop it. A local-first home network and privacy dashboard for any router.">
+<meta property="og:url" content="https://kailashamarnath.me/products/RouterView/">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>RouterView</title>
+<meta name="description" content="RouterView shows every device on your home network, what it talks to in plain language, and lets you cut down what your ISP can see.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single column that alternates between open prose bands and one "instrument" panel per section,
+   like the status page of a router. Ethernet pair colours (T568B) mark the four product areas. */
+:root{
+  /* dark-first, per RouterView brand: teal = protected, amber = exposed */
+  --bg:#0B141C; --surface:#12202B; --sunk:#09111A; --ink:#E3EDF3; --ink-2:#95A9B8; --line:#21384A;
+  --accent:#38D0D0; --accent-ink:#06181C;
+  --exposed:#F2A65A; --exposed-bg:#3A2614; --safe:#45D6B0; --safe-bg:#0E3129;
+  --pair-orange:#F09A4E; --pair-green:#4CC594; --pair-blue:#6FA3FF; --pair-brown:#C79572;
+  --panel:#060E15; --panel-ink:#D7E4EC; --panel-dim:#7F94A6;
+  color-scheme:dark;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --s-xs:.8125rem; --s-sm:.9375rem; --s-md:1.0625rem; --s-lg:1.375rem; --s-xl:2rem; --s-2xl:clamp(2.4rem,6vw,4.4rem);
+  --r:10px;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#EEF3F4; --surface:#FFFFFF; --sunk:#E2EAEC; --ink:#0F2129; --ink-2:#4A5F68; --line:#C8D6DA;
+  --accent:#0B7F86; --accent-ink:#FFFFFF;
+  --exposed:#B85A0B; --exposed-bg:#FBEBDC; --safe:#0B7D63; --safe-bg:#DAF1EA;
+  --pair-orange:#D9731A; --pair-green:#1F9467; --pair-blue:#2C63D6; --pair-brown:#8A5A3B;
+  --panel:#0F1D27; --panel-ink:#D7E4EC; --panel-dim:#7F94A6; color-scheme:light;
+}}
+:root[data-theme="light"]{
+  --bg:#EEF3F4; --surface:#FFFFFF; --sunk:#E2EAEC; --ink:#0F2129; --ink-2:#4A5F68; --line:#C8D6DA;
+  --accent:#0B7F86; --accent-ink:#FFFFFF;
+  --exposed:#B85A0B; --exposed-bg:#FBEBDC; --safe:#0B7D63; --safe-bg:#DAF1EA;
+  --pair-orange:#D9731A; --pair-green:#1F9467; --pair-blue:#2C63D6; --pair-brown:#8A5A3B;
+  --panel:#0F1D27; --panel-ink:#D7E4EC; --panel-dim:#7F94A6; color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:var(--s-md);line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);line-height:1.08;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:var(--s-xl);font-weight:700}
+h3{font-size:var(--s-lg);font-weight:700}
+p{margin:0}
+.lede{color:var(--ink-2);max-width:62ch}
+.eyebrow{font-family:var(--f-mono);font-size:var(--s-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);display:flex;align-items:center;gap:.6em}
+.pair{display:inline-block;width:22px;height:6px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--c) 0 6px,transparent 6px 9px),var(--c);background:linear-gradient(90deg,var(--c) 0 50%,color-mix(in srgb,var(--c) 30%,var(--surface)) 50%)}
+.mono{font-family:var(--f-mono)}
+.num{font-variant-numeric:tabular-nums}
+
+/* nav */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:1.2rem;color:var(--ink);text-decoration:none}
+.brand svg{flex:none}
+nav.links{display:flex;gap:22px;align-items:center;font-size:var(--s-sm)}
+nav.links a{color:var(--ink-2);text-decoration:none}
+nav.links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 var(--s-sm)/1 var(--f-body);padding:12px 18px;border-radius:8px;border:1px solid transparent;cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.small{padding:9px 14px}
+@media (max-width:720px){nav.links a:not(.btn){display:none}}
+
+section{padding-block:clamp(56px,9vw,104px)}
+section + section{border-top:1px solid var(--line)}
+.head{display:grid;gap:14px;margin-bottom:36px}
+
+/* hero */
+.hero{padding-block:clamp(40px,7vw,80px) clamp(48px,8vw,96px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,64px);align-items:center}
+@media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr)}}
+.hero h1{font-size:var(--s-2xl);font-weight:800;letter-spacing:-.025em}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .copy{display:grid;gap:22px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+.hero .fine{font-size:var(--s-xs);color:var(--ink-2)}
+
+/* ISP view panel */
+.isp{background:var(--panel);color:var(--panel-ink);border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(10,20,35,.55);min-width:0}
+.isp-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid #1E2E40;flex-wrap:wrap}
+.isp-bar .t{font:500 var(--s-xs)/1.3 var(--f-mono);color:var(--panel-dim);letter-spacing:.04em}
+.isp-bar .t b{color:var(--panel-ink);font-weight:500}
+.switch{display:inline-flex;background:#1A2A3C;border-radius:999px;padding:3px}
+.switch button{font:600 .78rem/1 var(--f-body);border:0;background:transparent;color:#9FB2C6;padding:8px 12px;border-radius:999px;cursor:pointer}
+.switch button[aria-pressed="true"]{background:#E4ECF4;color:#0F1B28}
+.log{font:400 .8rem/1.55 var(--f-mono);padding:14px 16px 6px;overflow-x:auto}
+.row{display:grid;grid-template-columns:4.6em 3.4em minmax(0,1fr) auto;gap:10px;padding:5px 0;border-bottom:1px dashed #1C2B3B;align-items:baseline;white-space:nowrap}
+.row .time,.row .kind{color:var(--panel-dim)}
+.row .what{overflow:hidden;text-overflow:ellipsis}
+.row .what.hid{color:#5E7186;letter-spacing:.06em}
+.tag{font:600 .66rem/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:4px}
+.tag.read{background:#4A2A10;color:#F7B27A}
+.tag.hide{background:#0F3A30;color:#6FE0C0}
+.tag.part{background:#3A3412;color:#E8D27A}
+.isp-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px 14px;font:400 var(--s-xs)/1.4 var(--f-body);color:var(--panel-dim)}
+.isp-foot strong{color:var(--panel-ink);font-weight:600}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;counter-reset:s;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.step{padding:22px 20px;display:grid;gap:8px;align-content:start;border-right:1px solid var(--line);min-width:0}
+.step:last-child{border-right:0}
+.step::before{counter-increment:s;content:"0" counter(s);font:500 var(--s-xs)/1 var(--f-mono);color:var(--ink-2)}
+.step h3{font-size:1.05rem}
+.step p{font-size:var(--s-sm);color:var(--ink-2)}
+@media (max-width:900px){.steps{grid-template-columns:minmax(0,1fr)}.step{border-right:0;border-bottom:1px solid var(--line)}.step:last-child{border-bottom:0}}
+
+/* product mock */
+.mock{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:20px}
+@media (max-width:900px){.mock{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.card-h h3{font-size:1.05rem}
+.card-h span{font-size:var(--s-xs);color:var(--ink-2)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--sunk);border-radius:8px;padding:10px 12px}
+.stat .k{font-size:.72rem;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+.stat .v{font:700 1.35rem/1.2 var(--f-display)}
+.dev{width:100%;display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px;border-radius:8px;border:1px solid transparent;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.dev:hover{background:var(--sunk)}
+.dev[aria-pressed="true"]{background:var(--sunk);border-color:var(--line)}
+.dev .ic{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;background:var(--bg);color:var(--ink-2)}
+.dev .n{font-weight:600;font-size:var(--s-sm);display:block}
+.dev .m{font-size:var(--s-xs);color:var(--ink-2)}
+.dev .u{text-align:right;font-size:var(--s-sm);font-weight:600}
+.dev .u small{display:block;font-weight:400;font-size:.72rem;color:var(--ink-2)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--safe);margin-right:6px;vertical-align:1px}
+.dot.idle{background:var(--line)}
+.dot.warn{background:var(--exposed)}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;font-size:var(--s-sm);margin-bottom:16px}
+.kv div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:5px 0;min-width:0}
+.kv dt{color:var(--ink-2)} .kv dd{margin:0;text-align:right;overflow-wrap:anywhere}
+@media (max-width:520px){.kv{grid-template-columns:minmax(0,1fr)}}
+.spark{width:100%;height:70px;display:block;margin-bottom:16px}
+.xlate{width:100%;border-collapse:collapse;font-size:var(--s-sm)}
+.xlate th{font:500 .72rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);text-align:left;padding:0 8px 8px 0}
+.xlate td{padding:8px 8px 8px 0;border-top:1px solid var(--line);vertical-align:top}
+.xlate td.raw{font:400 .78rem/1.4 var(--f-mono);color:var(--ink-2);word-break:break-all}
+.conf{font:600 .66rem/1 var(--f-body);letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;border-radius:4px;white-space:nowrap}
+.conf.h{background:var(--safe-bg);color:var(--safe)}
+.conf.m{background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent)}
+.conf.l{background:var(--sunk);color:var(--ink-2)}
+.tbl{overflow-x:auto}
+.note{font-size:var(--s-xs);color:var(--ink-2);margin-top:12px}
+
+/* features */
+.feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px}
+@media (max-width:720px){.feat{grid-template-columns:minmax(0,1fr)}}
+.feat div{display:grid;gap:6px;padding-top:14px;border-top:2px solid var(--c)}
+.feat h3{font-size:1.05rem}
+.feat p{font-size:var(--s-sm);color:var(--ink-2)}
+
+/* protection */
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:28px}
+@media (max-width:900px){.levels{grid-template-columns:minmax(0,1fr)}}
+.lvl{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:10px;align-content:start}
+.lvl .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lvl h3{font-size:1.15rem}
+.lvl p{font-size:var(--s-sm);color:var(--ink-2)}
+.lvl ul{margin:0;padding-left:1.1em;font-size:var(--s-sm);display:grid;gap:4px}
+.pill{font:600 .7rem/1 var(--f-body);padding:5px 8px;border-radius:999px;background:var(--sunk);color:var(--ink-2);white-space:nowrap}
+.pill.rec{background:var(--safe-bg);color:var(--safe)}
+.matrix{width:100%;border-collapse:collapse;font-size:var(--s-sm);min-width:640px;background:var(--surface)}
+.matrix th,.matrix td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.matrix thead th{font:600 .75rem/1.2 var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);background:var(--sunk)}
+.matrix tbody th{font-weight:600}
+.matrix tbody th small{display:block;font-weight:400;color:var(--ink-2);font-size:var(--s-xs)}
+.cell{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:var(--s-xs)}
+.cell::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
+.cell.see{color:var(--exposed)} .cell.hid{color:var(--safe)} .cell.mix{color:var(--ink-2)}
+.matrix-wrap{border:1px solid var(--line);border-radius:var(--r);overflow-x:auto}
+.honest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:28px}
+@media (max-width:720px){.honest{grid-template-columns:minmax(0,1fr)}}
+.honest div{display:grid;gap:6px}
+.honest h3{font-size:1.05rem}
+.honest p{font-size:var(--s-sm);color:var(--ink-2)}
+
+/* routers */
+.routers{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.rt{padding:16px 18px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);display:grid;gap:6px;margin:0 -1px -1px 0}
+.rt b{font-weight:600}
+.rt span{font-size:var(--s-xs);color:var(--ink-2)}
+.lvlbar{display:flex;gap:3px}
+.lvlbar i{width:18px;height:5px;border-radius:2px;background:var(--line)}
+.lvlbar i.on{background:var(--safe)}
+
+/* download */
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:820px){.dl{grid-template-columns:minmax(0,1fr)}}
+.dlc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;display:grid;gap:14px;align-content:start}
+.dlc h3{font-size:1.5rem}
+.dlc p{color:var(--ink-2);font-size:var(--s-sm)}
+.plats{display:flex;flex-wrap:wrap;gap:8px}
+.plat{font:500 var(--s-xs)/1 var(--f-mono);padding:8px 10px;border:1px solid var(--line);border-radius:6px;color:var(--ink-2)}
+.url{display:flex;align-items:center;gap:8px;background:var(--sunk);border-radius:8px;padding:10px 12px;font:500 var(--s-sm)/1.2 var(--f-mono);overflow-x:auto;white-space:nowrap}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.status{font-size:var(--s-xs);color:var(--ink-2);display:flex;gap:8px;align-items:center}
+
+/* faq */
+.faq{display:grid;gap:0;border-top:1px solid var(--line);max-width:820px}
+details{border-bottom:1px solid var(--line);padding:16px 0}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:500 1.2rem/1 var(--f-mono);color:var(--ink-2)}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:var(--ink-2);font-size:var(--s-sm);max-width:68ch}
+
+footer{border-top:1px solid var(--line);padding-block:32px;font-size:var(--s-xs);color:var(--ink-2)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="RouterView home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="12" width="24" height="12" rx="3" fill="var(--ink)"/><circle cx="8" cy="18" r="1.7" fill="var(--pair-green)"/><circle cx="13" cy="18" r="1.7" fill="var(--pair-orange)"/><circle cx="18" cy="18" r="1.7" fill="var(--pair-blue)"/><path d="M8 12 V4 M20 12 V4" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      RouterView
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#devices">Devices</a>
+      <a href="#protect">Protect</a>
+      <a href="#routers">Routers</a>
+      <a class="btn primary small" href="#download">Get RouterView</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="hero" data-protect="off">
+    <div class="wrap hero-grid">
+      <div class="copy">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-orange)"></span>Home network privacy</span>
+        <h1>See what your ISP sees. <em>Then stop it.</em></h1>
+        <p class="lede">RouterView connects to your router, lists every device in your home, and turns cryptic network traffic into plain language: this laptop watched YouTube, that TV phoned an ad server. Then it encrypts the parts your internet provider doesn't need to see, and the sites you visit keep working.</p>
+        <div class="ctas">
+          <a class="btn primary" href="#download">Get RouterView</a>
+          <a class="btn ghost" href="#protect">What each level hides</a>
+        </div>
+        <p class="fine">Runs on your own computer, Raspberry Pi, NAS or router. No account, no cloud, no telemetry.</p>
+      </div>
+
+      <div class="isp" role="region" aria-label="Example of what an internet provider can observe">
+        <div class="isp-bar">
+          <span class="t">VIEW FROM <b>YOUR ISP</b> · 203.0.113.42</span>
+          <div class="switch" role="group" aria-label="Protection level">
+            <button type="button" id="p-off" aria-pressed="true" data-level="off">Off</button>
+            <button type="button" id="p-dns" aria-pressed="false" data-level="dns">Private DNS</button>
+            <button type="button" id="p-vpn" aria-pressed="false" data-level="vpn">Enhanced</button>
+          </div>
+        </div>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="isp-foot">
+          <span id="footLeft"><strong>5 of 6</strong> events readable</span>
+          <span>Demo data</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-blue)"></span>Setup</span>
+        <h2>From unboxed to understood in about five minutes</h2>
+      </div>
+      <ol class="steps" style="list-style:none;margin:0;padding:0">
+        <li class="step"><h3>Find your router</h3><p>RouterView spots your gateway on the local network and guesses its maker and model.</p></li>
+        <li class="step"><h3>Sign in to it</h3><p>Enter the router's admin password once. It's stored encrypted on the machine running RouterView, nowhere else.</p></li>
+        <li class="step"><h3>Confirm the model</h3><p>Pick your router from the list so RouterView uses the right connection and knows what it can control.</p></li>
+        <li class="step"><h3>Meet your devices</h3><p>Every phone, laptop, TV and smart plug appears with a name, type and live usage.</p></li>
+        <li class="step"><h3>Turn on protection</h3><p>Choose a level. RouterView shows what will change, applies it, tests it, and undoes it automatically if anything fails.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="devices">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-green)"></span>Devices</span>
+        <h2>Every device, and what it's actually doing</h2>
+        <p class="lede">Tap a device to see its details, its usage across the day, and the services behind its traffic. Raw DNS names like <span class="mono">rr1---sn-4g5ednsl.googlevideo.com</span> become "YouTube video" with a confidence label, so you know when RouterView is sure and when it's guessing.</p>
+      </div>
+
+      <div class="mock">
+        <div class="card">
+          <div class="card-h"><h3>My Home Network</h3><span><span class="dot"></span>Online · today</span></div>
+          <div class="stats">
+            <div class="stat"><div class="k">Devices</div><div class="v num">8</div></div>
+            <div class="stat"><div class="k">Used today</div><div class="v num">18.6 GB</div></div>
+            <div class="stat"><div class="k">Down now</div><div class="v num">84 Mbps</div></div>
+          </div>
+          <div id="devList" role="group" aria-label="Connected devices"></div>
+          <p class="note">Demo data. Tap a device to open its profile.</p>
+        </div>
+
+        <div class="card" id="detail" aria-live="polite"></div>
+      </div>
+
+      <div class="feat">
+        <div style="--c:var(--pair-green)"><h3>Online activity, per device</h3><p>See when each device was active on the network and how much it moved, hour by hour. It's not screen time: a phone downloading an update in a drawer counts too, and RouterView labels it that way.</p></div>
+        <div style="--c:var(--pair-orange)"><h3>Trackers called out</h3><p>Advertising and analytics endpoints get flagged, so the smart TV that checks in with an ad network every few minutes stands out.</p></div>
+        <div style="--c:var(--pair-blue)"><h3>What your ISP sees</h3><p>A dedicated tab lists what is leaving your home readable right now: which lookups go to your ISP's DNS, which site names are visible, and whether your router reports to your ISP.</p></div>
+        <div style="--c:var(--pair-brown)"><h3>Pause, block, rename</h3><p>Pause a device's internet, block a domain, or give "android-7f3a" a name you'll recognise. Controls depend on what your router allows.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="protect">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-orange)"></span>Protect your internet</span>
+        <h2>Hide what you can, and know what's left</h2>
+        <p class="lede">Your ISP carries every packet, so no app can make you invisible to it. What RouterView can do is encrypt the parts that reveal the most, starting with DNS, which spells out each site's name in plain text by default. Typing youtube.com still gets you YouTube.</p>
+      </div>
+
+      <div class="levels">
+        <div class="lvl">
+          <div class="top"><h3>1 · Private DNS</h3><span class="pill">Beginner</span></div>
+          <p>Your router sends site lookups over DNS-over-HTTPS to a private resolver (Quad9 by default, or Cloudflare, Mullvad, AdGuard) instead of your ISP, and drops known trackers.</p>
+          <ul><li>No speed cost you'd notice</li><li>Every device on the network is covered</li><li>Hides lookups; site names in connections stay visible</li></ul>
+        </div>
+        <div class="lvl">
+          <div class="top"><h3>2 · Enhanced Privacy</h3><span class="pill rec">Recommended</span></div>
+          <p>The whole home goes through a WireGuard tunnel to a VPN provider you choose, with DNS inside the tunnel and a kill switch if it drops.</p>
+          <ul><li>Your ISP sees one encrypted stream</li><li>Exempt devices, like a TV whose streaming app blocks VPNs</li><li>Your VPN provider now sees what your ISP used to</li></ul>
+        </div>
+        <div class="lvl">
+          <div class="top"><h3>3 · Strict Privacy</h3><span class="pill">Advanced</span></div>
+          <p>Level 2, plus it catches devices that try to go around it: hard-coded DNS gets redirected, bypass routes get blocked, and IPv6 outside the tunnel is switched off.</p>
+          <ul><li>Fails closed: no tunnel, no internet</li><li>Some smart devices may need an exemption</li></ul>
+        </div>
+      </div>
+
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead><tr><th scope="col">What your ISP could observe</th><th scope="col">Off</th><th scope="col">1 · Private DNS</th><th scope="col">2 · Enhanced</th><th scope="col">3 · Strict</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Names of sites you look up<small>DNS queries</small></th><td><span class="cell see">Readable</span></td><td><span class="cell hid">Hidden</span></td><td><span class="cell hid">Hidden</span></td><td><span class="cell hid">Hidden</span></td></tr>
+            <tr><th scope="row">Site name in the secure handshake<small>TLS server name (SNI)</small></th><td><span class="cell see">Readable</span></td><td><span class="cell see">Readable</span></td><td><span class="cell hid">Hidden</span></td><td><span class="cell hid">Hidden</span></td></tr>
+            <tr><th scope="row">Server addresses you connect to<small>Destination IPs</small></th><td><span class="cell see">Readable</span></td><td><span class="cell see">Readable</span></td><td><span class="cell mix">VPN server only</span></td><td><span class="cell mix">VPN server only</span></td></tr>
+            <tr><th scope="row">How much data, and when<small>Volume and timing</small></th><td><span class="cell see">Readable</span></td><td><span class="cell see">Readable</span></td><td><span class="cell see">Readable</span></td><td><span class="cell see">Readable</span></td></tr>
+            <tr><th scope="row">Devices that ignore your settings<small>Hard-coded DNS, IPv6 leaks</small></th><td><span class="cell see">Readable</span></td><td><span class="cell see">Can leak</span></td><td><span class="cell mix">Rarely leak</span></td><td><span class="cell hid">Blocked</span></td></tr>
+            <tr><th scope="row">Page contents, passwords, messages<small>Anything over HTTPS</small></th><td><span class="cell hid">Already hidden</span></td><td><span class="cell hid">Hidden</span></td><td><span class="cell hid">Hidden</span></td><td><span class="cell hid">Hidden</span></td></tr>
+            <tr><th scope="row">Your list of devices<small>Only via ISP-managed routers</small></th><td><span class="cell mix">Depends on router</span></td><td><span class="cell mix">Depends on router</span></td><td><span class="cell mix">Depends on router</span></td><td><span class="cell mix">Depends on router</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="honest">
+        <div><h3>Addresses still give hints</h3><p>With Private DNS on, the server addresses you connect to and the site name in each secure connection are still visible. Big shared networks like Google or Cloudflare host thousands of sites behind one address, which blurs this, but a small site on its own server can still be spotted. Levels 2 and 3 close that gap.</p></div>
+        <div><h3>About your device list</h3><p>Your devices sit behind your router, so your ISP normally sees one home address, not each phone's MAC. The exception is a router your ISP supplied and manages remotely (TR-069 or TR-369), which can report connected devices back. RouterView checks for this and tells you if it's switched on.</p></div>
+        <div><h3>Nothing breaks quietly</h3><p>Before any change, RouterView shows what it will do and saves a snapshot of your router's settings. After applying, it checks DNS, IPv4, IPv6, YouTube, Google, WhatsApp and Netflix, and tests for leaks. If one check fails, it restores the snapshot and tells you which one. It only says "protected" when every check passed.</p></div>
+        <div><h3>Your data stays home</h3><p>Device histories and DNS logs live on the machine running RouterView. There's no RouterView account, no cloud copy and no telemetry, and router passwords are encrypted at rest.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="routers">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-brown)"></span>Routers</span>
+        <h2>One interface for the router you already have</h2>
+        <p class="lede">How much RouterView can do depends on what your router lets software read and change. Bars show the support level: see devices, see per-device usage, then apply protection on the router itself. Routers marked planned aren't supported yet.</p>
+      </div>
+      <div class="routers" id="routerGrid"></div>
+      <p class="note">Exact features vary by model and firmware version.</p>
+    </div>
+  </section>
+
+  <section id="download">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-blue)"></span>Get RouterView</span>
+        <h2>Two ways in, one network</h2>
+        <p class="lede">One small background service, the RouterView agent, talks to your router, keeps the history and runs protection. It can live on a PC, a Raspberry Pi, a NAS, or the router itself. Every app below is a window onto that agent.</p>
+      </div>
+      <div class="dl">
+        <div class="dlc">
+          <span class="eyebrow">Desktop app</span>
+          <h3>RouterView for your computer</h3>
+          <p>The simplest start. The desktop app includes the agent, so install it on a computer that's usually on and you're done.</p>
+          <div class="plats"><span class="plat">Windows</span><span class="plat">macOS</span><span class="plat">Linux</span></div>
+          <div><button class="btn primary" type="button" disabled aria-describedby="dlStatus">Download</button></div>
+          <span class="status" id="dlStatus"><span class="dot warn"></span>In development. Builds aren't published yet.</span>
+        </div>
+        <div class="dlc">
+          <span class="eyebrow">Web app</span>
+          <h3>RouterView in any browser</h3>
+          <p>Nothing extra to install. On the machine running the agent, open:</p>
+          <div class="url" aria-label="Web app address"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="6" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>http://localhost:7380</div>
+          <p>Turn on home-network access and other devices can open it too, after entering a pairing code. It's installable as an app and can't be reached from the internet.</p>
+          <span class="status"><span class="dot warn"></span>Ships with the agent.</span>
+        </div>
+        <div class="dlc">
+          <span class="eyebrow">Mobile app</span>
+          <h3>RouterView on your phone</h3>
+          <p>Check devices and flip protection from the sofa. The phone app pairs with your agent over home Wi-Fi with a pairing code; the agent does the work.</p>
+          <div class="plats"><span class="plat">Android</span><span class="plat">iOS</span></div>
+          <div><button class="btn ghost" type="button" disabled>App stores</button></div>
+          <span class="status"><span class="dot warn"></span>In development.</span>
+        </div>
+        <div class="dlc">
+          <span class="eyebrow">For tinkerers</span>
+          <h3>Run the agent yourself</h3>
+          <p>Put the agent on a Raspberry Pi, NAS or OpenWrt router so it runs around the clock without a desktop. It needs Node 20 or newer.</p>
+          <div class="url" aria-label="Command">node agent/src/server.js --lan</div>
+          <span class="status"><span class="dot warn"></span>Source release coming with the first build.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="head">
+        <span class="eyebrow"><span class="pair" style="--c:var(--pair-green)"></span>Questions</span>
+        <h2>Before you plug it in</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Will RouterView make me invisible to my ISP?</summary><p>No. Private DNS hides which sites you look up. Enhanced and Strict Privacy also hide which sites and servers you connect to, but your ISP can still see that you use a VPN, and how much data you move and when. Your VPN provider then sees what your ISP used to, so pick one you trust.</p></details>
+        <details><summary>Can RouterView read my messages or passwords?</summary><p>No. Almost everything on the web is HTTPS, so RouterView sees the same kind of outline your router sees: which device, which service, how much data, and when. It never decrypts traffic.</p></details>
+        <details><summary>Why does it need my router's admin password?</summary><p>To read the device list and traffic counters, and to change settings when you turn protection on. The password is encrypted on the machine running RouterView and used only to talk to your router.</p></details>
+        <details><summary>Is network activity the same as screen time?</summary><p>No. A phone can download an update in a drawer, and a laptop can sit on YouTube in a background tab. RouterView shows when a device was active on the network and calls it online activity.</p></details>
+        <details><summary>Which routers work today?</summary><p>Routers running OpenWrt get the full feature set. Any other router works in basic mode: RouterView finds your devices from the network and shows your ISP exposure report. Adapters for UniFi, MikroTik, ASUS, TP-Link, FRITZ!Box and ISP-supplied routers are planned. You can also try everything with the built-in demo router.</p></details>
+        <details><summary>What if my ISP gave me the router and locked it down?</summary><p>Basic mode still works, and RouterView will tell you whether the router reports to your ISP. Many people add their own OpenWrt router behind the ISP's box for full control.</p></details>
+        <details><summary>Does it work on phones?</summary><p>Yes. Use the mobile app or install the web app from your phone's browser, then pair it with your agent on home Wi-Fi. The agent keeps doing the work.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>RouterView · Understand your entire home network. Control what leaves it.</span>
+    <span>Devices, addresses and figures on this page are demo data. Built by <a href="https://kailashamarnath.me/">Kailash Amarnath</a>.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* ---------- ISP view demo ---------- */
+  var events=[
+    {t:"20:14:02",k:"DNS",off:"youtube.com",dns:"encrypted lookup → resolver",vpn:null},
+    {t:"20:14:02",k:"TLS",off:"rr1---sn-4g5ednsl.googlevideo.com",dns:"rr1---sn-4g5ednsl.googlevideo.com",vpn:null,ech:false},
+    {t:"20:14:03",k:"IP",off:"142.250.183.110 · 412 MB",dns:"142.250.183.110 · 412 MB",vpn:null},
+    {t:"20:17:41",k:"DNS",off:"graph.instagram.com",dns:"encrypted lookup → resolver",vpn:null},
+    {t:"20:17:41",k:"TLS",off:"www.instagram.com",dns:"www.instagram.com",vpn:null,ech:false},
+    {t:"20:21:09",k:"HTTPS",off:"page contents",dns:"page contents",vpn:null,always:true}
+  ];
+  var log=document.getElementById('log'),foot=document.getElementById('footLeft'),hero=document.getElementById('hero');
+  function render(level){
+    var html="",readable=0;
+    if(level==="vpn"){
+      html+=row("20:14:02","WG","198.51.100.7 · WireGuard tunnel","part","Visible");
+      html+=row("20:14:02","WG","1.6 GB, 20:14 to 22:30","part","Visible");
+      events.forEach(function(e){html+=row(e.t,e.k,"••••••••••••",'hide',"Hidden",true)});
+      readable=0;
+      foot.innerHTML="<strong>0 of 6</strong> events readable · tunnel, volume and timing visible";
+    }else{
+      events.forEach(function(e){
+        var v=level==="off"?e.off:e.dns, state;
+        if(e.always){state="hide";v="•••• encrypted ••••"}
+        else if(level==="off"){state="read"}
+        else if(e.k==="DNS"){state="hide"}
+        else if(e.k==="TLS"){state=e.ech?"hide":"read"}
+        else {state="read"}
+        if(state==="read")readable++;
+        html+=row(e.t,e.k,v,state,state==="read"?"Readable":"Hidden",state==="hide"&&e.k!=="TLS"&&!e.always?false:false);
+      });
+      foot.innerHTML="<strong>"+readable+" of 6</strong> events readable";
+    }
+    log.innerHTML=html;
+    hero.setAttribute('data-protect',level==="off"?"off":"on");
+  }
+  function row(t,k,what,cls,label){
+    var hid=(what.indexOf("encrypted lookup")===0||what.indexOf("(hidden")===0||what.indexOf("••")===0);
+    return '<div class="row"><span class="time">'+t+'</span><span class="kind">'+k+'</span><span class="what'+(hid?' hid':'')+'" title="'+what+'">'+what+'</span><span class="tag '+cls+'">'+label+'</span></div>';
+  }
+  document.querySelectorAll('.switch button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.switch button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+      render(b.dataset.level);
+    });
+  });
+  render("off");
+
+  /* ---------- Device mock ---------- */
+  var ic={
+    laptop:'<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="4" width="14" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 16h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    phone:'<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="6" y="2" width="8" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 15h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    tv:'<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="4" width="16" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    unk:'<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 8a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6 1V12M10 14.5v.1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+  };
+  var devices=[
+    {id:"lap",name:"Study Laptop",meta:"Windows PC · Wi-Fi 5 GHz",ic:"laptop",use:"6.2 GB",state:"Active",
+      kv:[["Local IP","192.168.1.105"],["MAC","3C:7C:3F:12:34:56"],["Maker","Lenovo (from MAC)"],["Signal","−48 dBm"],["First seen","2 Nov, 9:15 AM"],["Last active","Just now"]],
+      hours:[40,120,380,620,910,300,180,260,520,1100,1240,860],
+      svc:[["rr1---sn-4g5ednsl.googlevideo.com","YouTube video","2.1 GB","h"],["youtubei.googleapis.com","YouTube app","48 MB","h"],["login.live.com","Microsoft account","12 MB","h"],["d2x7x9k1a.cloudfront.net","Amazon CloudFront (shared)","96 MB","l"]]},
+    {id:"ph",name:"Galaxy Phone",meta:"Android · Wi-Fi 5 GHz",ic:"phone",use:"3.8 GB",state:"Active",
+      kv:[["Local IP","192.168.1.112"],["MAC","Randomised"],["Maker","Samsung (from hostname)"],["Signal","−61 dBm"],["First seen","2 Nov, 9:16 AM"],["Last active","2 min ago"]],
+      hours:[20,30,90,140,220,410,520,300,240,380,610,700],
+      svc:[["scontent-bom1-1.cdninstagram.com","Instagram photos and reels","1.4 GB","h"],["mmg.whatsapp.net","WhatsApp media","310 MB","h"],["graph.facebook.com","Meta services","22 MB","m"],["app-measurement.com","Google Analytics (tracker)","3 MB","h"]]},
+    {id:"tv",name:"Living Room TV",meta:"Smart TV · Wi-Fi 2.4 GHz",ic:"tv",use:"7.1 GB",state:"Idle",
+      kv:[["Local IP","192.168.1.120"],["MAC","A8:23:FE:9A:01:7C"],["Maker","LG (from MAC)"],["Signal","−67 dBm"],["First seen","2 Nov, 9:20 AM"],["Last active","38 min ago"]],
+      hours:[0,0,0,0,10,0,0,0,1800,2400,2200,600],
+      svc:[["ipv4-c001-bom001-ix.1.oca.nflxvideo.net","Netflix video","6.8 GB","h"],["lgtvsdp.com","LG TV platform","40 MB","m"],["ad.lgappstv.com","LG advertising (tracker)","8 MB","h"],["eu.ibs.lgappstv.com","LG viewing data","2 MB","m"]]},
+    {id:"unk",name:"Unknown device",meta:"Unidentified · Wi-Fi 2.4 GHz",ic:"unk",use:"420 MB",state:"New",
+      kv:[["Local IP","192.168.1.143"],["MAC","D8:F1:5B:22:90:AE"],["Maker","Espressif (from MAC)"],["Signal","−72 dBm"],["First seen","Today, 6:02 PM"],["Last active","Just now"]],
+      hours:[0,0,0,0,0,0,0,0,40,120,140,120],
+      svc:[["a1b2c3.iot.us-east-1.amazonaws.com","AWS IoT (smart plug or camera?)","380 MB","l"],["pool.ntp.org","Time sync","1 MB","h"],["tuya.com","Tuya smart home","36 MB","m"]]}
+  ];
+  var list=document.getElementById('devList'),detail=document.getElementById('detail');
+  list.innerHTML=devices.map(function(d,i){
+    var dot=d.state==="Idle"?"idle":d.state==="New"?"warn":"";
+    return '<button type="button" class="dev" id="dev-'+d.id+'" data-i="'+i+'" aria-pressed="'+(i===0)+'"><span class="ic">'+ic[d.ic]+'</span><span><span class="n">'+d.name+'</span><span class="m">'+d.meta+'</span></span><span class="u num">'+d.use+'<small><span class="dot '+dot+'"></span>'+d.state+'</small></span></button>';
+  }).join("");
+  function spark(h){
+    var W=600,H=70,max=Math.max.apply(null,h)||1,bw=W/h.length;
+    var bars=h.map(function(v,i){var bh=Math.max(2,(v/max)*(H-18));return '<rect x="'+(i*bw+3)+'" y="'+(H-14-bh)+'" width="'+(bw-6)+'" height="'+bh+'" rx="2" fill="var(--pair-green)" opacity="'+(i===h.length-1?1:.7)+'"/>'}).join("");
+    var lbl=['12 PM','3 PM','6 PM','9 PM'].map(function(t,i){return '<text x="'+(i*W/4+4)+'" y="'+(H-2)+'" font-size="10" fill="var(--ink-2)" font-family="IBM Plex Mono, monospace">'+t+'</text>'}).join("");
+    return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="Hourly usage from noon to 11 PM">'+bars+lbl+'</svg>';
+  }
+  var cl={h:"High",m:"Medium",l:"Low"};
+  function show(i){
+    var d=devices[i];
+    detail.innerHTML='<div class="card-h"><h3>'+d.name+'</h3><span>'+d.meta+'</span></div>'+
+      '<dl class="kv">'+d.kv.map(function(p){return '<div><dt>'+p[0]+'</dt><dd class="mono">'+p[1]+'</dd></div>'}).join("")+'</dl>'+
+      '<div class="card-h" style="margin-bottom:6px"><h3 style="font-size:.9rem">Network activity, noon to 11 PM</h3><span class="num">'+d.use+' today</span></div>'+spark(d.hours)+
+      '<div class="tbl"><table class="xlate"><thead><tr><th>Seen on the network</th><th>RouterView reads it as</th><th>Data</th><th>Confidence</th></tr></thead><tbody>'+
+      d.svc.map(function(s){return '<tr><td class="raw">'+s[0]+'</td><td>'+s[1]+'</td><td class="num">'+s[2]+'</td><td><span class="conf '+s[3]+'">'+cl[s[3]]+'</span></td></tr>'}).join("")+
+      '</tbody></table></div>';
+  }
+  list.addEventListener('click',function(e){
+    var b=e.target.closest('.dev');if(!b)return;
+    list.querySelectorAll('.dev').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    show(+b.dataset.i);
+  });
+  show(0);
+
+  /* ---------- Router grid ---------- */
+  var routers=[
+    ["OpenWrt","OpenWrt routers, via ubus",3],
+    ["Any router","Basic mode: devices found on your network",1],
+    ["Demo router","A simulated home of 10 devices",3],
+    ["UniFi","Planned",0],
+    ["MikroTik","Planned",0],
+    ["ASUS","Planned",0],
+    ["TP-Link","Planned",0],
+    ["FRITZ!Box","Planned",0],
+    ["ISP-supplied routers","Planned",0]
+  ];
+  document.getElementById('routerGrid').innerHTML=routers.map(function(r){
+    var bars="";for(var i=1;i<=3;i++)bars+='<i class="'+(i<=r[2]?'on':'')+'"></i>';
+    var lab=["Not yet supported","Devices","Devices + usage","Full control"][r[2]];
+    return '<div class="rt"><b>'+r[0]+'</b><span>'+r[1]+'</span><div class="lvlbar" role="img" aria-label="'+lab+'">'+bars+'</div><span>'+lab+'</span></div>';
+  }).join("");
+})();
+</script>
+
+</body>
+</html>
