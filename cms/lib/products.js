@@ -13,7 +13,7 @@ const attr = (s) => escapeHtml(s || '');
 const str = (v, max) => (typeof v === 'string' ? v.replace(/[\r\n]+/g, ' ').trim().slice(0, max) : '');
 
 function read() {
-  try { return JSON.parse(fs.readFileSync(FILE, 'utf8')); } catch { return null; }
+  try { return JSON.parse(fs.readFileSync(FILE, 'utf8').replace(/^\uFEFF/, '')); } catch { return null; }
 }
 
 // https:// links, or a path on this site (Aurora/, Images/x.png).
