@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="portfolio-cms">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
+
+  <title>NSEE, explained simply — Kailash Amarnath</title>
+  <meta name="description" content="What happens when you try to build an assistant without a big AI model? A plain-language walk through NSEE, what worked, and what didn't.">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/nsee-explained.html">
+  <meta name="theme-color" content="#001027">
+
+  <!-- Social previews -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="NSEE, explained simply">
+  <meta property="og:description" content="What happens when you try to build an assistant without a big AI model? A plain-language walk through NSEE, what worked, and what didn't.">
+  <meta property="og:url" content="https://kailashamarnath.me/nsee-explained.html">
+  <meta property="og:image" content="https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png">
+  <meta property="og:image:alt" content="NSEE, explained simply">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","name":"NSEE, explained simply","headline":"NSEE, explained simply","description":"What happens when you try to build an assistant without a big AI model? A plain-language walk through NSEE, what worked, and what didn't.","url":"https://kailashamarnath.me/nsee-explained.html","image":"https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png","author":{"@type":"Person","name":"Kailash Amarnath","url":"https://kailashamarnath.me/"},"datePublished":"2026-11-22"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://kailashamarnath.me/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://kailashamarnath.me/#blog"},{"@type":"ListItem","position":3,"name":"NSEE, explained simply"}]}]}</script>
+</head>
+<body class="content-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Kailash, home">
+      <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+      <span class="logo">KAILASH</span>
+      <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="links" id="nav-links" aria-label="Main">
+      <a href="./#home">Home</a>
+      <a href="./#about">About</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog" aria-current="page">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="./">Home</a></li>
+        <li><a href="./#blog">Blog</a></li>
+        <li><span aria-current="page">NSEE, explained simply</span></li>
+      </ol>
+    </nav>
+
+    <div class="page-title">
+      <div>
+        <h1>NSEE, explained simply</h1>
+
+        <div class="meta-row"><span class="tag muted"><time datetime="2026-11-22">22 November 2026</time></span><span class="tag muted">5 min read</span></div>
+      </div>
+
+    </div>
+
+    <section class="panel reveal" aria-labelledby="the-idea-in-one-paragraph">
+<h2 id="the-idea-in-one-paragraph">The idea in one paragraph</h2><p>Most AI assistants today run on a huge neural network that does everything at once: understanding you, planning, remembering facts and writing the reply. That works, but it needs a lot of memory and, usually, the cloud. I wanted to try the opposite. What if a small, ordinary program did the thinking and the doing, and you could teach it new skills just by adding a file? That experiment became <strong>NSEE</strong>, short for Neuro-Symbolic Edge Agent. It runs offline on my laptop and the whole engine is under 1 MB of plain Python.</p><p>One honest note before we start: I built NSEE with a lot of help from AI coding assistants. I decided what it should do, tested it and measured it, and I'm still learning many of the ideas inside it. This post explains it the way I understand it.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="what-happens-when-you-type-a-request">
+<h2 id="what-happens-when-you-type-a-request">What happens when you type a request</h2><p>Let's follow one request all the way through: <em>"sort my downloads, don't delete anything"</em>.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-flow.png" aria-label="Enlarge image: Flowchart: the journey of one request through NSEE"><img src="Images/uploads/nsee-blog-flow.png" alt="Flowchart: the journey of one request through NSEE" width="1200" height="1500" loading="lazy" decoding="async"></button></figure><ul><li><p><strong>Understand.</strong> A rule-based parser (no neural network) splits the sentence into goals. "Sort" becomes something it's allowed to do, and "delete" becomes something it is never allowed to do.</p></li><li><p><strong>Pick a skill.</strong> It looks through its skill files for the one that matches "sort files".</p></li><li><p><strong>Fill in the details.</strong> Which folder? Group by what? It pulls these from your sentence, or uses defaults and tells you which ones it assumed.</p></li><li><p><strong>Check the rules.</strong> Is anything blocked? Is a number out of range? If so, it stops and says why.</p></li><li><p><strong>Ask permission.</strong> Before touching anything, it shows you exactly which files will change.</p></li><li><p><strong>Do it, safely.</strong> It saves a copy of everything it's about to change, so it can undo the whole thing if something goes wrong.</p></li></ul>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="the-tricky-word-don-t">
+<h2 id="the-tricky-word-don-t">The tricky word: "don't"</h2><p>Big language models are known to sometimes "lose" a negation. Usually that's harmless, but if the model is also allowed to touch your files, a lost "don't" can delete something. NSEE treats negation as part of the structure instead.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-negation.png" aria-label="Enlarge image: Diagram: how don't stays attached to delete, not to sort"><img src="Images/uploads/nsee-blog-negation.png" alt="Diagram: how don't stays attached to delete, not to sort" width="1350" height="750" loading="lazy" decoding="async"></button></figure><p>The "don't" attaches only to its own part of the sentence. Then a safety gate checks every action before it runs, and refuses anything that matches a blocked word. So even a buggy skill can't delete files you protected.</p><p>It isn't perfect. On sentences built from patterns, it caught the negation 140 times out of 150. On natural ones I wrote by hand, like "no renaming" or "leave the logs alone", it only caught 28 out of 50. That's the weakest part of the project, and it's the first thing I'd improve.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="skills-are-just-files">
+<h2 id="skills-are-just-files">Skills are just files</h2><p>Every ability NSEE has comes from a "skill capsule": a JSON file with no code in it. It lists the words that call it, the settings it needs, the formulas it uses, the rules it must follow and what it produces.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-capsule.png" aria-label="Enlarge image: Diagram: the parts of a skill capsule"><img src="Images/uploads/nsee-blog-capsule.png" alt="Diagram: the parts of a skill capsule" width="1350" height="840" loading="lazy" decoding="async"></button></figure><p>My favourite example is the antenna skill. One file covers six antenna types (patch, dipole, monopole, helix, Yagi and horn) using standard textbook formulas, and it also writes a script you can open in Ansys HFSS. It understands sloppy input too, like "patch 5.8G" or "desing a dipole at 433 mhz". All 16 casual requests I tried came out right. The HFSS scripts pass a syntax check, and actually simulating them is my next step.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-antenna-demo.png" aria-label="Enlarge image: Examples of casual antenna requests and the designs NSEE produced"><img src="Images/uploads/nsee-antenna-demo.png" alt="Examples of casual antenna requests and the designs NSEE produced" width="1200" height="1500" loading="lazy" decoding="async"></button></figure>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="never-leaving-a-mess">
+<h2 id="never-leaving-a-mess">Never leaving a mess</h2><p>A multi-step task can fail halfway, for example after renaming one file and moving another. NSEE keeps a journal so that never leaves your folder half-changed.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-rollback.png" aria-label="Enlarge image: Diagram: snapshot before each step, restore in reverse on failure"><img src="Images/uploads/nsee-blog-rollback.png" alt="Diagram: snapshot before each step, restore in reverse on failure" width="1350" height="690" loading="lazy" decoding="async"></button></figure><p>To test this, I generated 200 random plans, crashed each one at a random step, and checked the folder afterwards. All 200 were restored exactly, byte for byte.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="where-do-the-neurons-come-in">
+<h2 id="where-do-the-neurons-come-in">Where do the "neurons" come in?</h2><p>NSEE also has small simulated spiking neurons, a simplified model of how real neurons fire. They take part in choosing which kind of ability a request needs, and they slowly strengthen the connection between a request and a skill each time that skill works.</p><p>Here's the honest part. When I compared the spiking version against a plain "does this request have the right keywords?" check, on 60 test requests, they made exactly the same choices every time. So right now the neurons don't make routing better. They're an interesting piece to experiment with, not a feature I can claim works.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="the-results-simply">
+<h2 id="the-results-simply">The results, simply</h2><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-worked-didnt.png" aria-label="Enlarge image: What worked and what didn't"><img src="Images/uploads/nsee-worked-didnt.png" alt="What worked and what didn't" width="1200" height="1500" loading="lazy" decoding="async"></button></figure><div class="table-wrap"><table><thead><tr><th>Worked well</th><th>Didn't work (yet)</th></tr></thead><tbody><tr><td>Understanding a request in about 0.2 ms</td><td>Natural negation: only 28 / 50</td></tr><tr><td>About 4.4 MB of memory for the engine</td><td>Spiking neurons don't beat simple rules yet</td></tr><tr><td>200 / 200 crashed tasks fully undone</td><td>Can't write essays beyond the text it's given</td></tr><tr><td>44 / 48 unseen requests handled correctly (simple keyword matching: 22 / 48)</td><td>A tiny 135M language model I tried as a helper gave valid output 0 / 12 times</td></tr></tbody></table></div>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="what-i-learned">
+<h2 id="what-i-learned">What I learned</h2><p>A small, predictable program is great at well-defined jobs: sorting files, generating designs from formulas, solving small puzzles, and doing all of it safely and offline. It's bad at anything open-ended, like natural conversation or writing about a topic it has no source for. That still needs a real language model.</p><p>The bigger lesson for me was about honesty in engineering: measure what you want to claim, compare against something simple, and write down the failures as clearly as the wins. Some of my favourite results in this project are the ones that didn't work.</p><p><strong>Links</strong></p><p><a href="nsee.html">Project page</a> · <a href="https://github.com/Kailu687/NSEE" target="_blank" rel="noopener">Code, raw results and limitations on GitHub</a></p>
+    </section>
+
+    <div class="cta-row" style="margin-top:40px">
+      <a class="btn" href="./#blog">← All posts</a>
+      <a class="btn primary" href="./#contact">Get in touch</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Kailash Amarnath</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>
