@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="portfolio-cms">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
+
+  <title>What if AI didn't need a data centre? The story behind NSEE — Kailash Amarnath</title>
+  <meta name="description" content="The behind-the-scenes story of NSEE: why I started it, every version along the way, the ideas I borrowed from the brain, the things I kept changing, and what the honest numbers finally said.">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/nsee-explained.html">
+  <meta name="theme-color" content="#001027">
+
+  <!-- Social previews -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="What if AI didn't need a data centre? The story behind NSEE">
+  <meta property="og:description" content="The behind-the-scenes story of NSEE: why I started it, every version along the way, the ideas I borrowed from the brain, the things I kept changing, and what the honest numbers finally said.">
+  <meta property="og:url" content="https://kailashamarnath.me/nsee-explained.html">
+  <meta property="og:image" content="https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png">
+  <meta property="og:image:alt" content="What if AI didn't need a data centre? The story behind NSEE">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","name":"What if AI didn't need a data centre? The story behind NSEE","headline":"What if AI didn't need a data centre? The story behind NSEE","description":"The behind-the-scenes story of NSEE: why I started it, every version along the way, the ideas I borrowed from the brain, the things I kept changing, and what the honest numbers finally said.","url":"https://kailashamarnath.me/nsee-explained.html","image":"https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png","author":{"@type":"Person","name":"Kailash Amarnath","url":"https://kailashamarnath.me/"},"datePublished":"2026-11-22"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://kailashamarnath.me/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://kailashamarnath.me/#blog"},{"@type":"ListItem","position":3,"name":"What if AI didn't need a data centre? The story behind NSEE"}]}]}</script>
+</head>
+<body class="content-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Kailash, home">
+      <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+      <span class="logo">KAILASH</span>
+      <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="links" id="nav-links" aria-label="Main">
+      <a href="./#home">Home</a>
+      <a href="./#about">About</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog" aria-current="page">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="./">Home</a></li>
+        <li><a href="./#blog">Blog</a></li>
+        <li><span aria-current="page">What if AI didn't need a data centre? The story behind NSEE</span></li>
+      </ol>
+    </nav>
+
+    <div class="page-title">
+      <div>
+        <h1>What if AI didn't need a data centre? The story behind NSEE</h1>
+
+        <div class="meta-row"><span class="tag muted"><time datetime="2026-11-22">22 November 2026</time></span><span class="tag muted">10 min read</span></div>
+      </div>
+
+    </div>
+
+    <section class="panel reveal" aria-labelledby="it-started-with-a-question">
+<h2 id="it-started-with-a-question">It started with a question</h2><p>AI and communication are quickly becoming lifelines for people everywhere. I honestly think that, someday, access to them should be treated as a basic right rather than a privilege.</p><p>Using tools like Claude Pro showed me how powerful AI already is. It also made me think about the people on the other side of that: people who can't afford a subscription, don't have a powerful computer, or don't have reliable internet. Why should useful intelligence always need massive data centres, expensive hardware, huge amounts of power and a monthly bill?</p><p>So I set myself a slightly crazy goal. Could I build an AI-like assistant that <em>isn't</em> a large language model? Not another chatbot, but something closer to a personal butler for your computer: it understands a task, picks the right tool, runs a known workflow, and never does anything you told it not to. And it had to be small: under 1 MB, standard-library Python only, offline, and ideally able to run even on an old 2 GB RAM laptop.</p><p>I called it <strong>NSEE, the Neuro-Symbolic Edge Engine</strong>. This post is the full behind-the-scenes story: what I tried, what I changed and why, and what the numbers said in the end.</p><p>One thing up front: I built NSEE with a lot of help from AI coding assistants. I decided what it should do, kept changing direction when things didn't work, tested it and measured it. I'm still learning a lot of the ideas inside it, and this post is how I understand them today.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="the-hypothesis-borrow-a-few-ideas-from-t">
+<h2 id="the-hypothesis-borrow-a-few-ideas-from-t">The hypothesis: borrow a few ideas from the brain</h2><p>The brain doesn't run one enormous list of instructions. It has specialised regions, neurons that fire when their input crosses a threshold, and connections that change with experience. My bet was that a few of those ideas could shape a small, efficient program. This is what each idea eventually became:</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-brain-mapping.png" aria-label="Enlarge image: Table mapping brain ideas to NSEE modules"><img src="Images/uploads/nsee-brain-mapping.png" alt="Table mapping brain ideas to NSEE modules" width="1800" height="1080" loading="lazy" decoding="async"></button></figure><p>These are small, simplified software models. They borrow ideas from neuroscience; they don't simulate a brain. But having the brain as a map helped me decide what pieces the system needed.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="version-0-1-and-0-2-a-parser-a-few-skill">
+<h2 id="version-0-1-and-0-2-a-parser-a-few-skill">Version 0.1 and 0.2: a parser, a few skills and some neurons</h2><p>The very first version did one thing: it turned a request into steps and generated a quadcopter frame for CAD. Version 0.2 became the real core. A rule-based "intent compiler" turned a sentence into a list of goals with typed values (like "at least 3 mm"), and every goal got a polarity: <em>allow</em> or <em>block</em>. That polarity is the reason NSEE never loses a "don't":</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-negation.png" aria-label="Enlarge image: Diagram: don't attaches to delete, not sort"><img src="Images/uploads/nsee-blog-negation.png" alt="Diagram: don't attaches to delete, not sort" width="1350" height="750" loading="lazy" decoding="async"></button></figure><p>The other big decision was to keep knowledge out of the code. A rule I gave myself early on: <strong>no gadget-specific code in the engine</strong>. Every ability lives in a "skill capsule", a JSON file with triggers, settings, formulas, rules and outputs. Adding a file adds a skill, and nothing needs retraining.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-capsule.png" aria-label="Enlarge image: The parts of a skill capsule"><img src="Images/uploads/nsee-blog-capsule.png" alt="The parts of a skill capsule" width="1350" height="840" loading="lazy" decoding="async"></button></figure><p>The first spiking neurons appeared here too: a small network that routes a goal to a skill and strengthens that connection every time the skill succeeds, a simplified version of how synapses strengthen with use (STDP).</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="first-real-test-it-didn-t-understand-me">
+<h2 id="first-real-test-it-didn-t-understand-me">First real test: it didn't understand me</h2><p>The first time I used it properly, it failed on simple things. If I asked a question, it sometimes tried to <em>do</em> something instead. So in the next version every goal also got an intent (explain, inspect, query or change), and skills got a risk class (read, report or write). A question can never trigger a skill that writes files.</p><p>Around then I had a choice. I could add a 22 MB sentence-embedding model to understand wording better, or stay model-free. I chose to stay model-free and built a concept thesaurus plus a vocabulary the system learns from use. Keeping it tiny was the whole point.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="versions-0-4-to-0-7-making-it-usable">
+<h2 id="versions-0-4-to-0-7-making-it-usable">Versions 0.4 to 0.7: making it usable</h2><p>A command line isn't something normal people use, so I added a chat UI that runs locally, with a permission card before any file changes. Then I kept fixing the gaps I hit while using it:</p><ul><li><p><strong>Spelling.</strong> Searching "Abdul Kailam" should still find A. P. J. Abdul Kalam, so I added phonetic matching and a frequency-based spelling corrector.</p></li><li><p><strong>Online knowledge.</strong> For questions it couldn't answer, an optional online mode reads Wikipedia or a web search, and can save the answer for offline use later.</p></li><li><p><strong>Teaching it.</strong> You can drop a guide or a cheat-sheet into it, and it turns the steps and formulas into a new read-only skill.</p></li><li><p><strong>Memory.</strong> A five-turn working memory, so "summarise that" or "open it" refers to the right thing.</p></li></ul><p>One funny lesson from this period: a bug I spent ages chasing turned out to be an old server process still running from a previous version. Now the app checks that the code it's serving is current.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="version-0-8-thinking-without-a-model">
+<h2 id="version-0-8-thinking-without-a-model">Version 0.8: thinking without a model</h2><p>The next problem was requests that no single skill covers, like "find all my text notes, then save a combined report". Instead of reaching for a language model, I added a small planner inspired by active inference. It keeps a tiny model of states (files listed, text extracted, summary ready, file written), works backwards to find the shortest safe chain of basic actions, and simulates it before running anything. If the plan works, it's saved and replayed as a reflex next time. If I cancel it, that path is weakened so it picks a different one.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="version-1-x-safety-first-then-the-brain-">
+<h2 id="version-1-x-safety-first-then-the-brain-">Version 1.x: safety first, then the "brain" parts</h2><p>Once NSEE could change files in bigger ways, I wanted a guarantee that a half-finished task could never leave a mess. Every file operation is now previewed as reversible, recoverable or irreversible, and a journal saves a copy of everything before it's touched.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-blog-rollback.png" aria-label="Enlarge image: Rollback diagram"><img src="Images/uploads/nsee-blog-rollback.png" alt="Rollback diagram" width="1350" height="690" loading="lazy" decoding="async"></button></figure><p>Then came the parts closest to the original brain idea:</p><ul><li><p><strong>A Wernicke-style comprehension module</strong> that reads a sentence into a frame (what's being asked, about what, with which negations), plus a <strong>Broca-style module</strong> that writes the reply.</p></li><li><p><strong>Neural assemblies</strong>: a small leaky integrate-and-fire circuit per request, where a capability "wins" when its neurons fire together across regions.</p></li><li><p><strong>Neuromodulators</strong>: dopamine scales how fast connections change, and a serotonin-like "risk" signal raises the firing threshold of neurons tied to irreversible actions.</p></li><li><p><strong>A "correct me" loop</strong>: if it isn't confident, it states its best guess and asks. If you say "no, I meant…", the wrong connections are weakened four times faster than normal and the right ones strengthened, so one correction actually changes its behaviour.</p></li></ul><p>It also learned to solve small logic puzzles, like "Alice, Bob and Carol each take one shift…", with a step-by-step proof.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-real-run.png" aria-label="Enlarge image: Real NSEE terminal output"><img src="Images/uploads/nsee-real-run.png" alt="Real NSEE terminal output" width="1800" height="1071" loading="lazy" decoding="async"></button></figure>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="the-bottleneck-understanding-people">
+<h2 id="the-bottleneck-understanding-people">The bottleneck: understanding people</h2><p>By now the engine could do a lot once it knew what you wanted. Getting there was the hard part. People write half sentences, typos, vague instructions and things that only make sense in context. Turning that into a clean, structured request is exactly what large language models are good at, and what rules struggle with.</p><p>So I made a compromise. I added an optional small language model (135M parameters, about 100 MB) as a <em>translator</em>: it could suggest a structured version of your request and rephrase results the engine had already checked. It was never allowed to touch the computer, and it could only <em>add</em> negations, never remove them. I even had it running in a hosted web version for a while.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="then-i-measured-everything-honestly">
+<h2 id="then-i-measured-everything-honestly">Then I measured everything honestly</h2><p>When I sat down to write the project up properly, I made one rule: every number must come from a script I can re-run, and every claim must be compared against something simple. That changed the story a lot.</p><ul><li><p><strong>The small language model didn't work in its role.</strong> Asked to return structured output, it succeeded 0 times out of 12, and it sometimes invented facts. The system stayed safe because it falls back to its own writer, but the model wasn't adding real value.</p></li><li><p><strong>The spiking arbiter wasn't changing decisions.</strong> On 60 labelled requests it made exactly the same choices as a plain "does this request mention the right thing?" check. That was hard to accept, but it's true.</p></li><li><p><strong>Natural negation was weaker than I thought.</strong> On templated sentences it caught 140 of 150 negations, but on natural ones like "no renaming" or "leave the logs alone", only 28 of 50.</p></li><li><p><strong>Writing hit a wall.</strong> An early version padded essays with repeated sentences. When I made it honest (only use real source text), it simply couldn't write more than its sources contained.</p></li></ul>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="how-i-improvised">
+<h2 id="how-i-improvised">How I improvised</h2><p>Some failures I could fix, and they taught me the most.</p><p>The best example is antennas. My first antenna skill only knew microstrip patches, so a request for a dipole silently got patch dimensions, which is the worst kind of error. Instead of writing antenna code, I replaced it with one skill file covering six antenna types (patch, dipole, monopole, helix, Yagi and horn) using standard textbook formulas, plus an Ansys HFSS script for each. I also taught it messy input like "patch 5.8G" or "desing a dipole at 433 mhz". All 16 casual requests I tried came out right, and the horn design matches the worked example in Balanis' antenna textbook.</p><p>Testing it on unseen requests then exposed a new bug: antenna types it doesn't support, like Vivaldi or bowtie, were still getting patch dimensions. The fix was simple and general: a skill can now say "only run me if you recognised one of my types". After that, NSEE handled 44 of 48 unseen requests correctly, against 22 for a keyword-matching baseline.</p><p>Even while making the figures for this post, I found one more real bug: on Windows, saving the rollback journal sometimes failed because antivirus briefly locked the file. NSEE did the right thing and rolled everything back, but it shouldn't fail at all, so it now retries briefly.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="where-it-reached">
+<h2 id="where-it-reached">Where it reached</h2><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-architecture.png" aria-label="Enlarge image: NSEE architecture"><img src="Images/uploads/nsee-architecture.png" alt="NSEE architecture" width="2013" height="1192" loading="lazy" decoding="async"></button></figure><div class="table-wrap"><table><thead><tr><th>Worked</th><th>Didn't (yet)</th></tr></thead><tbody><tr><td>Engine + skills ≈ 963 KB of plain Python, no external libraries</td><td>The small language model: 0 / 12 valid structured outputs</td></tr><tr><td>About 0.2 ms to understand a request, ~4.4 MB peak Python memory</td><td>Natural negation: only 28 / 50 caught</td></tr><tr><td>200 / 200 deliberately crashed tasks fully rolled back</td><td>The spiking arbiter made the same choices as simple thresholding on 60 / 60 tests</td></tr><tr><td>44 / 48 unseen requests handled correctly (keyword matching: 22 / 48)</td><td>Requests outside the existing skills are usually declined</td></tr><tr><td>Six antenna types from casual input, with HFSS scripts</td><td>The HFSS scripts are syntax-checked but not yet simulated</td></tr></tbody></table></div><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-benchmarks.png" aria-label="Enlarge image: Latency and memory measurements"><img src="Images/uploads/nsee-benchmarks.png" alt="Latency and memory measurements" width="2501" height="999" loading="lazy" decoding="async"></button></figure><p>So I ended up with a working experimental direction, not a replacement for real AI assistants. In the end I also pulled back the hosted app. NSEE now lives as an open-source repository with its raw results and a full list of limitations, which feels like the honest home for it.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="what-i-learned">
+<h2 id="what-i-learned">What I learned</h2><p>Making an AI system small turned out not to be the hardest part. The hard part is deciding what intelligence actually needs to be there: what can be written as rules, what can live in specialised skills, and where a language model is genuinely needed.</p><p>Maybe edge AI doesn't have to be a choice between a giant model and pure rules. There may be room for hybrids: a small, safe, local core that does the work, with language understanding added only where it earns its place.</p><p>The bigger lesson was about honesty. Measuring my own claims, and comparing them against something simple, killed a few ideas I liked. It also showed me exactly where to go next, and that feels more valuable than a nicer-looking result.</p>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="and-then-there-s-communication">
+<h2 id="and-then-there-s-communication">And then there's communication</h2><p>That brings me to the other half of my original thought. If AI is becoming a lifeline, communication is the infrastructure that lets that lifeline exist at all. More on that soon.</p><p><strong>Links</strong></p><p><a href="nsee.html">Project page</a> · <a href="https://github.com/Kailu687/NSEE" target="_blank" rel="noopener">Code, raw results and limitations on GitHub</a></p>
+    </section>
+
+    <div class="cta-row" style="margin-top:40px">
+      <a class="btn" href="./#blog">← All posts</a>
+      <a class="btn primary" href="./#contact">Get in touch</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Kailash Amarnath</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>

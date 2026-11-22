@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="portfolio-cms">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T9LBFG5H67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-T9LBFG5H67');
+  </script>
+
+  <title>NSEE - Neuro-Symbolic Edge Engine — Kailash Amarnath</title>
+  <meta name="description" content="An experimental offline agent whose planning, skills and execution fit in under 1 MB of plain Python. Measured what it does well (fast, predictable, fully reversible file tasks) and where it breaks (natural language, open-ended writing).">
+  <meta name="author" content="Kailash Amarnath">
+  <link rel="canonical" href="https://kailashamarnath.me/nsee.html">
+  <meta name="theme-color" content="#001027">
+
+  <!-- Social previews -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Kailash Amarnath">
+  <meta property="og:title" content="NSEE - Neuro-Symbolic Edge Engine">
+  <meta property="og:description" content="An experimental offline agent whose planning, skills and execution fit in under 1 MB of plain Python. Measured what it does well (fast, predictable, fully reversible file tasks) and where it breaks (natural language, open-ended writing).">
+  <meta property="og:url" content="https://kailashamarnath.me/nsee.html">
+  <meta property="og:image" content="https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png">
+  <meta property="og:image:alt" content="NSEE - Neuro-Symbolic Edge Engine">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Icons -->
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Fonts and styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&amp;display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/content.css">
+  <script>document.documentElement.classList.remove('no-js');</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CreativeWork","name":"NSEE - Neuro-Symbolic Edge Engine","headline":"NSEE - Neuro-Symbolic Edge Engine","description":"An experimental offline agent whose planning, skills and execution fit in under 1 MB of plain Python. Measured what it does well (fast, predictable, fully reversible file tasks) and where it breaks (natural language, open-ended writing).","url":"https://kailashamarnath.me/nsee.html","image":"https://kailashamarnath.me/Images/Project%20Nimbus%20Logo.png","author":{"@type":"Person","name":"Kailash Amarnath","url":"https://kailashamarnath.me/"},"datePublished":"2026-11-22","keywords":"Python, Neuro-symbolic AI, Spiking neurons, RF design, Open source"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://kailashamarnath.me/"},{"@type":"ListItem","position":2,"name":"Projects","item":"https://kailashamarnath.me/#projects"},{"@type":"ListItem","position":3,"name":"NSEE - Neuro-Symbolic Edge Engine"}]}]}</script>
+</head>
+<body class="content-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="brand" href="./" aria-label="Kailash, home">
+      <img class="brand-mark" src="favicon.svg" alt="" width="28" height="28">
+      <span class="logo">KAILASH</span>
+      <span class="subtitle">ECE Student · Aviation Enthusiast</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="links" id="nav-links" aria-label="Main">
+      <a href="./#home">Home</a>
+      <a href="./#about">About</a>
+      <a href="./#projects" aria-current="page">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main id="main" class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="./">Home</a></li>
+        <li><a href="./#projects">Projects</a></li>
+        <li><span aria-current="page">NSEE - Neuro-Symbolic Edge Engine</span></li>
+      </ol>
+    </nav>
+
+    <div class="page-title">
+      <div>
+        <h1>NSEE - Neuro-Symbolic Edge Engine</h1>
+        <p class="page-subtitle">Experimental software project</p>
+        <div class="meta-row"><span class="tag">Python</span><span class="tag muted">Neuro-symbolic AI</span><span class="tag muted">Spiking neurons</span><span class="tag muted">RF design</span><span class="tag muted">Open source</span></div>
+      </div>
+
+    </div>
+
+    <section class="panel reveal" aria-labelledby="overview">
+<h2 id="overview">Overview</h2><p>NSEE (Neuro-Symbolic Edge Engine) is an experiment in building an assistant without a large language model. Instead of one big neural network, a small rule-based program reads the request, picks a skill, checks it and runs it, all offline on a laptop and in under 1 MB of standard-library Python.</p><p>I wanted to see how far this approach can go, so I measured both what it does well and where it fails, and published the code, the raw results and a list of limitations.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-architecture.png" aria-label="Enlarge image: NSEE architecture diagram"><img src="Images/uploads/nsee-architecture.png" alt="NSEE architecture diagram" width="2013" height="1192" loading="lazy" decoding="async"></button></figure>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="how-it-works">
+<h2 id="how-it-works">How it works</h2><ul><li><strong>Intent compiler&nbsp;:&nbsp;</strong>turns a request into goals and keeps negation scoped, so "sort my files, don't delete anything" becomes sort = allowed, delete = blocked.</li><li><strong>Skill capsules&nbsp;:&nbsp;</strong>each skill is a JSON file with parameters, formulas and rules, not code. New abilities are added as data.</li><li><strong>Spiking-neuron circuits&nbsp;:&nbsp;</strong>small leaky integrate-and-fire circuits take part in routing and in learning which skill works for which request.</li><li><strong>Safety and rollback&nbsp;:&nbsp;</strong>every file operation needs approval, is previewed first and is journaled, so a failed multi-step task is undone completely.</li></ul>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="rf-antenna-skill">
+<h2 id="rf-antenna-skill">RF antenna skill</h2><p>One capsule designs six antenna types (microstrip patch, dipole, monopole, axial-mode helix, Yagi-Uda and pyramidal horn) from standard closed-form formulas, and writes an Ansys HFSS (PyAEDT) script. It understands casual input such as "patch 5.8G" or "desing a dipole at 433 mhz". The scripts pass a syntax check; running them in HFSS is my next step.</p><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-real-run.png" aria-label="Enlarge image: Real NSEE terminal output for a file sort and a misspelled dipole request"><img src="Images/uploads/nsee-real-run.png" alt="Real NSEE terminal output for a file sort and a misspelled dipole request" width="1800" height="1071" loading="lazy" decoding="async"></button></figure>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="results">
+<h2 id="results">Results</h2><div class="table-wrap"><table><thead><tr><th>What I measured</th><th>Result</th></tr></thead><tbody><tr><td>Time to parse a request</td><td>about 0.2 ms</td></tr><tr><td>Peak Python heap</td><td>4.4 MB</td></tr><tr><td>Crashed multi-step file plans fully rolled back</td><td>200 / 200</td></tr><tr><td>Unseen requests handled correctly</td><td>44 / 48 (keyword baseline: 22 / 48)</td></tr><tr><td>Natural negation phrasings caught</td><td>28 / 50</td></tr><tr><td>Valid outputs from a 135M language model</td><td>0 / 12</td></tr></tbody></table></div><figure class="img-wide"><button class="zoomable" type="button" data-full="Images/uploads/nsee-benchmarks.png" aria-label="Enlarge image: Latency and memory measurements"><img src="Images/uploads/nsee-benchmarks.png" alt="Latency and memory measurements" width="2501" height="999" loading="lazy" decoding="async"></button></figure>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="what-i-worked-on">
+<h2 id="what-i-worked-on">What I worked on</h2><ul><li><p>Set the goals and constraints: offline, standard library only, under 1 MB, skills as data.</p></li><li><p>Directed the implementation, which was built with heavy help from AI coding assistants, and reviewed and tested the behaviour.</p></li><li><p>Designed and ran the experiments: held-out test sets, a keyword baseline, a rollback fault-injection test and a comparison of the spiking arbiter against simpler methods.</p></li><li><p>Wrote up the results, including the parts that did not work.</p></li></ul>
+    </section>
+
+    <section class="panel reveal" aria-labelledby="outcome-learning">
+<h2 id="outcome-learning">Outcome &amp; Learning</h2><p>Small symbolic systems turned out to be fast, predictable and safe for well-defined procedures, but weak at natural phrasing and open-ended language. One honest surprise: the spiking arbiter made the same decisions as plain thresholding on all 60 test cases, so it does not improve routing yet.</p><p>The biggest lesson for me was to measure the thing I want to claim, and to report the failures as clearly as the successes. I am still learning many of the ideas underneath this project.</p><p><strong>Resources</strong></p><p><a href="https://github.com/Kailu687/NSEE" target="_blank" rel="noopener">https://github.com/Kailu687/NSEE</a></p>
+    </section>
+
+    <div class="cta-row" style="margin-top:40px">
+      <a class="btn" href="./#projects">← All projects</a>
+      <a class="btn primary" href="./#contact">Get in touch</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span data-year>2026</span> Kailash Amarnath</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="./#projects">Projects</a>
+      <a href="./#products">Products</a>
+      <a href="./#blog">Blog</a>
+      <a href="./#contact">Contact</a>
+    </nav>
+  </footer>
+
+  <script src="assets/js/site.js" defer></script>
+</body>
+</html>
